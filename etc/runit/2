@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Runit stage 2: start services in parallel and keep them alive
+# based on VOID Linux (https://www.voidlinux.eu)
+
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+. /etc/runit/functions
+msg "Entering Runit stage 2 ($0)"
+
+[ -x /etc/rc.local ] && /etc/rc.local
+
+exec env - PATH=$PATH \
+runsvdir -P /etc/service 'log: ...................................................................................'

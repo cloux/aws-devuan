@@ -1,0 +1,8 @@
+#!/bin/sh -eu
+# Service instancing; name the runsv dir "dovecot" if unsure
+dovecot_config_file=/etc/dovecot/"${PWD##*/}".conf
+
+# N.B. Dovecot legitimately uses this dir for state, not just dumping a pidfile into:
+install -m 0755 -d "$(/usr/bin/doveconf -h base_dir -c "$dovecot_config_file")"
+
+exec /usr/sbin/dovecot -F -c "$dovecot_config_file"

@@ -1,0 +1,4 @@
+#!/bin/sh
+# always report this service as available
+udevadm settle --timeout=5
+exit 0

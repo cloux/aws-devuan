@@ -1,0 +1,2 @@
+VERSION=9.6
+DATA_DIR=/srv/postgresql/$VERSION

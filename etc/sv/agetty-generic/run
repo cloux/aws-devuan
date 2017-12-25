@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Run agetty on a terminal
+# (cloux@rote.ch)
+
+BAUD_RATE="115200 38400"
+TERM_NAME="linux"
+GETTY_ARGS=""
+
+tty=${PWD##*-}
+# if there is just a number after "-", add "tty" upfront.
+# this makes services like "agetty-1", "agetty-tty1" and "agetty-console" work
+[ $(expr "$tty" : '^[0-9]*$') -gt 0 ] && tty=tty${tty}
+# fallback to "tty1" if device doesn't exist
+[ -c /dev/"$tty" ] || tty=tty1
+
+# custom config
+[ -r conf ] && . ./conf
+
+GETTY=$(which agetty 2>/dev/null)
+if [ ! -x "$GETTY" ]; then
+	GETTY=$(which getty 2>/dev/null)
+	[ -x "$GETTY" ] || exit 1
+	if [ "$tty" = "tty1" ]; then
+		GETTY_ARGS="--noclear"
+	fi
+fi
+
+exec setsid $GETTY $GETTY_ARGS -- $tty $BAUD_RATE "$TERM_NAME"

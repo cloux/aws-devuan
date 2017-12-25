@@ -1,0 +1,5 @@
+#!/bin/sh
+service=${PWD##*/}
+
+# run this only once
+sv stop $service

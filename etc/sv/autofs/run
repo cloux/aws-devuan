@@ -1,0 +1,2 @@
+#!/bin/sh -eu
+exec /usr/sbin/automount --foreground

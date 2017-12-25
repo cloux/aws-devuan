@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# Write an empty record for tty to the wtmp file
+# to indicate that the user on the terminal has logged out
+# (cloux@rote.ch)
+
+tty=${PWD##*-}
+[ $(expr "$tty" : '^[0-9]*$') -gt 0 ] && tty=tty${tty}
+[ -c /dev/"$tty" ] || tty=tty1
+exec utmpset -w $tty

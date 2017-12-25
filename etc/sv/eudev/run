@@ -1,0 +1,8 @@
+#!/bin/sh
+exec 2>&1
+
+[ -x /sbin/udevadm ] || exit 0
+
+/sbin/udevadm control --exit
+
+exec /sbin/udevd

@@ -1,0 +1,28 @@
+#!/bin/sh -e
+#
+# man-db cron daily
+
+# run only if can be started nicely
+[ -x "$(which ionice 2>/dev/null)" ] || exit 1
+
+iosched=0
+# Don't try to change I/O priority in a vserver or OpenVZ.
+if ! egrep -q '(envID|VxID):.*[1-9]' /proc/self/status && \
+   ([ ! -d /proc/vz ] || [ -d /proc/bc ]); then
+    iosched=3
+fi
+
+if ! [ -d /var/cache/man ]; then
+    # Recover from deletion, per FHS.
+    install -d -o man -g man -m 0755 /var/cache/man
+fi
+
+if [ ! -d /run/systemd/system ] && [ -d /var/cache/man ]; then
+  ionice --class $iosched --ignore find /var/cache/man -type f -name '*.gz' -atime +6 -delete >/dev/null 2>/dev/null
+fi
+
+# NOTE: do not start as a daemon, for compatibility with other-than-sysvinit init systems
+# regenerate man database
+if [ -x /usr/bin/mandb ]; then
+  ionice --class $iosched --ignore /usr/bin/mandb --quiet >/dev/null 2>/dev/null
+fi

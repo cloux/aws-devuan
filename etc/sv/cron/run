@@ -1,0 +1,7 @@
+#!/bin/sh
+exec 2>&1
+
+# Cron should run even without logging, so don't exit here if socklog fails:
+sv start socklog-unix >/dev/null
+
+exec /usr/sbin/cron -f -l -L 1

@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# integrate socket loging into /var/log/ directory
+# (cloux@rote.ch)
+
+LOGDIR=/var/log
+SOCKLOG_SERVICES=()
+LOGUSER=daemon
+
+[ -r ../config ] && . ../config
+[ -r ./config ] && . ./config
+
+LOGGED=()
+for SRV in ${SOCKLOG_SERVICES[@]}; do
+  if [ -d "../templates/$SRV" -a ! -d "$LOGDIR/$SRV" ]; then
+    cp -Pr "../templates/$SRV" "$LOGDIR/$SRV" 2>/dev/null
+    chown -R ${LOGUSER}: "$LOGDIR/$SRV" 2>/dev/null
+  fi
+  [ -f "$LOGDIR/$SRV/config" ] && LOGGED+=("$LOGDIR/$SRV")
+done
+
+[ "$LOGGED" ] || exit 1
+
+exec chpst -u$LOGUSER svlogd ${LOGGED[@]}

@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# runit service deactivation
+# (cloux@rote.ch)
+
+if [ $# -eq 0 ]; then
+	echo "Enter Runit service name as a parameter"
+	echo "Supported services are listed in /etc/sv/"
+	exit 0
+fi
+
+# process all services provided as command line parameters
+RET=0
+for SRV in ${@}; do
+	if [ ! -d "/etc/service/$SRV" ]; then
+		if [ -d "/etc/sv/$SRV" ]; then
+			echo "Info: Runit service '$SRV' is already inactive"
+		else
+			echo "Warning: Runit service definition '/etc/sv/$SRV' doesn't exist, cannot be activated or deactivated"
+		fi
+		continue
+	fi
+	rm "/etc/service/$SRV" 2>/dev/null
+	if [ $? -ne 0 ]; then
+		echo "ERROR: Runit service $SRV deactivation failed"
+		RET=1
+	fi
+done
+
+exit $RET

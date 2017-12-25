@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# openvpn runit service
+# If the service directory is "/etc/sv/openvpn-NAME", then a corresponding
+# config file /etc/openvpn/NAME.conf must exist. If the service directory is
+# just "/etc/sv/openvpn", then /etc/openvpn/openvpn.conf must exist.
+#
+# (cloux@rote.ch)
+
+exec 2>&1
+
+NAME=${PWD##*/}
+NAME=${NAME##*-}
+DAEMON=/usr/sbin/openvpn
+CONFIG_DIR=/etc/openvpn
+CONFIG_FILE=${CONFIG_DIR}/${NAME}.conf
+OPTARGS=""
+
+[ -x $DAEMON ] || exit 0
+[ -f $CONFIG_FILE ] || exit 0
+[ -f /etc/default/openvpn ] && . /etc/default/openvpn
+
+# tun using the "subnet" topology confuses the routing code that wrongly
+# emits ICMP redirects for client to client communications
+SAVED_DEFAULT_SEND_REDIRECTS=0
+if grep -q '^[[:space:]]*dev[[:space:]]*tun' $CONFIG_FILE && grep -q '^[[:space:]]*topology[[:space:]]*subnet' $CONFIG_FILE ; then
+	# When using "client-to-client", OpenVPN routes the traffic itself without
+	# involving the TUN/TAP interface so no ICMP redirects are sent
+	if ! grep -q '^[[:space:]]*client-to-client' $CONFIG_FILE ; then
+		sysctl -w net.ipv4.conf.all.send_redirects=0 > /dev/null
+		# Save the default value for send_redirects before disabling it
+		# to make sure the tun device is created with send_redirects disabled
+		SAVED_DEFAULT_SEND_REDIRECTS=$(sysctl -n net.ipv4.conf.default.send_redirects)
+		if [ "$SAVED_DEFAULT_SEND_REDIRECTS" -ne 0 ]; then
+			sysctl -w net.ipv4.conf.default.send_redirects=0 > /dev/null
+		fi
+		echo -n "$SAVED_DEFAULT_SEND_REDIRECTS" > /run/openvpn-${NAME}.SEND_REDIRECTS 2>/dev/null
+	fi
+fi
+
+exec $DAEMON $OPTARGS --cd /etc/openvpn --config $CONFIG_FILE

@@ -1,0 +1,4 @@
+Runit bootup scripts are borrowed from core-services in VOID Linux (https://www.voidlinux.eu)
+and modified for Amazon EC2 compatibility.
+
+(cloux@rote.ch)

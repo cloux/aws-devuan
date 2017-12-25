@@ -1,0 +1,11 @@
+#!/bin/sh
+
+INCROND=/usr/sbin/incrond
+INCROND_CONF=/etc/incron.conf
+
+[ -x "$INCROND" ] || exit 0
+
+# incron should run even without logging, so don't exit here if socklog fails:
+sv start socklog-unix >/dev/null
+
+exec "$INCROND" --foreground -f "$INCROND_CONF"

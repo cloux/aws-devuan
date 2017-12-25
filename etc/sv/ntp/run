@@ -1,0 +1,14 @@
+#!/bin/sh
+# Start NTP daemon
+exec 2>&1
+NAME=ntp
+DAEMON=/usr/sbin/ntpd
+
+[ -x $DAEMON ] || exit 0
+
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+[ -e /run/ntp.conf.dhcp ] && NTPD_OPTS="$NTPD_OPTS -c /run/ntp.conf.dhcp"
+
+NTPD_OPTS="$NTPD_OPTS -n -u ntp:ntp"
+
+exec $DAEMON $NTPD_OPTS

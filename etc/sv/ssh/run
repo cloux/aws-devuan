@@ -1,0 +1,15 @@
+#!/bin/sh -e
+exec 2>&1
+
+# generate host keys if they don't already exist
+ssh-keygen -A >/dev/null
+
+[ -r /etc/default/ssh ] && . /etc/default/ssh
+[ -r conf ] && . ./conf
+
+# Create the PrivSep empty dir if necessary
+if [ ! -d /var/run/sshd ]; then
+  rm -f /var/run/sshd; mkdir -p /var/run/sshd; chmod 0755 /var/run/sshd
+fi
+
+exec /usr/sbin/sshd $SSHD_OPTS

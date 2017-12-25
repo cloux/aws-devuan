@@ -1,0 +1,3 @@
+#!/bin/sh -eu
+sv start rpc.nfsd || exit 0
+exec /usr/sbin/rpc.mountd --foreground --no-nfs-version 2 --no-nfs-version 3

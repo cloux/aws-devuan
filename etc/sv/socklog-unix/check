@@ -1,0 +1,2 @@
+#!/bin/sh
+socklog-check unix /dev/log 2>/dev/null >/dev/null

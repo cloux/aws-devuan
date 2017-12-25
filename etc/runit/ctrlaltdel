@@ -1,0 +1,19 @@
+#!/bin/sh
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+if [ "$1" = "soft" ]; then
+  MSG="System is going down for soft reboot..."
+  install --mode=755 /dev/null /run/runit.kexecreboot
+else
+  MSG="System is going down for reboot..."
+  rm -f /run/runit.kexecreboot
+fi
+# We check for these files in stage3 to halt or reboot
+install --mode=0 /dev/null /run/runit.stopit
+install --mode=755 /dev/null /run/runit.reboot
+
+# Proceed with reboot process
+echo "$MSG" | wall --nobanner
+
+/sbin/runit-init 6

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+NAME=${PWD##*-}
+[ -f "/run/openvpn-${NAME}.SEND_REDIRECTS" ] || exit 0
+SAVED_DEFAULT_SEND_REDIRECTS=$(cat /run/openvpn-${NAME}.SEND_REDIRECTS 2>/dev/null)
+
+# Set the back the original default value of send_redirects if it was changed
+if [ "$SAVED_DEFAULT_SEND_REDIRECTS" -ne 0 ]; then
+	sysctl -w net.ipv4.conf.default.send_redirects=$SAVED_DEFAULT_SEND_REDIRECTS > /dev/null
+	rm -f /run/openvpn-${NAME}.SEND_REDIRECTS
+fi

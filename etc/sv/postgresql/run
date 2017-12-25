@@ -1,0 +1,23 @@
+#!/bin/sh -eu
+test -r rc && . ./rc
+
+# Ask portage for the slot of the highest version installed; this is what gets
+# run. If this isn't what you want, use the rc file to set $VERSION explicitly.
+query_postgres_version() {
+    portageq metadata / ebuild "$(portageq best_version / dev-db/postgresql)" SLOT
+}
+
+test -d "${DATA_DIR:=/srv/postgresql/"${VERSION:=$(query_postgres_version)}"}" || {
+    echo "Data directory $DATA_DIR not found." >&2
+    exit 1
+}
+
+install -m 0750 -o postgres -g postgres -d /run/postgresql
+
+# Remove dot from middle of version because that's the binary naming scheme up to 9.x.
+case "$VERSION" in
+    *.*) VERSION="${VERSION%%.*}${VERSION##*.}" ;;
+esac
+
+cd /var/empty
+exec chpst -u postgres /usr/bin/postgres"$VERSION" -D "$DATA_DIR"

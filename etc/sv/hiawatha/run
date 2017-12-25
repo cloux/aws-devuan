@@ -1,0 +1,7 @@
+#!/bin/sh -e
+#
+# Hiawatha Webserver (https://www.hiawatha-webserver.org)
+
+exec 2>&1
+[ -x "$(which hiawatha 2>/dev/null)" ] || exit 1
+exec hiawatha -d -c /etc/hiawatha >/dev/null
