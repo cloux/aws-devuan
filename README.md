@@ -28,16 +28,16 @@ Systemd became the single most widespread Linux init system. And it doesn't just
 
 Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-01:
 
-| AMI Name | [Init System](https://devuan.org/os/init-freedom/) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> | License | 
+| AMI Name | [Init System](https://devuan.org/os/init-freedom/) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> <sup>([&pm;SD](https://en.wikipedia.org/wiki/Standard_deviation))</sup> | License | 
 | :---  | :--- | :--- | :--- | :--- | :--- | :--- |
-| Amazon Linux AMI 2017.09.1 | Systemd | Quick Start | rpm | 8 GB | 11.8 s <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 0.8)</sup> | [EULA](https://aws.amazon.com/agreement/) |
-| Amazon Linux 2 LTS Candidate AMI 2017.12.0 | Systemd | Quick Start | rpm | 8 GB | 30.2 s <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 1.6)</sup> | [EULA](https://aws.amazon.com/agreement/) |
-| Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | Systemd | Quick Start | rpm | 10 GB | 20.4 s <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 1.7)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
-| SUSE Linux Enterprise Server 12 SP3 | Systemd | Quick Start | rpm | 10 GB | 46.4 s <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 0.5)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
-| Ubuntu Server 16.04 LTS | Systemd | Quick Start | apt | 8 GB | 16.8 s <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 1.1)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
-| CentOS 7 | Systemd | Marketplace | rpm | 8 GB | 21.2 <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 1.1)</sup> | Free |
-| Debian GNU/Linux 9.3 Stretch | Systemd | Marketplace | apt | 8 GB | 8.0 s <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 0.7)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
-| **Devuan Ascii** (this AMI) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **3 GB** | 12.8 <sup>([+](https://en.wikipedia.org/wiki/Standard_deviation) 0.8)</sup> | [**Free**](https://devuan.org/os/free-software) |
+| Amazon Linux AMI 2017.09.1 | Systemd | Quick Start | rpm | 8 GB | 11.8&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Amazon Linux 2 LTS Candidate AMI 2017.12.0 | Systemd | Quick Start | rpm | 8 GB | 30.2&nbsp;s&nbsp;<sup>(&pm;1.6)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | Systemd | Quick Start | rpm | 10 GB | 20.4&nbsp;s&nbsp;<sup>(&pm;1.7)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
+| SUSE Linux Enterprise Server 12 SP3 | Systemd | Quick Start | rpm | 10 GB | 46.4&nbsp;s&nbsp;<sup>(&pm;0.5)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
+| Ubuntu Server 16.04 LTS | Systemd | Quick Start | apt | 8 GB | 16.8&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
+| CentOS 7 | Systemd | Marketplace | rpm | 8 GB | 21.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | Free |
+| Debian GNU/Linux 9.3 Stretch | Systemd | Marketplace | apt | 8 GB | 8.0&nbsp;s&nbsp;<sup>(&pm;0.7)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
+| **Devuan Ascii** (this AMI) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **3 GB** | 12.8&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 
 \*1) Smallest possible volume storage size for a new instance  
@@ -100,9 +100,9 @@ A few useful commands to get an instance up and running.
 
 **Login**
 
- * The default user is **admin**
- * To login to your new instance over SSH, use:  
-   `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
+ * The default SSH user is **admin**
+ * For an easy access, use [ec2-login.sh](misc/ec2-login.sh)
+ * Or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
 **Timezone** is set to UTC by default. To change it, run:
 
