@@ -34,27 +34,50 @@ if [ -e /etc/zfs/zpool.cache -a -x /usr/bin/zfs ]; then
 	# anybody is doing that, so we aren't supporting it for now.
 fi
 
+# Filesystem check
 [ -f /fastboot -o "$(grep fastboot /proc/cmdline)" ] && FASTBOOT=1
 [ -f /forcefsck -o "$(grep forcefsck /proc/cmdline)" ] && FORCEFSCK="-f"
-
+MOUNT_RW=$(mount | grep -m 1 -c ' / .*[(\s,]rw[\s,)]')
 if [ -z "$FASTBOOT" ]; then
-	if [ $(mount | grep -c ' / ') -gt 0 ]; then
-		# only remount / if it needs to be repaired
-		fsck -T / -- -n 2>/dev/null >/dev/null
-		if [ $? -ne 0 -o "$FORCEFSCK" ]; then
-			msg "Remounting rootfs read-only..."
+	if [ "$FORCEFSCK" ]; then
+		if [ $MOUNT_RW -eq 1 ]; then
+			msg "Remounting root read-only..."
 			mount -o remount,ro / 2>&1
-			msg "Checking rootfs:"
+			MOUNT_RW=0
+		fi
+		msg "Force checking rootfs:"
+		fsck -T / -- -p $FORCEFSCK
+	else
+		# repair the filesystem only if damaged.
+		# this should allow faster boot if filesystem is OK
+		msg "Checking rootfs:"
+		fsck -T / -- -n
+		if [ $? -ne 0 ]; then
+			if [ $MOUNT_RW -eq 1 ]; then
+				msg "Remounting root read-only..."
+				mount -o remount,ro / 2>&1
+				MOUNT_RW=0
+			fi
+			msg "Repairing damaged rootfs:"
 			fsck -T / -- -p $FORCEFSCK
 		fi
 	fi
-	msg "Checking filesystems:"
+	msg "Checking non-root filesystems:"
 	fsck -ART -t noopts=_netdev -- -p $FORCEFSCK
 fi
-if [ $(mount | grep ' / ' | grep -c '[(\s,]rw[\s,)]') -eq 0 ]; then
+if [ $MOUNT_RW -eq 0 ]; then
 	msg "Mounting rootfs read-write..."
 	mount -o remount,rw / 2>&1
 fi
 
+# growpart in cloud-init needs rootfs linked to /dev/root
+if [ ! -e /dev/root ]; then
+	ROOTDEVICE="$(findmnt --noheadings --output SOURCE /)"
+	msg "Link $ROOTDEVICE to /dev/root ..."
+	ln -s "$ROOTDEVICE" /dev/root
+fi
+
 msg "Mounting all non-network filesystems..."
 mount -a -t "nosysfs,nonfs,nonfs4,nosmbfs,nocifs" -O no_netdev
+
+

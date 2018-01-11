@@ -4,7 +4,7 @@
 >"Do one thing, do it well."
 ><cite> - [Doug McIllroy](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well)</cite>
 
->"Do everything, do it in PID1."
+>"Do everything, do it in PID1"
 ><cite> - [Systemd](https://ewontfix.com/14/)</cite>
 
 ## About
@@ -22,7 +22,7 @@ This project aims to provide a viable alternative to the systemd-monotheistic AW
 
 The development progress of Systemd seems to closely resemble the well-known "[embrace, extend, extinguish](https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish)" strategy formerly used by Microsoft. Whether intentional or not, this can arguably lead to a dangerous situation. Systemd has shown to be unstable, [prone to crashes](https://www.agwa.name/blog/post/how_to_crash_systemd_in_one_tweet), and its developers approach to security is [famous for being lame](https://www.theregister.co.uk/2017/07/28/black_hat_pwnie_awards/). 
 
-Systemd became the single most widespread Linux init system. And it doesn't just do init, it also does login, pam, getty, syslog, udev, cryptsetup, cron, at, dbus, acpi,  gnome-session, autofs, tcpwrappers, audit, chroot, mount<sup>([1](https://systemd-free.org))</sup> , network management, DNS, Firewall, UEFI<sup>([2](http://without-systemd.org/wiki/index.php/Arguments_against_systemd#Scope_creep))</sup>, su<sup>([3](https://linux.slashdot.org/story/15/08/29/1526217/systemd-absorbs-su-command-functionality))</sup>, HTTP server<sup>([4](https://www.freedesktop.org/software/systemd/man/systemd-journal-gatewayd.service.html))</sup> ... and on saturdays it also does your laundry. Adopted by all major distributions, there seems to be no real alternative, pushing the Linux base further towards a monoculture environment. Systemd is not just a default software choice. Many packages depend directly on it, which makes it IMPOSSIBLE to remove or switch to something else later on. Once you run an OS with Systemd, that's it, you're stuck with it, for better or worse, so help you God. And even if you use Systemd on a daily basis and everything goes well, you might want to have some alternative. Just in the case that something breaks someday. So, what alternatives are available?
+Systemd became the single most widespread Linux init system. And it doesn't just do init, it also does login, pam, getty, syslog, udev, cryptsetup, cron, at, dbus, acpi, gnome-session, autofs, tcpwrappers, audit, chroot, mount<sup>([1](https://systemd-free.org))</sup>, network management, DNS, Firewall, UEFI<sup>([2](http://without-systemd.org/wiki/index.php/Arguments_against_systemd#Scope_creep))</sup>, su<sup>([3](https://linux.slashdot.org/story/15/08/29/1526217/systemd-absorbs-su-command-functionality))</sup>, HTTP server<sup>([4](https://www.freedesktop.org/software/systemd/man/systemd-journal-gatewayd.service.html))</sup> ... and on saturdays it also does your laundry. Adopted by all major distributions, there seems to be no real alternative, pushing the Linux base further towards a monoculture environment. Systemd is not just a default software choice. Many packages depend directly on it, which makes it IMPOSSIBLE to remove or switch to something else later on. Once you run an OS with Systemd, that's it, you're stuck with it, for better or worse, so help you God. And even if you use Systemd on a daily basis and everything goes well, you might want to have some alternative. Just in the case that something breaks someday. So, what alternatives are available?
 
 ### EC2 Linux AMI Comparison
 
@@ -37,11 +37,10 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-01:
 | Ubuntu Server 16.04 LTS | Systemd | Quick Start | apt | 8 GB | 16.8&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
 | CentOS 7 | Systemd | Marketplace | rpm | 8 GB | 21.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | Free |
 | Debian GNU/Linux 9.3 Stretch | Systemd | Marketplace | apt | 8 GB | 8.0&nbsp;s&nbsp;<sup>(&pm;0.7)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
-| **Devuan Ascii** (this AMI) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **3 GB** | 12.8&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | [**Free**](https://devuan.org/os/free-software) |
+| **Devuan Ascii** (2018-01-11) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **4 GB** | 6.8&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
-
-\*1) Smallest possible volume storage size for a new instance  
-\*2) Determined by [benchmark-ec2-osboot.sh](misc/benchmark-ec2-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs
+<sup>\*1) Smallest possible volume storage size for a new instance</sup>  
+<sup>\*2) Determined by [benchmark-ec2-osboot.sh](misc/benchmark-ec2-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
 This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not Systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on AWS and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
 
@@ -53,14 +52,15 @@ It's clear that all major distributions on AWS already transitioned to Systemd. 
 Currently available Devuan AMI offers:
 
  * _Runit_  init with _runsvdir_ as service supervisor
- * Small footprint (3 GB minimal volume size)
+ * Small footprint (4 GB minimal volume size)
  * All logs are saved as text files inside _/var/log/_
-    * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for logging services writing into stdout and stderr (e.g. ssh)
-    * _[socklog](http://smarden.org/socklog/)_ to log services using sockets (e.g. dhclient)
-    * other services writing logfiles directly (e.g. bootlogd or hiawatha)
     * easily comprehensible and configurable logging setup per service
- * Network drivers: [Amazon ENA](https://github.com/amzn/amzn-drivers) (25Gb) + Intel 82599 ixgbevf 3.3.2-k (10Gb)
- * Devuan stock kernel 4.9.0-5
+    * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
+    * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
+    * other services writing logfiles directly (e.g. bootlogd or hiawatha)
+ * Custom Kernel from https://www.kernel.org stable branch
+ * Network drivers: [Amazon ENA](https://github.com/amzn/amzn-drivers) 1.5.0g (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
+ * Fast direct boot without Initrd or initramfs
  * [cloud-init](https://cloud-init.io) v0.7.9
  * [aptitude](https://en.wikipedia.org/wiki/Aptitude_%28software%29) package manager
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org) v10.7, advanced and secure webserver
@@ -74,11 +74,11 @@ The main differences compared to a clean Devuan installation:
 
 **Preinstalled tools from Devuan repository:**
 
-    # apt-get install acpid apache2-utils aptitude auditd certbot cpulimit curl ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi pwgen rename runit screen sntop ssmtp sysv-rc-conf
+    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi pwgen rename runit screen sntop ssmtp sysv-rc-conf
 
 **Additionally from sources:**
 
- * aws-ena (https://github.com/vnetmx/aws-ena)
+ * Amazon ENA (https://github.com/vnetmx/aws-ena)
  * Socklog (http://smarden.org/socklog/install.html)
  * Hiawatha (http://www.hiawatha-webserver.org)
 
@@ -104,10 +104,6 @@ A few useful commands to get an instance up and running.
  * For an easy access, use [ec2-login.sh](misc/ec2-login.sh)
  * Or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
-**Timezone** is set to UTC by default. To change it, run:
-
- * `dpkg-reconfigure tzdata`
-
 **Shutdown and reboot**:
 
  * `shutdown` - simple immediate halt and power off. Does not accept any parameters.
@@ -120,17 +116,17 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 
  * `svactivate` - include and start services in Runit supervisor
  * `svdeactivate` - stop service and disable supervision
- * `runit-core-install` - forcibly integrate Runit into the system. Useful after a system upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
+ * `runit-core-install` - integrate Runit into the system. Useful after a system upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
 
 ---
 ## ToDo
 
  * Automate AMI propagation to all EC2 regions (currently us-east-1 only)
  * Include the _amazon-ssm-agent_ (https://github.com/aws/amazon-ssm-agent)
- * Integrate Runit into _update-rc.d_ (part of devuan's "init-system-helpers" package), to enable immediate automatic activation of services upon installation
- * Add Runit supervisor support for more services
- * Customize kernel, replace Devuan stock with stable branch from kernel\.org
+ * Integrate Runit into Devuan's _init-system-helpers_ package
  * Create clean [VOID](https://www.voidlinux.eu) AMI from scratch, as an additional alternative distribution
+ * ~~Speed up boot process, remove initrd~~ DONE
+ * ~~Customize kernel, replace Devuan stock with stable branch from kernel\.org~~ DONE
 
 ---
 <a href="http://www.wtfpl.net"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png" align="right"></a>

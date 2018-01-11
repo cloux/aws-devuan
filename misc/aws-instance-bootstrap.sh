@@ -48,9 +48,13 @@ echo "Stopping services..."
 sv stop bootlogd cron hiawatha ntp socklog-unix
 
 echo "Deleting logfiles..."
-rm -f /var/log/boot.log* /var/log/cloud-init*.log /var/log/dmesg.log* /var/log/hiawatha/* 2>/dev/null
+rm -f /var/log/boot.log* /var/log/cloud-init*.log /var/log/dmesg.log* \
+   /var/log/apt/history.log* /var/log/apt/term.log* /var/log/hiawatha/* \
+   /var/log/autorun*.log* 2>/dev/null
 find /var/log -type f -iname current -delete
 find /var/log -type f -iname '@*' -delete
+find /var/log -type f -iname '*.gz' -delete
+find /var/log -type f -iname '*.xz' -delete
 
 # shut down instance
 echo ""

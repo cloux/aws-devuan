@@ -12,15 +12,15 @@ detect_virt
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 
 if [ -e /run/runit.kexecreboot ]; then
-  if command -v kexec >/dev/null; then
-    msg "Rebooting using kexec"
-  else
-    msg_error "kexec reboot failed, rebooting normally"
-  fi
+	if command -v kexec >/dev/null; then
+		msg "Rebooting using kexec"
+	else
+		msg_error "kexec reboot failed, rebooting normally"
+	fi
 elif [ -e /run/runit.reboot ]; then
-  msg "Rebooting system"
+	msg "Rebooting system"
 else
-  msg "Shutdown and halt the system"
+	msg "Shutdown and halt the system"
 fi
 
 msg "Waiting for services to stop..."
@@ -38,8 +38,8 @@ msg "Saving random seed..."
   dd if=/dev/urandom of=/var/lib/random-seed count=1 bs=$bytes >/dev/null 2>&1 )
 
 if [ -z "$VIRTUALIZATION" ]; then
-    msg "Stopping udev..."
-    udevadm control --exit
+		msg "Stopping udev..."
+		udevadm control --exit
 fi
 
 msg "Sending TERM signal to processes..."
@@ -49,20 +49,20 @@ msg "Sending KILL signal to processes..."
 pkill --inverse -s0,1 -KILL
 
 if [ -z "$VIRTUALIZATION" ]; then
-    msg "Unmounting filesystems, disabling swap..."
-    swapoff -a 2>/dev/null
-    umount -r -a -t nosysfs,noproc,nodevtmpfs,notmpfs
-    msg "Remounting rootfs read-only..."
-    mount -o remount,ro /
+	msg "Unmounting filesystems, disabling swap..."
+	swapoff -a 2>/dev/null
+	umount -r -a -t nosysfs,noproc,nodevtmpfs,notmpfs
+	msg "Remounting rootfs read-only..."
+	mount -o remount,ro /
 fi
 
 if [ -z "$VIRTUALIZATION" ]; then
-    deactivate_vgs
-    if [ -e /run/runit.kexecreboot ] && command -v kexec >/dev/null; then
-        msg "Triggering kexec reboot of the current kernel..."
-        kexec -e 2>/dev/null
-        # not reached when kexec was successful.
-    fi
+	deactivate_vgs
+	if [ -e /run/runit.kexecreboot ] && command -v kexec >/dev/null; then
+		msg "Triggering kexec reboot of the current kernel..."
+		kexec -e 2>/dev/null
+		# not reached when kexec was successful.
+	fi
 fi
 
 msg "Triggering reboot...\n----"

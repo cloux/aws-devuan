@@ -1,6 +1,6 @@
 Runit bootup scripts are borrowed from core-services in VOID Linux (https://www.voidlinux.eu)
 and modified for Amazon EC2 compatibility.
 
-All scripts named '*.sh' will be executed, in the sort-by-name order.
+All scripts named '*.sh' will be executed in series, in the glob order.
 
 (cloux@rote.ch)

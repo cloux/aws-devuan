@@ -1,0 +1,9 @@
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file contains the names of kernel modules that should be loaded
+# at boot time, one per line. Lines beginning with "#" are ignored.
+
+# Amazon EC2 Enahnced Network Adapter
+# Kernel includes an older version, so better
+# use the one from https://github.com/amzn/amzn-drivers
+ena

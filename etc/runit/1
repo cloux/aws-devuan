@@ -5,8 +5,16 @@
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
+# Skip fsck on boot. Use this for testing only, disable in production!
+#FASTBOOT=1
+
 # copy /dev/console messages to a logfile
-[ -x /sbin/bootlogd ] && /sbin/bootlogd -c -l /var/log/boot.log
+if [ -e /etc/service/bootlogd -a -x /sbin/bootlogd ]; then
+	mountpoint -q /dev || mount -o mode=0755,nosuid -t devtmpfs dev /dev
+	mkdir -p -m0755 /dev/pts
+	mountpoint -q /dev/pts || mount -o mode=0620,gid=5,nosuid,noexec -n -t devpts devpts /dev/pts
+	/sbin/bootlogd -c -l /var/log/boot.log
+fi
 
 . /etc/runit/functions
 
@@ -16,25 +24,20 @@ msg "Entering Runit stage 1 ($0)"
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 detect_virt
 
-# rcS tasks are handled by runit 'bootup' scripts
+# rcS tasks are handled by 'bootup' scripts
 #/etc/init.d/rcS
 
-# Run bootup scripts: one-time system tasks
+# Run bootup scripts
 for f in /etc/runit/bootup/*.sh; do
-  [ -r $f ] && . $f
+	[ -r $f ] && . $f
 done
 
 dmesg >/var/log/dmesg.log
 if [ $(sysctl -n kernel.dmesg_restrict 2>/dev/null) -eq 1 ]; then
-  chmod 0600 /var/log/dmesg.log
+	chmod 0600 /var/log/dmesg.log
 else
-  chmod 0644 /var/log/dmesg.log
+	chmod 0644 /var/log/dmesg.log
 fi
-
-# set soft reboot as the default operation
-install --mode=0 /dev/null /run/runit.stopit
-install --mode=755 /dev/null /run/runit.reboot
-install --mode=755 /dev/null /run/runit.kexecreboot
 
 #[ -e /etc/runit/no-emulate-sysv ] || /etc/init.d/rc 5
 
