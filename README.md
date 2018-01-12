@@ -53,24 +53,20 @@ Currently available Devuan AMI offers:
 
  * _Runit_  init with _runsvdir_ as service supervisor
  * Small footprint (4 GB minimal volume size)
- * All logs are saved as text files inside _/var/log/_
-    * easily comprehensible and configurable logging setup per service
+ * Fast direct boot without Initrd
+ * Custom compiled kernel from https://www.kernel.org stable branch
+ * [cloud-init](https://cloud-init.io) v0.7.9
+ * Network drivers: [Amazon ENA](https://github.com/amzn/amzn-drivers) 1.5.0g (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
+ * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
-    * other services writing logfiles directly (e.g. bootlogd or hiawatha)
- * Custom Kernel from https://www.kernel.org stable branch
- * Network drivers: [Amazon ENA](https://github.com/amzn/amzn-drivers) 1.5.0g (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
- * Fast direct boot without Initrd
- * [cloud-init](https://cloud-init.io) v0.7.9
- * [aptitude](https://en.wikipedia.org/wiki/Aptitude_%28software%29) package manager
- * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org) v10.7, advanced and secure webserver
- * Additional preinstalled utilities
- * hardened _sshd_config_ - drops failed logins faster
- 
+ * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org) v10.7, advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
+
+_NOTE:_ not everybody wants to run a webserver. However, for convenience, Hiawatha is preinstalled since it is not directly available from the main repository. If you don't need a webserver, or wish to use a different one, you can easily deactivate the Hiawatha service, see [service management](#runit-service-management).
 
 ### Changes
 
-The main differences compared to a clean Devuan installation:
+The main setup differences compared to a clean Devuan installation:
 
 #### Preinstalled tools from Devuan repository
 
@@ -78,13 +74,12 @@ The main differences compared to a clean Devuan installation:
 
 #### Additionally from sources
 
+ * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
  * Amazon ENA (https://github.com/vnetmx/aws-ena)
  * Socklog (http://smarden.org/socklog/install.html)
- * Hiawatha (http://www.hiawatha-webserver.org)
+ * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
 
-All sources are in _/root/inst/_ directory inside the AMI. All other modifications are in this repository. These mainly address runit compatibility with Devuan and cloud environment integration.
-
-_NOTE:_ not everybody wants to run a webserver. However, for convenience, Hiawatha is preinstalled since it is not directly available from the main repository. If you don't need a webserver, or wish to use a different one, you can easily deactivate the Hiawatha service, see [service management](#runit-service-management).
+Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI. All other sources and Devuan modifications are in this repository. These mainly address runit compatibility with Devuan and cloud environment integration.
 
 ---
 ## Installation
@@ -96,7 +91,7 @@ Why **'Unofficial'**: This project is not affiliated with the official Devuan GN
 ---
 ## Usage
 
-A few useful commands to get you up and running. These are mostly universal, and work well outside the cloud environment.
+A few useful commands to get you up and running. These Runit scripts are universal, and work well outside the cloud environment.
 
 ### Login
 
@@ -122,8 +117,7 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 
  * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from kernel.org
  * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
- * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates
- * `aptitude update && aptitude full-upgrade` - update Devuan system
+ * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by `certbot`
 
 ---
 ## ToDo

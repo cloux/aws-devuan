@@ -125,7 +125,7 @@ cd "$KERNEL_DIR"
 
 # from here on, pipe everything to stdout and compile.log
 echo "=================" >> compile.log
-exec &> >(tee -a compile.log)
+exec &> >(tee -a "/usr/src/$KERNEL_DIR/compile.log")
 
 echo "Configure ..."
 make oldconfig

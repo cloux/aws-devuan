@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# AWS EC2 instance - cleanup for redistribution
+# AWS EC2 instance cleanup for redistribution
 #
 # WARNING: BIOHAZARD!!!
 # The instance will become unaccessible after this!
@@ -19,6 +19,7 @@ fi
 
 if [ "$1" != "force" ]; then
 	echo "WARNING:"
+	echo "After shutdown, this instance will not be accessible anymore!"
 	echo "Do not proceed, if not absolutely sure, that an AMI"
 	echo "exported from this instance will start properly!!!"
 	echo
@@ -56,7 +57,6 @@ find /var/log -type f -iname '@*' -delete
 find /var/log -type f -iname '*.gz' -delete
 find /var/log -type f -iname '*.xz' -delete
 
-# shut down instance
 echo ""
 echo "After shutdown, instance can be exported as AMI."
 #sleep 3
