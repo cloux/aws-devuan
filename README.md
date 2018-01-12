@@ -40,7 +40,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-01:
 | **Devuan Ascii** (2018-01-11) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **4 GB** | **6.8&nbsp;s**&nbsp;<sup>(&pm;1.1)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 <sup>\*1) Smallest possible volume storage size for a new instance</sup>  
-<sup>\*2) Determined by [benchmark-ec2-osboot.sh](misc/benchmark-ec2-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
+<sup>\*2) Determined by [benchmark-ec2-osboot.sh](tools/benchmark-ec2-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
 This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not Systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on AWS and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
 
@@ -96,12 +96,12 @@ Why **'Unofficial'**: This project is not affiliated with the official Devuan GN
 ---
 ## Usage
 
-A few useful commands to get an instance up and running.
+A few useful commands to get you up and running. These are mostly universal, and work well outside the cloud environment.
 
 ### Login
 
  * The default SSH user is **admin**
- * For an easy access, use [ec2-login.sh](misc/ec2-login.sh)
+ * For an easy access, use [ec2-login.sh](tools/ec2-login.sh)
  * Or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
 ### Shutdown and reboot
@@ -114,9 +114,16 @@ A few useful commands to get an instance up and running.
 
 In addition to standard Runit [service control](http://smarden.org/runit/sv.8.html), these commands were added for convenience:
 
- * `svactivate` - include and start services in Runit supervisor
- * `svdeactivate` - stop service and disable supervision
- * `runit-core-install` - integrate Runit into the system. Useful after a system upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
+ * [svactivate](etc/runit/svactivate) - include and start services in Runit supervisor
+ * [svdeactivate](etc/runit/svdeactivate) - stop service and disable supervision
+ * [runit-core-install](etc/runit/runit-core-install) - integrate Runit into the system. Useful after a system upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
+
+### System Updates
+
+ * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from kernel.org
+ * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
+ * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates
+ * `aptitude update && aptitude full-upgrade` - update Devuan system
 
 ---
 ## ToDo
@@ -134,8 +141,6 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 
 This work is free. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See http://www.wtfpl.net for more details. If you feel that releasing this work under WTFPL is not appropriate, since some of the code might be derivative and thus possibly breaking some other license... just do WTF you want to.
 
-_NOTE:_ Much of the Runit base structure is "borrowed" from the [void-runit](https://github.com/voidlinux/void-runit), and modified to integrate with Devuan inside cloud environment. Notably for some Runit stage 1 bootup scripts, further license clarification might be necessary in order to keep this project under WTFPL.
-
 ### Trademarks
 "AWS" and "Amazon EC2" are registered trademarks of Amazon\.com Inc., "Devuan" is a registered trademark of the Dyne\.org foundation, "Debian" is a registered trademark of Software in the Public Interest Inc., "Ubuntu" is a registered Trademark of Canonical Inc.,  "SuSE" is a registered trademark of SUSE IP Development Ltd., Red Hat is a trademark or registered trademark of Red Hat Inc. or its subsidiaries, Linux is a registered trademark of Linus Torvalds. All other possibly and impossibly mentioned trademarks are the property of their respective owners.
 
@@ -147,6 +152,8 @@ This repository is maintained by _cloux@rote.ch_
 ### Disclaimer
 
 I am not involved in the development, nor in any way affiliated with any particular init system. I do not participate in any discussion or flamewar about init. I am not a fanboy, nor a hater. I do not have any personal feelings towards any init, or any other software, or it's developers. As a sysadmin, I could not care less which init system is in use. As long as it works. And in the case it doesn't, I want to have a solid alternative available. Also, I do not claim fitness of this project for any particular purpose, and do not take any responsibility for it's use. You should always choose your system and all of it's components very carefully, if something breaks it's on you. See [license](#license).
+
+_NOTE:_ Much of the Runit base structure is "borrowed" from the [void-runit](https://github.com/voidlinux/void-runit), and modified to integrate with Devuan inside cloud environment.
 
 ### Contributing
 
