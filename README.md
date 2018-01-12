@@ -72,11 +72,11 @@ Currently available Devuan AMI offers:
 
 The main differences compared to a clean Devuan installation:
 
-**Preinstalled tools from Devuan repository:**
+#### Preinstalled tools from Devuan repository
 
     # apt-get install acpid apache2-utils aptitude certbot cpulimit curl ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi pwgen rename runit screen sntop ssmtp sysv-rc-conf
 
-**Additionally from sources:**
+#### Additionally from sources
 
  * Amazon ENA (https://github.com/vnetmx/aws-ena)
  * Socklog (http://smarden.org/socklog/install.html)
@@ -91,20 +91,20 @@ _NOTE:_ not everybody wants to run a webserver. However, for convenience, Hiawat
 
 **"Devuan Ascii YYYY-MM-DD (Unofficial)"** AMIs are available in the Amazon EC2 **us-east-1** region in the **Community AMIs** category. This git repository serves as documentation and development base for Devuan AMIs inside AWS EC2, and cannot be directly used for AWS management, installation, or upgrades.
 
-**Why 'Unofficial'**: This project is not affiliated with the official Devuan GNU/Linux distribution in any way.
+Why **'Unofficial'**: This project is not affiliated with the official Devuan GNU/Linux distribution in any way.
 
 ---
 ## Usage
 
 A few useful commands to get an instance up and running.
 
-**Login**
+### Login
 
  * The default SSH user is **admin**
  * For an easy access, use [ec2-login.sh](misc/ec2-login.sh)
  * Or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
-**Shutdown and reboot**:
+### Shutdown and reboot
 
  * `shutdown` - simple immediate halt and power off. Does not accept any parameters.
  * `reboot` - immediate system reboot
