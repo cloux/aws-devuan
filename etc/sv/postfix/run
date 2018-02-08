@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Postfix runscript
+# NOTE: this works for single-instance postfix configuration only,
+#       since spawning of multiple instances cannot be supervised!
+#
+# (cloux@rote.ch)
+exec 2>&1
+
+POSTCONF=$(which postconf)
+[ -x "$POSTCONF" -a -f /etc/postfix/main.cf ] || exit 0
+
+ENABLED_INSTANCES=$(postmulti -l -a | awk '($3=="y") {print $1}')
+
+if [ "${ENABLED_INSTANCES##-}" ]; then
+	echo "Error: multiple postfix instances found, this setup cannot run supervised. Exiting."
+	exit 0
+fi
+
+command_directory=$(postconf -h command_directory)
+daemon_directory=$(postconf -h daemon_directory)
+
+# consistency check
+$command_directory/postfix check
+
+# configure instance
+/usr/lib/postfix/configure-instance.sh
+
+# run Postfix
+exec $daemon_directory/master -d

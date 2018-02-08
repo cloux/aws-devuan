@@ -17,7 +17,7 @@ for SRV in ${@}; do
 		if [ -d "/etc/sv/$SRVNAME" ]; then
 			echo "Info: Runit service '$SRVNAME' is already inactive"
 		else
-			echo "Warning: Runit service definition '/etc/sv/$SRVNAME' doesn't exist, cannot be activated or deactivated"
+			echo "Warning: Runit service definition '/etc/sv/$SRVNAME' doesn't exist and cannot be activated or deactivated"
 		fi
 		continue
 	fi

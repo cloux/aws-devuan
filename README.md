@@ -5,7 +5,7 @@
 ><cite> - [Doug McIllroy](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well)</cite>
 
 >"Do everything, do it in PID1"
-><cite> - [Systemd](https://ewontfix.com/14/)</cite>
+><cite> - [systemd](https://ewontfix.com/14/)</cite>
 
 ## About
 
@@ -16,13 +16,13 @@ This project aims to provide a viable alternative to the systemd-monotheistic AW
 ---
 ## Why bother?
 
->The crowd pushing Systemd, possibly including its author, is not content to have systemd be one choice among many. By providing public APIs intended to be used by other applications, systemd has set itself up to be difficult not to use once it achieves a certain adoption threshold. Its popularity is purely the result of an aggressive, dictatorial marketing strategy including engulfing other essential system components, setting up for API lock-in, and dictating policy... at the expense of flexibility and diversity.
+>The crowd pushing systemd, possibly including its author, is not content to have systemd be one choice among many. By providing public APIs intended to be used by other applications, systemd has set itself up to be difficult not to use once it achieves a certain adoption threshold. Its popularity is purely the result of an aggressive, dictatorial marketing strategy including engulfing other essential system components, setting up for API lock-in, and dictating policy... at the expense of flexibility and diversity.
 >
 ><cite>\- [Rich Felker](https://ewontfix.com/14/), author of [musl](http://www.musl-libc.org/faq.html) library</cite>
 
-The development progress of Systemd seems to closely resemble the well-known "[embrace, extend, extinguish](https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish)" strategy formerly used by Microsoft. Whether intentional or not, this can arguably lead to a dangerous situation. Systemd has shown to be unstable, [prone to crashes](https://www.agwa.name/blog/post/how_to_crash_systemd_in_one_tweet), and its developers approach to security is [famous for being lame](https://www.theregister.co.uk/2017/07/28/black_hat_pwnie_awards/). 
+The development progress of systemd seems to closely resemble the well-known "[embrace, extend, extinguish](https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish)" strategy formerly used by Microsoft. Whether intentional or not, this can arguably lead to a dangerous situation. systemd has shown to be unstable, [prone to crashes](https://www.agwa.name/blog/post/how_to_crash_systemd_in_one_tweet), and its developers approach to security is [famous for being lame](https://www.theregister.co.uk/2017/07/28/black_hat_pwnie_awards/). 
 
-Systemd became the single most widespread Linux init system. And it doesn't just do init, it also does login, pam, getty, syslog, udev, cryptsetup, cron, at, dbus, acpi, gnome-session, autofs, tcpwrappers, audit, chroot, mount<sup>([1](https://systemd-free.org))</sup>, network management, DNS, Firewall, UEFI<sup>([2](http://without-systemd.org/wiki/index.php/Arguments_against_systemd#Scope_creep))</sup>, su<sup>([3](https://linux.slashdot.org/story/15/08/29/1526217/systemd-absorbs-su-command-functionality))</sup>, HTTP server<sup>([4](https://www.freedesktop.org/software/systemd/man/systemd-journal-gatewayd.service.html))</sup> ... and on saturdays it also does your laundry. Adopted by all major distributions, there seems to be no real alternative, pushing the Linux base further towards a monoculture environment. Systemd is not just a default software choice. Many packages depend directly on it, which makes it IMPOSSIBLE to remove or switch to something else later on. Once you run an OS with Systemd, that's it, you're stuck with it, for better or worse, so help you God. And even if you use Systemd on a daily basis and everything goes well, you might want to have some alternative. Just in the case that something breaks someday. So, what alternatives are available?
+systemd became the single most widespread Linux init system. And it doesn't just do init, it also does login, pam, getty, syslog, udev, cryptsetup, cron, at, dbus, acpi, gnome-session, autofs, tcpwrappers, audit, chroot, mount<sup>([1](https://systemd-free.org))</sup>, network management, DNS, Firewall, UEFI<sup>([2](http://without-systemd.org/wiki/index.php/Arguments_against_systemd#Scope_creep))</sup>, su<sup>([3](https://linux.slashdot.org/story/15/08/29/1526217/systemd-absorbs-su-command-functionality))</sup>, HTTP server<sup>([4](https://www.freedesktop.org/software/systemd/man/systemd-journal-gatewayd.service.html))</sup> ... and on saturdays it also does your laundry. Adopted by all major distributions, there seems to be no real alternative, pushing the Linux base further towards a monoculture environment. systemd is not just a default software choice. Many packages depend directly on it, which makes it IMPOSSIBLE to remove or switch to something else later on. Once you run an OS with systemd, that's it, you're stuck with it, for better or worse, so help you God. And even if you use systemd on a daily basis and everything goes well, you might want to have some alternative. Just in the case that something breaks someday. So, what alternatives are available?
 
 ### EC2 Linux AMI Comparison
 
@@ -30,28 +30,28 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-01:
 
 | AMI Name | [Init System](https://devuan.org/os/init-freedom/) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> <sup>([&pm;SD](https://en.wikipedia.org/wiki/Standard_deviation))</sup> | License | 
 | :---  | :--- | :--- | :--- | :--- | :--- | :--- |
-| Amazon Linux AMI 2017.09.1 | Systemd | Quick Start | rpm | 8 GB | 11.8&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | [EULA](https://aws.amazon.com/agreement/) |
-| Amazon Linux 2 LTS Candidate AMI 2017.12.0 | Systemd | Quick Start | rpm | 8 GB | 30.2&nbsp;s&nbsp;<sup>(&pm;1.6)</sup> | [EULA](https://aws.amazon.com/agreement/) |
-| Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | Systemd | Quick Start | rpm | 10 GB | 20.4&nbsp;s&nbsp;<sup>(&pm;1.7)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
-| SUSE Linux Enterprise Server 12 SP3 | Systemd | Quick Start | rpm | 10 GB | 46.4&nbsp;s&nbsp;<sup>(&pm;0.5)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
-| Ubuntu Server 16.04 LTS | Systemd | Quick Start | apt | 8 GB | 16.8&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
-| CentOS 7 | Systemd | Marketplace | rpm | 8 GB | 21.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | Free |
-| Debian GNU/Linux 9.3 Stretch | Systemd | Marketplace | apt | 8 GB | 8.0&nbsp;s&nbsp;<sup>(&pm;0.7)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
+| Amazon Linux AMI 2017.09.1 | systemd | Quick Start | rpm | 8 GB | 11.8&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Amazon Linux 2 LTS Candidate AMI 2017.12.0 | systemd | Quick Start | rpm | 8 GB | 30.2&nbsp;s&nbsp;<sup>(&pm;1.6)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | systemd | Quick Start | rpm | 10 GB | 20.4&nbsp;s&nbsp;<sup>(&pm;1.7)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
+| SUSE Linux Enterprise Server 12 SP3 | systemd | Quick Start | rpm | 10 GB | 46.4&nbsp;s&nbsp;<sup>(&pm;0.5)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
+| Ubuntu Server 16.04 LTS | systemd | Quick Start | apt | 8 GB | 16.8&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
+| CentOS 7 | systemd | Marketplace | rpm | 8 GB | 21.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | Free |
+| Debian GNU/Linux 9.3 Stretch | systemd | Marketplace | apt | 8 GB | 8.0&nbsp;s&nbsp;<sup>(&pm;0.7)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
 | **Devuan Ascii** (2018-01-11) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **4 GB** | **6.8&nbsp;s**&nbsp;<sup>(&pm;1.1)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 <sup>\*1) Smallest possible volume storage size for a new instance</sup>  
 <sup>\*2) Determined by [benchmark-ec2-osboot.sh](tools/benchmark-ec2-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
-This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not Systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on AWS and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
+This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on AWS and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
 
-It's clear that all major distributions on AWS already transitioned to Systemd. If you want to use something else, you are pretty much out of luck. And very much out of luck on AWS. This is where **Devuan Ascii + Runit** distribution comes in:
+It's clear that all major distributions on AWS already transitioned to systemd. If you want to use something else, you are pretty much out of luck. And very much out of luck on AWS. This is where **Devuan Ascii + Runit** distribution comes in:
 
 ---
 ## Features
 
 Currently available Devuan AMI offers:
 
- * _Runit_  init with _runsvdir_ as service supervisor
+ * _Runit_  init and service supervisor
  * Small footprint (4 GB minimal volume size)
  * Fast direct boot without Initrd
  * Custom compiled kernel from https://www.kernel.org stable branch
@@ -66,20 +66,20 @@ _NOTE:_ not everybody wants to run a webserver. However, for convenience, Hiawat
 
 ### Changes
 
-The main setup differences compared to a clean Devuan installation:
+The main setup differences compared to a clean Devuan installation. These mainly address runit compatibility with Devuan and AWS cloud environment integration.
 
 #### Preinstalled tools from Devuan repository
 
-    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi pwgen rename runit screen sntop ssmtp sysv-rc-conf
+    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet
 
-#### Additionally from sources
+#### Compiled from source
 
  * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
  * Amazon ENA (https://github.com/vnetmx/aws-ena)
  * Socklog (http://smarden.org/socklog/install.html)
  * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
 
-Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI. All other sources and Devuan modifications are in this repository. These mainly address runit compatibility with Devuan and cloud environment integration.
+Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
 ---
 ## Installation

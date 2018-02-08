@@ -38,8 +38,8 @@ msg "Saving random seed..."
   dd if=/dev/urandom of=/var/lib/random-seed count=1 bs=$bytes >/dev/null 2>&1 )
 
 if [ -z "$VIRTUALIZATION" ]; then
-		msg "Stopping udev..."
-		udevadm control --exit
+	msg "Stopping udev..."
+	udevadm control --exit
 fi
 
 msg "Sending TERM signal to processes..."

@@ -1,2 +1,4 @@
-#!/bin/sh -eu
-exec /usr/sbin/automount --foreground
+#!/bin/sh
+exec 2>&1
+[ -x /usr/sbin/automount ] || exit 0
+exec /usr/sbin/automount --foreground --verbose 2>&1

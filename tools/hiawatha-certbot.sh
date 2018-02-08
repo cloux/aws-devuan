@@ -4,10 +4,9 @@
 # into /etc/letsencrypt/archive/$DOMAIN/hiawatha.pem
 #
 # To create/update a certificate, run certbot like:
-# certbot certonly --webroot -w /var/www -d rote.ch -d secure.rote.ch -d www.rote.ch
-# certbot certonly --webroot -w /var/www/clixt.net -d clixt.net -d www.clixt.net
+# certbot certonly --webroot -w /var/www -d example.com -d www.example.com
 #
-# NOTE: TLSCertFile in hiawatha.conf has to be set to:
+# NOTE: TLSCertFile parameter in hiawatha.conf has to be set to:
 #       /etc/letsencrypt/archive/DOMAIN/hiawatha.pem
 #
 #########################################################################

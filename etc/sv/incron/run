@@ -1,4 +1,5 @@
 #!/bin/sh
+exec 2>&1
 
 INCROND=/usr/sbin/incrond
 INCROND_CONF=/etc/incron.conf
@@ -7,5 +8,8 @@ INCROND_CONF=/etc/incron.conf
 
 # incron should run even without logging, so don't exit here if socklog fails:
 sv start socklog-unix >/dev/null
+# incron jobs keep polluting /dev/console, do not log that
+sv stop bootlogd >/dev/null
+killall --quiet --exact bootlogd
 
 exec "$INCROND" --foreground -f "$INCROND_CONF"

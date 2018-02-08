@@ -1,9 +1,9 @@
 #!/bin/sh
 exec 2>&1
 
-[ -x /sbin/bootlogd ] || exit 1
+[ -x /sbin/bootlogd ] || exit 0
 
-# kill any bootlog daemons running outside of runsvdir
-/usr/bin/killall --quiet --exact bootlogd
+# stop any bootlog daemons running outside of runsvdir
+killall --quiet --exact bootlogd
 
 exec /sbin/bootlogd -d -c -l /var/log/boot.log

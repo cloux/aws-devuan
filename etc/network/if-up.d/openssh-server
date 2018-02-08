@@ -25,7 +25,7 @@ if [ ! -e /usr/sbin/sshd ]; then
   exit 0
 fi
 
-if [ -x "$(which sv 2>/dev/null)" ]; then
+if [ "$(pgrep runsvdir)" ]; then
   sv restart ssh >/dev/null 2>/dev/null || true
 else
   if [ ! -f /var/run/sshd.pid ] || [ "$(ps -p "$(cat /var/run/sshd.pid)" -o comm=)" != sshd ]; then

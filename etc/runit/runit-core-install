@@ -18,12 +18,18 @@ if [ "$(readlink /sbin/reboot)" != "/etc/runit/ctrlaltdel" ]; then
 	ln -s /etc/runit/ctrlaltdel /sbin/reboot
 fi
 
-ln -sf /etc/runit/svactivate /sbin/
-ln -sf /etc/runit/svdeactivate /sbin/
+if [ ! -f /sbin/svactivate ]; then
+	echo "Link sv commands..."
+	ln -sf /etc/runit/svactivate /sbin/
+	ln -sf /etc/runit/svdeactivate /sbin/
+fi
 
 # move socklog commands into usual paths
-for cmdlink in $(find /command -type l); do
-	cp --dereference --remove-destination "$cmdlink" /usr/local/bin/
-	[ $? -eq 0 ] && rm "$cmdlink" 2>/dev/null
-done
-rmdir /command 2>/dev/null
+if [ -d /command ]; then
+	echo "Move socklog commands from /command/* into usual paths"
+	for cmdlink in $(find /command -type l 2>/dev/null); do
+		cp --dereference --remove-destination "$cmdlink" /usr/local/bin/
+		[ $? -eq 0 ] && rm "$cmdlink" 2>/dev/null
+	done
+	rmdir /command 2>/dev/null
+fi

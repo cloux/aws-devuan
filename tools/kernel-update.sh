@@ -115,6 +115,10 @@ fi
 
 echo "Unpacking ..."
 tar -Jxf $KERNEL_FILE
+if [ $? -ne 0 ]; then
+	echo "ERROR: Unpacking /usr/src/$KERNEL_FILE Failed!"
+	exit 1
+fi
 
 KERNEL_DIR=$(echo $KERNEL_FILE | grep -Po '.*(?=.tar)')
 if [ ! -d "$KERNEL_DIR" ]; then
@@ -158,30 +162,27 @@ else
 fi
 echo "scale=3; ($END - $START)/1" | bc
 
-if [ -e "/boot/vmlinuz-$KERNEL_VERSION" -o -e "/boot/vmlinuz-$KERNEL_VERSION_0" -o -e "/boot/vmlinuz-$KERNEL_VERSION.0" ]; then
-	# apply dkms
-	[ -x "$(which dkms 2>/dev/null)" ] && dkms autoinstall
-
-	# clean up automatically, if there is less free space left than the size of this kernel
-	FREE_SPACE_MB=$(df --block-size=M --output=avail /usr | grep -o '[0-9]*')
-	KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
-	if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
-		echo "Free space left is only $FREE_SPACE_MB MB, Cleanup..."
-		make clean
-		rm -f "/usr/src/$KERNEL_FILE"
-		# keep only "include" and "arch"
-		rm -rf block certs crypto Documentation drivers firmware fs init ipc \
-		       kernel lib mm net samples scripts security sound tools usr virt 
-		# in arch, keep only "x86"
-		cd arch
-		rm -rf alpha arc arm arm64 blackfin c6x cris frv h8300 hexagon ia64 m32r \
-		       m68k metag microblaze mips mn10300 nios2 openrisc parisc powerpc \
-		       s390 score sh sparc tile um unicore32 xtensa
-	fi
-
-	echo -e "\nDONE, feel free to reboot :)"
-else
-	echo "ERROR: kernel upgrade failed :("
+if [ ! -e "/boot/vmlinuz-$KERNEL_VERSION" -a ! -e "/boot/vmlinuz-$KERNEL_VERSION_0" -a ! -e "/boot/vmlinuz-$KERNEL_VERSION.0" ]; then
 	exit 1
+fi
+
+# apply dkms
+[ -x "$(which dkms 2>/dev/null)" ] && dkms autoinstall
+
+# clean up automatically, if the free space left is less than the size of this kernel
+FREE_SPACE_MB=$(df --block-size=M --output=avail /usr | grep -o '[0-9]*')
+KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
+if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
+	echo "Free space left is only $FREE_SPACE_MB MB, Cleanup..."
+	make clean
+	rm -f "/usr/src/$KERNEL_FILE"
+	# keep only "include" and "arch"
+	rm -rf block certs crypto Documentation drivers firmware fs init ipc \
+				 kernel lib mm net samples scripts security sound tools usr virt 
+	# in arch, keep only "x86"
+	cd arch
+	rm -rf alpha arc arm arm64 blackfin c6x cris frv h8300 hexagon ia64 m32r \
+				 m68k metag microblaze mips mn10300 nios2 openrisc parisc powerpc \
+				 s390 score sh sparc tile um unicore32 xtensa
 fi
 

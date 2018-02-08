@@ -1,0 +1,26 @@
+#!/bin/sh
+
+OPENVPN=/usr/sbin/openvpn
+OPENVPN_INIT=/etc/init.d/openvpn
+SYSTEMCTL=/bin/systemctl
+SYSTEMD=/run/systemd/system
+
+if [ ! -x $OPENVPN ]; then
+	exit 0
+fi
+
+if [ -n "$IF_OPENVPN" ]; then
+	for vpn in $IF_OPENVPN; do
+		if [ "$(pgrep runsvdir)" ]; then
+			# runit supervisor
+			sv restart /etc/service/openvpn* >/dev/null 2>/dev/null || true
+		elif [ -d $SYSTEMD ]; then
+			# systemd
+			$SYSTEMCTL --no-block start openvpn@$vpn
+		else
+			# sysvinit
+			$OPENVPN_INIT start $vpn
+		fi
+	done
+fi
+

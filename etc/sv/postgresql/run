@@ -1,23 +1,21 @@
 #!/bin/sh -eu
-test -r rc && . ./rc
+# PostgreSQL Cluster
+# see 'man pg_ctlcluster' and 'man pg_ctl' for details
+#
+# (cloux@rote.ch)
 
-# Ask portage for the slot of the highest version installed; this is what gets
-# run. If this isn't what you want, use the rc file to set $VERSION explicitly.
-query_postgres_version() {
-    portageq metadata / ebuild "$(portageq best_version / dev-db/postgresql)" SLOT
-}
+DAEMON="$(which pg_ctlcluster)"
+[ -x "$DAEMON"] || exit 1
 
-test -d "${DATA_DIR:=/srv/postgresql/"${VERSION:=$(query_postgres_version)}"}" || {
-    echo "Data directory $DATA_DIR not found." >&2
-    exit 1
-}
+PGBINROOT="/usr/lib/postgresql/"
+[ -r ./config ] && . ./config
+[ -d "$PGBINROOT" ] || exit 1
 
-install -m 0750 -o postgres -g postgres -d /run/postgresql
+OPTIONS=
+VERSION=
+NAME=
+[ -z "$VERSION" ] && VERSION=$(ls -1v $PGBINROOT | tail -n 1)
+[ -z "$NAME" ] && NAME=$(ls -1tr /etc/postgresql/$VERSION | tail -n 1)
 
-# Remove dot from middle of version because that's the binary naming scheme up to 9.x.
-case "$VERSION" in
-    *.*) VERSION="${VERSION%%.*}${VERSION##*.}" ;;
-esac
-
-cd /var/empty
-exec chpst -u postgres /usr/bin/postgres"$VERSION" -D "$DATA_DIR"
+install -d -m 2775 -o postgres -g postgres -d /run/postgresql
+exec chpst -u postgres $DAEMON --foreground --skip-systemctl-redirect $VERSION $NAME start -- $OPTIONS
