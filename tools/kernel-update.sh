@@ -3,11 +3,11 @@
 # Check/Download/Unpack/Compile the latest Linux kernel from www.kernel.org.
 # Save progress into /usr/src/linux-NEW/compile.log
 #
-# Usage: kernel-update [moniker] [-check]
+# Usage: kernel-update [moniker] [-c]
 #
 #        moniker: stable, mainline, longterm, linux-next...
-#                 Go for "stable" if empty.
-#         -check: just check if new version is available and quit
+#                 Go for stable version if empty.
+#             -c: just check if new version is available, don't update
 #
 # dependencies: wget bc libncurses5-dev
 #   for -check GUI notification: notify-send
@@ -27,9 +27,9 @@ JOBS=
 # parse parameters
 MONIKER=stable
 CHECK=0
-if [ "$1" = "-check" ]; then
+if [ "$1" = "-c" ]; then
 	CHECK=1
-elif [ "$2" = "-check" ]; then
+elif [ "$2" = "-c" ]; then
 	MONIKER=$1
 	CHECK=1
 elif [ "$1" ]; then
@@ -106,7 +106,7 @@ fi
 FREE_MB=$(df --block-size=M --output=avail /usr | grep -o '[0-9]*')
 # rough estimate how much do we need
 KERNEL_SIZE_MB=$(du --block-size=M "$KERNEL_FILE" | grep -o '^[0-9]*')
-NEEDED_MB=$(echo "25 * $KERNEL_SIZE_MB" | bc)
+NEEDED_MB=$(echo "22 * $KERNEL_SIZE_MB" | bc)
 if [ $NEEDED_MB -gt $FREE_MB ]; then
 	echo "ERROR: not enough free space in /usr."
 	echo "You should have at least $(echo "scale=1; ${NEEDED_MB}/1000" | bc) GB free to continue."
@@ -176,13 +176,13 @@ if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
 	echo "Free space left is only $FREE_SPACE_MB MB, Cleanup..."
 	make clean
 	rm -f "/usr/src/$KERNEL_FILE"
-	# keep only "include" and "arch"
+	# keep only "include", "arch" and "scripts"
 	rm -rf block certs crypto Documentation drivers firmware fs init ipc \
-				 kernel lib mm net samples scripts security sound tools usr virt 
-	# in arch, keep only "x86"
+	       kernel lib mm net samples security sound tools usr virt 
+	# in arch, keep only "x86" and "x86_64"
 	cd arch
 	rm -rf alpha arc arm arm64 blackfin c6x cris frv h8300 hexagon ia64 m32r \
-				 m68k metag microblaze mips mn10300 nios2 openrisc parisc powerpc \
-				 s390 score sh sparc tile um unicore32 xtensa
+	       m68k metag microblaze mips mn10300 nios2 openrisc parisc powerpc \
+	       s390 score sh sparc tile um unicore32 xtensa
 fi
 

@@ -9,6 +9,8 @@
 
 ## About
 
+![htop](screenshot.png)
+
 This project aims to provide a viable alternative to the systemd-monotheistic AWS offering. The goal is to track progress and maintain documentation for a fast, stable and secure general-purpose operating system for Amazon EC2.
 
 [Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [Ascii](https://devuan.org/os/releases), which runs SysVinit by default, was modified to use [Runit](http://smarden.org/runit/) instead. All changes regarding this switch are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
@@ -56,7 +58,7 @@ Currently available Devuan AMI offers:
  * Fast direct boot without Initrd
  * Custom compiled kernel from https://www.kernel.org stable branch
  * [cloud-init](https://cloud-init.io) v0.7.9
- * Network drivers: [Amazon ENA](https://github.com/amzn/amzn-drivers) 1.5.0g (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
+ * Network drivers: Amazon ENA v1.3.0K (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
  * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
@@ -70,12 +72,11 @@ The main setup differences compared to a clean Devuan installation. These mainly
 
 #### Preinstalled tools from Devuan repository
 
-    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet
+    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet
 
 #### Compiled from source
 
  * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
- * Amazon ENA (https://github.com/vnetmx/aws-ena)
  * Socklog (http://smarden.org/socklog/install.html)
  * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
 
@@ -122,9 +123,8 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 ---
 ## ToDo
 
- * Automate AMI propagation to all EC2 regions (currently us-east-1 only)
  * Include the _amazon-ssm-agent_ (https://github.com/aws/amazon-ssm-agent)
- * Integrate Runit into Devuan's _init-system-helpers_ package
+ * Automate AMI propagation to all EC2 regions (currently us-east-1 only)
  * Create clean [VOID](https://www.voidlinux.eu) AMI from scratch, as an additional alternative distribution
  * ~~Speed up boot process, remove initrd~~ DONE
  * ~~Customize kernel, replace Devuan stock with stable branch from kernel\.org~~ DONE
