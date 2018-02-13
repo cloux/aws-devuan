@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # MySQL/MariaDB server
 exec 2>&1
 
 DAEMON="$(which mysqld)"
-[ -x "$DAEMON" ] || exit 1
+[ -x "$DAEMON" ] || exit 0
 
 export HOME=/etc/mysql/
 [ -f /etc/default/mysql ] && . /etc/default/mysql
@@ -11,4 +11,4 @@ export HOME=/etc/mysql/
 [ -r /etc/mysql/my.cnf ] || echo "WARNING: /etc/mysql/my.cnf cannot be read."
 [ -e /var/run/mysqld ] || install -m 755 -o mysql -g root -d /var/run/mysqld
 
-exec $DAEMON
+exec chpst -u mysql $DAEMON

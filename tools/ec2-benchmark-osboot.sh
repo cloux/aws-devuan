@@ -16,7 +16,7 @@ cycles=5
 
 instance_id="$1"
 if [ -z "$instance_id" ]; then
-  echo "Usage: benchmark-ec2-osboot.sh INSTANCE-ID"
+  echo "Usage: ec2-benchmark-osboot.sh INSTANCE-ID"
   exit
 fi
 

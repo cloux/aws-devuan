@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # Download latest Hiawatha webserver, compile and update.
-# For Hiawatha v8.0 and higher only!
+# For Hiawatha v8.0 and higher.
 #
 # (cloux@rote.ch)
 #########################################################################
@@ -10,12 +10,11 @@
 # example: MAILTO=admin@yourserver.com
 MAILTO=
 
-# working directory
-MY_ROOT=/usr/src/hiawatha
-
 #########################################################################
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:$PATH
+# working directory
+MY_ROOT=/usr/src/hiawatha
 
 # Make sure that I'm root
 if [ "$(id -u)" != "0" ]; then
@@ -25,21 +24,23 @@ fi
 
 if [ ! -x "$(which hiawatha)" ]; then
 	echo "Hiawatha not found. Install dependencies..."
+	APTINST=
 	if [ -x "$(which aptitude)" ]; then
 		APTINST=aptitude
 	elif [ -x "$(which apt-get)" ]; then
 		APTINST=apt-get
-	else
-		echo "Error: aptitude or apt-get not found"
-		exit 1
 	fi
-	$APTINST install cmake make lsof libxml2 libxml2-dev libxslt1.1 \
-	         libxslt1-dev libc6-dev libssl-dev zlib1g-dev dpkg-dev \
-	         debhelper fakeroot apache2-utils php php-cgi wget
+	if [ "$APTINST" ]; then
+		$APTINST install cmake make lsof libxml2 libxml2-dev libxslt1.1 \
+		         libxslt1-dev libc6-dev libssl-dev zlib1g-dev dpkg-dev \
+		         debhelper fakeroot apache2-utils php php-cgi procps wget
+	else
+		echo "WARNING: Apt packaging system not found, dependencies installation skipped."
+	fi
 fi
 
 if [ ! -x "$(which lsof)" ]; then
-	echo "Error: lsof not found, exiting."
+	echo "ERROR: lsof not found, exiting."
 	exit 1
 fi
 
@@ -48,7 +49,7 @@ cd "$MY_ROOT" || exit 1
 
 LATEST=$(wget -q -O - http://www.hiawatha-webserver.org/latest)
 if [ -z "$LATEST" ]; then
-	echo "Error: Hiawatha version number downloading failed"
+	echo "ERROR: Hiawatha version number downloading failed"
 	exit 1
 fi
 if [ -s $MY_ROOT/hiawatha-$LATEST.tar.gz ]; then
@@ -75,7 +76,7 @@ fi
 echo "OK"
 
 if [ ! -d $MY_ROOT/hiawatha-$LATEST ]; then
-	echo "Error: hiawatha-$LATEST directory not found."
+	echo "ERROR: hiawatha-$LATEST directory not found."
 	exit 1
 fi
 
@@ -91,10 +92,31 @@ if [ -x "$(which dpkg)" ]; then
 		echo "DEB package not found!"
 		exit 1
 	fi
+
+	# stop hiawatha on supervised init:
+	if [ -z "$(runlevel 2>/dev/null | grep -v unknown)" ]; then
+		mv -n /etc/init.d/hiawatha /etc/init.d/hiawatha.dpkg
+		rm -f /etc/init.d/hiawatha; touch /etc/init.d/hiawatha
+		if [ "$(pgrep runsvdir)" ]; then
+			# runit supervisor
+			sv stop hiawatha
+		elif [ "$(pgrep s6-svscan)" ]; then
+			# s6 supervisor
+			s6-svc -wd hiawatha
+		fi
+	fi
+
 	echo "Installing new ${DEBPAK##*/}..."
 	dpkg -i --force-all $DEBPAK
 	EC=$?
-	
+
+	# start hiawatha after update
+	if [ "$(pgrep runsvdir)" ]; then
+		sv start hiawatha
+	elif [ "$(pgrep s6-svscan)" ]; then
+		s6-svc -u hiawatha
+	fi
+
 	mv "$DEBPAK" "$MY_ROOT"
 else
 	echo "Cmake build..."

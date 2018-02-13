@@ -42,7 +42,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-01:
 | **Devuan Ascii** (2018-01-11) | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **4 GB** | **6.8&nbsp;s**&nbsp;<sup>(&pm;1.1)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 <sup>\*1) Smallest possible volume storage size for a new instance</sup>  
-<sup>\*2) Determined by [benchmark-ec2-osboot.sh](tools/benchmark-ec2-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
+<sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
 This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on AWS and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
 
@@ -56,9 +56,9 @@ Currently available Devuan AMI offers:
  * _Runit_  init and service supervisor
  * Small footprint (4 GB minimal volume size)
  * Fast direct boot without Initrd
- * Custom compiled kernel from https://www.kernel.org stable branch
+ * Custom compiled stable kernel from https://www.kernel.org
  * [cloud-init](https://cloud-init.io) v0.7.9
- * Network drivers: Amazon ENA v1.3.0K (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
+ * Network drivers Amazon ENA v1.3.0K (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
  * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
@@ -72,12 +72,13 @@ The main setup differences compared to a clean Devuan installation. These mainly
 
 #### Preinstalled tools from Devuan repository
 
-    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet
+    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet whois
 
 #### Compiled from source
 
  * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
  * Socklog (http://smarden.org/socklog/install.html)
+ * ec2-metadata query [tool](https://aws.amazon.com/code/ec2-instance-metadata-query-tool/) (see [ec2-update.sh](tools/ec2-update.sh))
  * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
 
 Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
@@ -97,8 +98,8 @@ A few useful commands to get you up and running. These Runit scripts are univers
 ### Login
 
  * The default SSH user is **admin**
- * For an easy access, use [ec2-login.sh](tools/ec2-login.sh)
- * Or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
+ * For an easy access, use [ssh-login.sh](tools/ssh-login.sh)  
+   or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
 ### Shutdown and reboot
 
@@ -112,7 +113,8 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 
  * [svactivate](etc/runit/svactivate) - include and start services in Runit supervisor
  * [svdeactivate](etc/runit/svdeactivate) - stop service and disable supervision
- * [runit-core-install](etc/runit/runit-core-install) - integrate Runit into the system. Useful after a system upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
+ * [runit-core-install](etc/runit/runit-core-install) - integrate Runit into the system  
+   Useful after OS upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
 
 ### System Updates
 

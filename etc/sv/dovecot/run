@@ -1,4 +1,6 @@
-#!/bin/sh -eu
+#!/bin/sh
+exec 2>&1
+
 # Service instancing; name the runsv dir "dovecot" if unsure
 dovecot_config_file=/etc/dovecot/"${PWD##*/}".conf
 

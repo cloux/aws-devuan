@@ -8,11 +8,6 @@
 [ -x "/usr/bin/cloud-init" ] || exit
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
-. /etc/runit/functions
-
-# discard output
-#exec >/dev/null
-#exec 2>/dev/null
 
 # clean up
 rm -f /var/log/cloud-init.log /var/log/cloud-init-output.log

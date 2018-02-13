@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Activate/deactivate SERVICES if my public IP
+# matches the DOMAINS in /etc/default/public-domain
+# (cloux@rote.ch)
+
+# Run myself periodically, every DELAY seconds
+DELAY=40
+
+# SERVICES to activate/deactivate, if DOMAINS resolve to me
+[ -s /etc/default/public-domain ] && . /etc/default/public-domain
+[ "$DOMAINS" -a "$SERVICES" ] || exit
+
+# check if one of the DOMAINS resolves to IP address of this server
+DATEFMT='%Y-%m-%d_%H:%M:%S.%N'
+echo -n "$(date +$DATEFMT): Detecting public IP ... "
+PUBLIC_IP=$(public-ip 2>/dev/null)
+[ $? -eq 0 ] || exit
+if [ -r /var/run/public-ip -a "$(cat /var/run/public-ip 2>/dev/null)" = "$PUBLIC_IP" ]; then
+	echo "no change detected"
+else
+	echo "CHANGED"
+	echo -n "$PUBLIC_IP" >/var/run/public-ip
+	if [ $(echo "$PUBLIC_IP" | grep -c '[a-z]') -eq 0 ]; then
+		echo "$(date +$DATEFMT): $PUBLIC_IP - no assigned domain, deactivating services"
+		svdeactivate $SERVICES 2>&1
+	else
+		echo "$(date +$DATEFMT): $PUBLIC_IP - manages:$(echo "$PUBLIC_IP" | grep -o ' .*') - activating services"
+		svactivate $SERVICES 2>&1
+	fi
+	echo "$(date +$DATEFMT): DONE"
+fi
+
+# keep running myself periodically
+sleep $DELAY
+nohup nice -n 10 $0 >/dev/null 2>/dev/null &

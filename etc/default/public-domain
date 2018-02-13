@@ -1,0 +1,9 @@
+# Space separated list of domains checked when running /usr/local/bin/public-ip
+#DOMAINS="my-server.com subdomain-of.my-server.com"
+DOMAINS=""
+
+# Services to have automatically activated/deactivated,
+# if one of the DOMAINS resolves to the public IP of this instance.
+# See /etc/runit/autorun/periodic
+#SERVICES="cron hiawatha postfix"
+SERVICES=""

@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Start firewall
+# (cloux@rote.ch)
+
+[ -x /usr/sbin/firehol ] || exit
+
+[ -r /etc/default/firehol ] && set -a && . /etc/default/firehol
+[ $(echo "$START_FIREHOL" | grep -ic 'no') -ne 0 ] && exit
+
+/usr/sbin/firehol start
