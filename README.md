@@ -28,7 +28,7 @@ systemd became the single most widespread Linux init system. And it doesn't just
 
 ### EC2 Linux AMI Comparison
 
-Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-01:
+Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-02:
 
 | AMI Name | [Init System](https://devuan.org/os/init-freedom/) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> <sup>([&pm;SD](https://en.wikipedia.org/wiki/Standard_deviation))</sup> | License | 
 | :---  | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -53,12 +53,12 @@ It's clear that all major distributions on AWS already transitioned to systemd. 
 
 Currently available Devuan AMI offers:
 
- * _Runit_  init and service supervisor
- * Small footprint (4 GB minimal volume size)
- * Fast direct boot without Initrd
- * Custom compiled stable kernel from https://www.kernel.org
+ * **Runit** as init and service supervisor
+ * Small footprint with only **4 GB** minimal EBS volume size
+ * Fast direct boot **without Initrd**
  * [cloud-init](https://cloud-init.io) v0.7.9
- * Network drivers Amazon ENA v1.3.0K (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
+ * Custom [compiled](tools/kernel-update.sh) stable kernel from https://www.kernel.org
+    * Included network drivers Amazon ENA v1.3.0K (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
  * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
