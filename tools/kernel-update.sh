@@ -92,7 +92,7 @@ if [ $CHECK -ne 0 ]; then
 fi
 
 # Download
-cd /usr/src
+cd /usr/src || exit 1
 if [ ! -e "$KERNEL_FILE" ]; then
 	echo "Downloading ..."
 	wget $KERNEL_LINK
@@ -114,11 +114,12 @@ if [ $NEEDED_MB -gt $FREE_MB ]; then
 fi
 
 echo "Unpacking ..."
-tar -Jxf $KERNEL_FILE
+tar -Jxf "$KERNEL_FILE"
 if [ $? -ne 0 ]; then
 	echo "ERROR: Unpacking /usr/src/$KERNEL_FILE Failed!"
 	exit 1
 fi
+rm -f "$KERNEL_FILE"
 
 KERNEL_DIR=$(echo $KERNEL_FILE | grep -Po '.*(?=.tar)')
 if [ ! -d "$KERNEL_DIR" ]; then
@@ -175,7 +176,6 @@ KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
 if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
 	echo "Free space left is only $FREE_SPACE_MB MB, Cleanup..."
 	make clean
-	rm -f "/usr/src/$KERNEL_FILE"
 	# keep only "include", "arch" and "scripts"
 	find -mindepth 1 -maxdepth 1 -type d ! -iname 'arch' ! -iname 'include' ! -iname 'scripts' -exec rm -rf '{}' \;
 	# in arch, keep only "x86" and "x86_64"

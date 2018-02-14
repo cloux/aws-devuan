@@ -30,22 +30,22 @@ function get_instance_info () {
 }
 
 function start_instance () {
-	echo -n "Start instance "
+	echo -n "Start instance ... "
 	aws ec2 start-instances --profile $profile --instance-ids="$instance_id" 2>/dev/null >/dev/null
-	while [ 1 ]; do
+	while true; do
 		get_instance_info
 		[ "$instance_state" = "running" ] && break
-		sleep 0.2; echo -n "."
+		sleep 0.1
 	done
 	echo "OK"
 }
 
 function get_instance_URI () {
 	if [ -z "$instance_uri" ]; then
-		echo "Wait for URI "
+		echo "Wait for URI ... "
 		while [ -z "$instance_uri" ]; do
 			get_instance_info
-			sleep 0.2; echo -n "."
+			sleep 0.1
 		done
 		echo "OK"
 	fi
@@ -59,20 +59,20 @@ function get_instance_URI () {
 
 function wait_for_ssh () {
 	echo -n "  Wait for SSH "
-	while [ 1 ]; do
+	while true; do
 		#nc -w 1 -4z "$instance_uri" 22 2>/dev/null >/dev/null; [ $? -eq 0 ] && break
 		[ "$(ssh-keyscan -4 -T 1 "$instance_uri" 2>/dev/null)" ] && break
 		echo -n "."
 	done
-	echo "OK"
+	echo " OK"
 }
 
 function stop_instance () {
-	echo -n " Stop instance "
+	echo -n " Stop instance ... "
 	aws ec2 stop-instances --profile $profile --instance-ids="$instance_id" 2>/dev/null >/dev/null
 	while [ "$instance_state" != "stopped" ]; do
 		get_instance_info
-		sleep 1; echo -n "."
+		sleep 0.2
 	done
 	echo "OK"
 }
@@ -100,12 +100,12 @@ echo "=========================================="
 for i in $(seq 1 $cycles); do
 	echo "   Boot cycle: $i of $cycles"
 	start_instance
-	boot_start_time=$(date +%s)
+	START=$(date +%s.%N)
 	get_instance_URI
 	wait_for_ssh
-	boot_end_time=$(date +%s)
+	END=$(date +%s.%N)
 	stop_instance
-	echo -e "  Bootup Time: \033[1;95m$(($boot_end_time - $boot_start_time))\033[0m sec"
+	echo -e "  Bootup Time: \033[1;95m$(echo "scale=1; ($END - $START)/1" | bc)\033[0m sec"
 	echo "=========================================="
 done
 
