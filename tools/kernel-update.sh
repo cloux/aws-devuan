@@ -177,12 +177,9 @@ if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
 	make clean
 	rm -f "/usr/src/$KERNEL_FILE"
 	# keep only "include", "arch" and "scripts"
-	rm -rf block certs crypto Documentation drivers firmware fs init ipc \
-	       kernel lib mm net samples security sound tools usr virt 
+	find -mindepth 1 -maxdepth 1 -type d ! -iname 'arch' ! -iname 'include' ! -iname 'scripts' -exec rm -rf '{}' \;
 	# in arch, keep only "x86" and "x86_64"
 	cd arch
-	rm -rf alpha arc arm arm64 blackfin c6x cris frv h8300 hexagon ia64 m32r \
-	       m68k metag microblaze mips mn10300 nios2 openrisc parisc powerpc \
-	       s390 score sh sparc tile um unicore32 xtensa
+	find -mindepth 1 -maxdepth 1 -type d ! -iname 'x86*' -exec rm -rf '{}' \;
 fi
 

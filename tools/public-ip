@@ -6,10 +6,10 @@
 # load DOMAINS as space separated list of domains to check
 [ -r /etc/default/public-domain ] && . /etc/default/public-domain
 
-# On Amazon EC2, ask the instance-data
-PUBLIC_IP="$(wget -qO- http://instance-data/latest/meta-data/public-ipv4 2>/dev/null)"
-# if that fails, ask the external service
-[ -z "$PUBLIC_IP" ] && PUBLIC_IP=$(wget -qO- http://ipecho.net/plain 2>/dev/null | grep -o '[0-9.]*')
+# WARNING: on AWS, http://instance-data/latest/meta-data/public-ipv4 
+#          will not reflect IP changes until instance restart!
+# Query external service for the real external IP. It's slower, but reliable.
+PUBLIC_IP=$(wget -qO- http://ipecho.net/plain 2>/dev/null)
 echo -n $PUBLIC_IP
 
 # show domain names that point to the public IP
