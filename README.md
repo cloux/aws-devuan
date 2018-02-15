@@ -11,7 +11,7 @@
 
 ![htop](screenshot.png)
 
-This project aims to provide a viable alternative to the systemd-monotheistic AWS offering. The goal is to track progress and maintain documentation for a fast, stable and secure general-purpose operating system for Amazon EC2.
+This project aims to provide a viable alternative to the systemd-monotheistic AWS offering. The goal is to track progress and maintain documentation for a fast, stable and secure general-purpose operating system for [Amazon EC2](https://aws.amazon.com/ec2/).
 
 [Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [Ascii](https://devuan.org/os/releases), which runs SysVinit by default, was modified to use [Runit](http://smarden.org/runit/) instead. All changes regarding this switch are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
 
@@ -44,16 +44,16 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-02:
 <sup>\*1) Smallest possible volume storage size for a new instance</sup>  
 <sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
-This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on AWS and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
+This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on EC2 and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
 
-It's clear that all major distributions on AWS already transitioned to systemd. If you want to use something else, you are pretty much out of luck. And very much out of luck on AWS. This is where **Devuan Ascii + Runit** distribution comes in:
+All major Linux distributions already transitioned to systemd. If you want to use something else on Amazon EC2, you are pretty much out of luck. This is where the **Devuan Ascii + Runit** distribution comes in:
 
 ---
 ## Features
 
 Currently available Devuan AMI offers:
 
- * **Runit** as init and service supervisor
+ * [**Runit**](http://smarden.org/runit/) as init and service supervisor
  * Small footprint with only **4 GB** minimal EBS volume size
  * Fast direct boot **without Initrd**
  * [cloud-init](https://cloud-init.io) v0.7.9
