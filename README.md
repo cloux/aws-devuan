@@ -77,9 +77,9 @@ The main setup differences compared to a clean Devuan installation. These mainly
 #### Compiled from source
 
  * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
+ * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
  * Socklog (http://smarden.org/socklog/install.html)
  * [ec2-metadata](https://aws.amazon.com/code/ec2-instance-metadata-query-tool/) query tool, see [ec2-update.sh](tools/ec2-update.sh)
- * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
 
 Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
@@ -120,7 +120,7 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 
  * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from kernel.org
  * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
- * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by `certbot`
+ * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by [certbot](https://certbot.eff.org/#devuanother-other)
 
 ---
 ## ToDo
