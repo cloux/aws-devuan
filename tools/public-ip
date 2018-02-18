@@ -3,18 +3,20 @@
 # Show external IP and domains pointing to it
 # (cloux@rote.ch)
 
-# load DOMAINS as space separated list of domains to check
-[ -r /etc/default/public-domain ] && . /etc/default/public-domain
-
 # WARNING: on AWS, http://instance-data/latest/meta-data/public-ipv4 
 #          will not reflect IP changes until instance restart!
-# Query external service for the real external IP. It's slower, but reliable.
-PUBLIC_IP=$(wget -qO- http://ipecho.net/plain 2>/dev/null)
+#          Query external server for the real external IP, it's slower but reliable.
+PUBLIC_IP=$(curl http://checkip.amazonaws.com 2>/dev/null)
 echo -n $PUBLIC_IP
 
-# show domain names that point to the public IP
-for DOMAIN_NAME in $DOMAINS; do
-	DOMAIN_IP=$(dig +short "$DOMAIN_NAME" 2>/dev/null)
-	[ "$PUBLIC_IP" = "$DOMAIN_IP" ] && echo -n " $DOMAIN_NAME"
-done
+# check if some of the DOMAINS point to me
+if [ -r /etc/default/public-domain ]; then
+	# load DOMAINS as space separated list of domains to check
+	. /etc/default/public-domain
+	# show domain names that point to my public IP
+	for DOMAIN_NAME in $DOMAINS; do
+		DOMAIN_IP=$(dig +short "$DOMAIN_NAME" 2>/dev/null)
+		[ "$PUBLIC_IP" = "$DOMAIN_IP" ] && echo -n " $DOMAIN_NAME"
+	done
+fi
 echo

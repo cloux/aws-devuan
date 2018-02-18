@@ -56,17 +56,18 @@ Currently available Devuan AMI offers:
  * [**Runit**](http://smarden.org/runit/) as init and service supervisor
  * Small footprint with only **4 GB** minimal EBS volume size
  * Fast direct boot **without Initrd**
- * [cloud-init](https://cloud-init.io) v0.7.9
  * Custom [compiled](tools/kernel-update.sh) stable kernel from https://www.kernel.org
     * Included network drivers Amazon ENA v1.3.0K (25Gb) + Intel 82599 ixgbevf 4.1.0-k (10Gb)
  * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
+ * Preinstalled [cloud-init](https://cloud-init.io) v0.7.9
+ * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.2
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org) v10.7, advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
 
-_NOTE:_ not everybody wants to run a webserver. However, for convenience, Hiawatha is preinstalled since it is not directly available from the main repository. If you don't need a webserver, or wish to use a different one, you can easily deactivate the Hiawatha service, see [service management](#runit-service-management).
+_NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenience, these services are preinstalled and activated, since they are not directly available from the repository. If you don't need it, simply use the _svdeactivate_ command, see [service management](#runit-service-management).
 
-### Changes
+### Main changes
 
 The main setup differences compared to a clean Devuan installation. These mainly address runit compatibility with Devuan and AWS cloud environment integration.
 
@@ -79,7 +80,8 @@ The main setup differences compared to a clean Devuan installation. These mainly
  * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
  * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
  * Socklog (http://smarden.org/socklog/install.html)
- * [ec2-metadata](https://aws.amazon.com/code/ec2-instance-metadata-query-tool/) query tool, see [ec2-update.sh](tools/ec2-update.sh)
+ * _amazon-ssm-agent_ and _ec2-metadata_, see [ec2-update.sh](tools/ec2-update.sh)
+ * additional [tools](tools/) in _/usr/local/bin_
 
 Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
@@ -121,15 +123,17 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
  * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from kernel.org
  * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
  * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by [certbot](https://certbot.eff.org/#devuanother-other)
+ * [ec2-update.sh](tools/ec2-update.sh) - update [ec2-metadata](https://aws.amazon.com/code/ec2-instance-metadata-query-tool/) and [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent)
+
+   NOTE: these scripts are included in _/usr/local/bin_ inside the AMI
 
 ---
 ## ToDo
 
- * Include the _amazon-ssm-agent_ (https://github.com/aws/amazon-ssm-agent)
  * Automate AMI propagation to all EC2 regions (currently us-east-1 only)
- * Create clean [VOID](https://www.voidlinux.eu) AMI from scratch, as an additional alternative distribution
- * ~~Speed up boot process, remove initrd~~ DONE
  * ~~Customize kernel, replace Devuan stock with stable branch from kernel\.org~~ DONE
+ * ~~Speed up boot process, remove initrd~~ DONE
+ * ~~Include the _amazon-ssm-agent_ (https://github.com/aws/amazon-ssm-agent)~~ DONE
 
 ---
 <a href="http://www.wtfpl.net"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png" align="right"></a>

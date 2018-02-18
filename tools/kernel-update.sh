@@ -15,12 +15,15 @@
 # (cloux@rote.ch)
 ###########################################################
 
-# If set, run configuration tool before compilation
+# If not empty, run configuration tool 'make menuconfig'  before compilation
 MENUCONFIG=
 
 # Number of simultaneous compilation jobs.
 # If not set, detect and use all CPU cores.
 JOBS=
+
+# Compilation log will be: /usr/src/kernel-VERSION/$LOGFILE
+LOGFILE=compile.log
 
 ###########################################################
 
@@ -74,7 +77,9 @@ KERNEL_FILE=$(echo $KERNEL_LINK | grep -Po '[^/]+$')
 
 rm $RELEASES_FILE
 
-if [ -e "/boot/vmlinuz-$KERNEL_VERSION" -o -e "/boot/vmlinuz-$KERNEL_VERSION_0" -o -e "/boot/vmlinuz-$KERNEL_VERSION.0" ]; then
+if [ -e "/boot/vmlinuz-$KERNEL_VERSION" -o \
+     -e "/boot/vmlinuz-$KERNEL_VERSION_0" -o \
+     -e "/boot/vmlinuz-$KERNEL_VERSION.0" ]; then
 	echo "We already have that one."
 	exit 0
 fi
@@ -85,7 +90,8 @@ if [ $CHECK -ne 0 ]; then
 	# show notification balloon in GUI environment
 	if [ -x "$(which notify-send 2>/dev/null)" ]; then
 		export DISPLAY=:0
-		notify-send --expire-time=30000 --icon=/usr/share/icons/gnome/48x48/status/software-update-available.png \
+		notify-send --expire-time=30000 \
+		  --icon=/usr/share/icons/gnome/48x48/status/software-update-available.png \
 		"New $MONIKER kernel $KERNEL_VERSION found"
 	fi
 	exit 0
@@ -102,13 +108,13 @@ if [ ! -e "$KERNEL_FILE" ]; then
 	fi
 fi
 
-# how much free space do we have in /usr ?
-FREE_MB=$(df --block-size=M --output=avail /usr | grep -o '[0-9]*')
+# is there enough free space in /usr/src ?
+FREE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
 # rough estimate how much do we need
 KERNEL_SIZE_MB=$(du --block-size=M "$KERNEL_FILE" | grep -o '^[0-9]*')
 NEEDED_MB=$(echo "22 * $KERNEL_SIZE_MB" | bc)
 if [ $NEEDED_MB -gt $FREE_MB ]; then
-	echo "ERROR: not enough free space in /usr."
+	echo "ERROR: not enough free space in /usr/src"
 	echo "You should have at least $(echo "scale=1; ${NEEDED_MB}/1000" | bc) GB free to continue."
 	exit 1
 fi
@@ -129,7 +135,8 @@ fi
 cd "$KERNEL_DIR"
 
 # from here on, pipe everything to stdout and compile.log
-echo "=================" >> compile.log
+echo -e "===================\n$(date '+%Y-%m-%d %H:%M:%S')\n===================\n" > \
+        "/usr/src/$KERNEL_DIR/compile.log"
 exec &> >(tee -a "/usr/src/$KERNEL_DIR/compile.log")
 
 echo "Configure ..."
@@ -163,7 +170,9 @@ else
 fi
 echo "scale=3; ($END - $START)/1" | bc
 
-if [ ! -e "/boot/vmlinuz-$KERNEL_VERSION" -a ! -e "/boot/vmlinuz-$KERNEL_VERSION_0" -a ! -e "/boot/vmlinuz-$KERNEL_VERSION.0" ]; then
+if [ ! -e "/boot/vmlinuz-$KERNEL_VERSION" -a \
+     ! -e "/boot/vmlinuz-$KERNEL_VERSION_0" -a \
+     ! -e "/boot/vmlinuz-$KERNEL_VERSION.0" ]; then
 	exit 1
 fi
 
@@ -171,7 +180,7 @@ fi
 [ -x "$(which dkms 2>/dev/null)" ] && dkms autoinstall
 
 # clean up automatically, if the free space left is less than the size of this kernel
-FREE_SPACE_MB=$(df --block-size=M --output=avail /usr | grep -o '[0-9]*')
+FREE_SPACE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
 KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
 if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
 	echo "Free space left is only $FREE_SPACE_MB MB, Cleanup..."

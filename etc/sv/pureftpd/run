@@ -3,12 +3,13 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-[ -d /etc/pure-ftpd/conf ] || exit 0
+CONF_DIR=/etc/pure-ftpd/conf
+[ -d "$CONF_DIR" ] || exit 0
 DAEMON="$(which pure-ftpd-wrapper 2>/dev/null)"
 [ -x "$DAEMON" ] || exit 0
 [ -r /etc/default/pure-ftpd-common ] && . /etc/default/pure-ftpd-common
 
-# get authentication suffix: ldap/pgsql/mysql
+# get authentication suffix: ldap/mysql/postgresql
 SUFFIX=
 PGCONF=$($DAEMON --show-options 2>/dev/null)
 if [ "$(echo "$PGCONF" | grep ldap)" ]; then
@@ -19,9 +20,9 @@ elif [ "$(echo "$PGCONF" | grep pgsql)" ]; then
 	SUFFIX="postgresql"
 fi
 
-# On Amazon EC2, use real external IP for passive mode
-EC2_IP="$(wget -qO- http://instance-data/latest/meta-data/public-ipv4 2>/dev/null)"
-[ "$EC2_IP" ] && echo "$EC2_IP" > /etc/pure-ftpd/conf/ForcePassiveIP
+# always use real external IP for passive mode
+PUBLIC_IP="$(curl http://checkip.amazonaws.com 2>/dev/null)"
+[ "$PUBLIC_IP" ] && echo "$PUBLIC_IP" > $CONF_DIR/ForcePassiveIP
 
-echo "No" > /etc/pure-ftpd/conf/Daemonize
+echo "No" > $CONF_DIR/Daemonize
 exec $DAEMON $SUFFIX
