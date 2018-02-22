@@ -1,17 +1,11 @@
 #!/bin/sh
 # daemon to balance interrupts for SMP systems
-# NOTE: on single-CPU systems, irqbalabce has no effect and exits immediately
+# WARNING: on single-CPU systems, irqbalabce has no effect and exits immediately,
+#          so it's probably best to supervise it only on multi-CPU systems!
 exec 2>&1
 
 NAME=irqbalance
-DAEMON=/usr/sbin/$NAME
+DAEMON=$(command -v $NAME)
+[ -x "$DAEMON" ] || exit
 
-# Defaults - don't touch, edit /etc/default/irqbalance
-OPTIONS=""
-ONESHOT=0
-
-[ -x $DAEMON ] || exit 0
-
-[ -f /etc/default/$NAME ] && . /etc/default/$NAME
-
-exec $DAEMON --foreground $OPTIONS
+exec "$DAEMON" --foreground

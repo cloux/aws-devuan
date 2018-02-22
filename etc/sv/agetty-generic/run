@@ -17,9 +17,9 @@ tty=${PWD##*-}
 # custom config
 [ -r conf ] && . ./conf
 
-GETTY=$(which agetty 2>/dev/null)
+GETTY=$(command -v agetty)
 if [ ! -x "$GETTY" ]; then
-	GETTY=$(which getty 2>/dev/null)
+	GETTY=$(command -v getty)
 	[ -x "$GETTY" ] || exit 1
 	if [ "$tty" = "tty1" ]; then
 		GETTY_ARGS="--noclear"

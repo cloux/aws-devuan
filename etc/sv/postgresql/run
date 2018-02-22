@@ -1,11 +1,12 @@
-#!/bin/sh -eu
+#!/bin/sh
 # PostgreSQL Cluster
 # see 'man pg_ctlcluster' and 'man pg_ctl' for details
 #
 # (cloux@rote.ch)
+exec 2>&1
 
-DAEMON="$(which pg_ctlcluster)"
-[ -x "$DAEMON"] || exit 1
+DAEMON="$(command -v pg_ctlcluster)"
+[ -x "$DAEMON"] || exit 0
 
 PGBINROOT="/usr/lib/postgresql/"
 [ -r ./config ] && . ./config

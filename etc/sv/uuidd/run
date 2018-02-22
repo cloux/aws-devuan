@@ -6,11 +6,11 @@ UUIDD_USER=uuidd
 UUIDD_GROUP=uuidd
 UUIDD_DIR=/run/uuidd
 
-[ -x $DAEMON ] || exit 0
+[ -x "$DAEMON" ] || exit 0
 [ -r conf ] && . ./conf
 
 if [ ! -d $UUIDD_DIR ]; then
-	install --group=$UUIDD_GROUP --owner=$UUIDD_USER -d $UUIDD_DIR
+	install --group="$UUIDD_GROUP" --owner="$UUIDD_USER" -d "$UUIDD_DIR"
 fi
 
-exec /usr/sbin/uuidd --no-fork --no-pid --quiet
+exec $DAEMON --no-fork --no-pid --quiet

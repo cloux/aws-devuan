@@ -9,7 +9,7 @@ PATH=/usr/sbin:/usr/bin:/sbin:/bin
 #FASTBOOT=1
 
 # copy /dev/console messages to a logfile
-if [ -e /etc/service/bootlogd -a -x /sbin/bootlogd ]; then
+if [ -e /etc/service/bootlogd ] && [ -x /sbin/bootlogd ]; then
 	mountpoint -q /dev || mount -o mode=0755,nosuid -t devtmpfs dev /dev
 	mkdir -p -m0755 /dev/pts
 	mountpoint -q /dev/pts || mount -o mode=0620,gid=5,nosuid,noexec -n -t devpts devpts /dev/pts
@@ -29,7 +29,7 @@ detect_virt
 
 # Run bootup scripts
 for f in /etc/runit/bootup/*.sh; do
-	[ -r $f ] && . $f
+	[ -r "$f" ] && . "$f"
 done
 
 dmesg >/var/log/dmesg.log

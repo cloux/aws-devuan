@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 #
 # Postfix runscript
 # NOTE: this works for single-instance postfix configuration only,
@@ -7,8 +7,8 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-POSTCONF=$(which postconf)
-[ -x "$POSTCONF" -a -f /etc/postfix/main.cf ] || exit 0
+POSTCONF=$(command -v postconf)
+([ -x "$POSTCONF" ] && [ -f /etc/postfix/main.cf ]) || exit 0
 
 ENABLED_INSTANCES=$(postmulti -l -a | awk '($3=="y") {print $1}')
 

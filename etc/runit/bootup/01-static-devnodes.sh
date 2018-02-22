@@ -10,5 +10,5 @@ for f in $(kmod static-nodes 2>/dev/null | awk '/Module/ {print $2}'); do
 	#       if you need btrfs loaded, add it to /etc/modules
 	[ "$f" = "btrfs" ] && continue
 	msg "+ modprobe '$f'"
-	modprobe -q $f 2>&1
+	modprobe -q "$f" 2>&1
 done

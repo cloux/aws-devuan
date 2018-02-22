@@ -7,7 +7,7 @@
 #          will not reflect IP changes until instance restart!
 #          Query external server for the real external IP, it's slower but reliable.
 PUBLIC_IP=$(curl http://checkip.amazonaws.com 2>/dev/null)
-echo -n $PUBLIC_IP
+printf "%s" "$PUBLIC_IP"
 
 # check if some of the DOMAINS point to me
 if [ -r /etc/default/public-domain ]; then
@@ -16,7 +16,7 @@ if [ -r /etc/default/public-domain ]; then
 	# show domain names that point to my public IP
 	for DOMAIN_NAME in $DOMAINS; do
 		DOMAIN_IP=$(dig +short "$DOMAIN_NAME" 2>/dev/null)
-		[ "$PUBLIC_IP" = "$DOMAIN_IP" ] && echo -n " $DOMAIN_NAME"
+		[ "$PUBLIC_IP" = "$DOMAIN_IP" ] && printf " %s" "$DOMAIN_NAME"
 	done
 fi
-echo
+printf "\n"

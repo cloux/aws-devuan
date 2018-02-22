@@ -5,18 +5,18 @@ exec 2>&1
 
 CONF_DIR=/etc/pure-ftpd/conf
 [ -d "$CONF_DIR" ] || exit 0
-DAEMON="$(which pure-ftpd-wrapper 2>/dev/null)"
+DAEMON="$(command -v pure-ftpd-wrapper)"
 [ -x "$DAEMON" ] || exit 0
 [ -r /etc/default/pure-ftpd-common ] && . /etc/default/pure-ftpd-common
 
 # get authentication suffix: ldap/mysql/postgresql
 SUFFIX=
 PGCONF=$($DAEMON --show-options 2>/dev/null)
-if [ "$(echo "$PGCONF" | grep ldap)" ]; then
+if [ "$(printf "%s" "$PGCONF" | grep ldap)" ]; then
 	SUFFIX="ldap"
-elif [ "$(echo "$PGCONF" | grep mysql)" ]; then
+elif [ "$(printf "%s" "$PGCONF" | grep mysql)" ]; then
 	SUFFIX="mysql"
-elif [ "$(echo "$PGCONF" | grep pgsql)" ]; then
+elif [ "$(printf "%s" "$PGCONF" | grep pgsql)" ]; then
 	SUFFIX="postgresql"
 fi
 

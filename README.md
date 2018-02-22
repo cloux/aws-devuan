@@ -69,7 +69,7 @@ _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenie
 
 ### Main changes
 
-The main setup differences compared to a clean Devuan installation. These mainly address runit compatibility with Devuan and AWS cloud environment integration.
+The setup differences compared to a clean Devuan installation mainly address runit compatibility with Devuan and AWS EC2 environment integration:
 
 #### Preinstalled tools from Devuan repository
 
@@ -88,7 +88,7 @@ Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 ---
 ## Installation
 
-**"Devuan Ascii YYYY-MM-DD (Unofficial)"** AMIs are available in the Amazon EC2 **us-east-1** region in the **Community AMIs** category. This git repository serves as documentation and development base for Devuan AMIs inside AWS EC2, and cannot be directly used for AWS management, installation, or upgrades.
+**"Devuan Ascii YYYY-MM-DD (Unofficial)"** AMIs are available in the Amazon EC2 **us-east-1** (N. Virginia) region in the **Community AMIs** category. This git repository serves as documentation and development base for Devuan AMIs inside AWS EC2, and cannot be directly used for AWS management, installation, or upgrades.
 
 Why **'Unofficial'**: This project is not affiliated with the official Devuan GNU/Linux distribution in any way.
 

@@ -1,6 +1,9 @@
 #!/bin/sh -e
 exec 2>&1
 
+DAEMON=$(command -v sshd)
+[ -x "$DAEMON" ] || exit
+
 # generate host keys if they don't already exist
 ssh-keygen -A >/dev/null
 
@@ -12,4 +15,4 @@ if [ ! -d /var/run/sshd ]; then
   rm -f /var/run/sshd; mkdir -p /var/run/sshd; chmod 0755 /var/run/sshd
 fi
 
-exec /usr/sbin/sshd $SSHD_OPTS
+exec $DAEMON $SSHD_OPTS

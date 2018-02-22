@@ -1,7 +1,7 @@
 #!/bin/sh
 exec 2>&1
 
-DAEMON=$(which amazon-ssm-agent)
+DAEMON=$(command -v amazon-ssm-agent)
 [ -x "$DAEMON" ] || exit
 
 exec $DAEMON

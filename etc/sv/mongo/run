@@ -2,11 +2,11 @@
 # MongoDB server
 exec 2>&1
 
-DAEMON="$(which mongod)"
-[ -x "$DAEMON" ] || exit 0
+DAEMON="$(command -v mongod)"
+[ -x "$DAEMON" ] || exit
 
 OPTIONS=
 [ -r ./config ] && . ./config
 [ -f /etc/mongodb.conf ] && OPTIONS+="--config /etc/mongodb.conf"
 
-exec chpst -u mongodb $DAEMON $OPTIONS
+exec chpst -u mongodb "$DAEMON" $OPTIONS

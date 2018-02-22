@@ -15,8 +15,8 @@
 MAILTO=
 #########################################################################
 
-if [ ! -x "$(which certbot 2>/dev/null)" ]; then
-  echo "certbot not installed, exiting."
+if [ -z "$(command -v certbot)" ]; then
+  printf "certbot not installed, exiting.\n"
   exit 1
 fi
 
@@ -27,19 +27,19 @@ fi
 #       Sadly, I was unable to find a better way to disable systemd
 #       updater, so this is a crude hack :/
 if [ -s "/lib/systemd/system/certbot.timer" ]; then
-	echo -n "" > /lib/systemd/system/certbot.timer
-	echo -n "" > /lib/systemd/system/certbot.service
+	printf "" > /lib/systemd/system/certbot.timer
+	printf "" > /lib/systemd/system/certbot.service
 fi
 
 LETSENCRYPT_BASE=/etc/letsencrypt/archive
 LOGFILE="$LETSENCRYPT_BASE/renewal.log"
 
-echo -e "Certificate Renewal at $(date '+%Y-%m-%d %H:%M:%S') by $0\n" | tee "$LOGFILE"
+printf "Certificate Renewal at %s by $0\n" "$(date '+%Y-%m-%d %H:%M:%S')" | tee "$LOGFILE"
 certbot renew 2>/dev/null | tee -a "$LOGFILE"
 
 RENEWED=0
 DOMAINS=$(find "$LETSENCRYPT_BASE" -mindepth 1 -maxdepth 1 -type d -printf '%f ' 2>/dev/null)
-for DOMAIN in ${DOMAINS[@]}; do
+for DOMAIN in $DOMAINS; do
 	LETSENCRYPT_DIR="$LETSENCRYPT_BASE/$DOMAIN"
 	cat "$LETSENCRYPT_DIR/$(ls -t1 privkey* 2>/dev/null | head -n 1)" \
 	    "$LETSENCRYPT_DIR/$(ls -t1 fullchain* 2>/dev/null | head -n 1)" \
@@ -59,7 +59,7 @@ for DOMAIN in ${DOMAINS[@]}; do
 done
 
 if [ $RENEWED -eq 1 ]; then
-	echo "Generated New Hiawatha Certificate: $LETSENCRYPT_DIR/hiawatha.pem" | tee -a "$LOGFILE"
+	printf "Generated New Hiawatha Certificate: %s/hiawatha.pem\n" "$LETSENCRYPT_DIR" | tee -a "$LOGFILE"
 
 	# restart services
 	if [ -e "/etc/service/hiawatha" ]; then
@@ -72,10 +72,10 @@ if [ $RENEWED -eq 1 ]; then
 	elif [ -e "/etc/init.d/dovecot" ]; then
 		/etc/init.d/dovecot restart 2>&1 | tee -a "$LOGFILE"
 	fi
-	echo "DONE" | tee -a "$LOGFILE"
+	printf "DONE\n" | tee -a "$LOGFILE"
 
 	if [ "$MAILTO" ]; then
-		echo -n "Sending status EMail to: $MAILTO... "
-		cat "$LOGFILE" | mail -s "$(hostname 2>/dev/null) (IP $(hostname -i 2>/dev/null)) - Webserver Certificate Renewal" "$MAILTO"
+		printf "Sending status EMail to: %s... \n" "$MAILTO"
+		mail -s "$(hostname 2>/dev/null) (IP $(hostname -i 2>/dev/null)) - Webserver Certificate Renewal" "$MAILTO" < "$LOGFILE"
 	fi
 fi

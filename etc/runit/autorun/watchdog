@@ -13,7 +13,7 @@ DATEFMT='%Y-%m-%d_%H:%M:%S.%N'
 # load SERVICES to activate/deactivate, if DOMAINS resolve to me
 # if one of them is empty, watchdog doesn't have to run
 [ -s /etc/default/public-domain ] && . /etc/default/public-domain
-[ "$DOMAINS" -a "$SERVICES" ] || exit
+([ "$DOMAINS" ] && [ "$SERVICES" ]) || exit
 
 while true; do
 
@@ -23,17 +23,17 @@ while true; do
 	# check if one of the DOMAINS resolves to IP address of this server
 	PUBLIC_IP=$(public-ip 2>/dev/null)
 	[ $? -eq 0 ] || exit
-	if [ "$PUBLIC_IP" -a "$PUBLIC_IP" != "$(cat /var/run/public-ip 2>/dev/null)" ]; then
-		echo -n "$PUBLIC_IP" >/var/run/public-ip
-		echo -n "$(date "+$DATEFMT"): Public IP changed to $PUBLIC_IP, "
-		if [ $(echo "$PUBLIC_IP" | grep -c '[a-z]') -eq 0 ]; then
-			echo "no assigned domain, deactivating services"
+	if [ "$PUBLIC_IP" ] && [ "$PUBLIC_IP" != "$(cat /var/run/public-ip 2>/dev/null)" ]; then
+		printf "%s" "$PUBLIC_IP" >/var/run/public-ip
+		printf "%s: Public IP changed to %s, " "$(date "+$DATEFMT")" "$PUBLIC_IP"
+		if [ $(printf "%s" "$PUBLIC_IP" | grep -c '[a-z]') -eq 0 ]; then
+			printf "no assigned domain, deactivating services\n"
 			svdeactivate $SERVICES 2>&1
 		else
-			echo "activating services"
+			printf "activating services\n"
 			svactivate $SERVICES 2>&1
 		fi
-		echo "$(date +$DATEFMT): DONE"
+		printf "%s: DONE\n" "$(date "+$DATEFMT")"
 	fi
 
 	# cycle with delay

@@ -1,30 +1,30 @@
-#!/bin/bash
+#!/bin/sh
 #
 # runit service activation
 # (cloux@rote.ch)
 
 if [ $# -eq 0 ]; then
-	echo "Enter Runit service names as a parameter."
-	echo "Supported services are listed in /etc/sv/"
+	printf "Enter Runit service names as a parameter.\n"
+	printf "Supported services are listed in /etc/sv/\n"
 	exit 0
 fi
 
 # process all services provided as command line parameters
 RET=0
-for SRV in ${@}; do
+for SRV in "$@"; do
 	SRVNAME=${SRV##*/}
 	if [ -d "/etc/service/$SRVNAME" ]; then
-		echo "Info: Runit service '$SRVNAME' is already active"
+		printf "Runit service '%s' is already active\n" "$SRVNAME"
 		continue
 	fi
 	if [ ! -d "/etc/sv/$SRVNAME" ]; then
-		echo "ERROR: Runit service definition '/etc/sv/$SRVNAME' not found, activation failed"
+		printf "ERROR: Runit service definition '/etc/sv/%s' not found, activation failed\n" "$SRVNAME"
 		RET=1
 		continue
 	fi
 	ln -s "/etc/sv/$SRVNAME" /etc/service/ 2>/dev/null
 	if [ $? -ne 0 ]; then
-		echo "ERROR: Runit service '$SRVNAME' activation failed"
+		printf "ERROR: Runit service '%s' activation failed\n" "$SRVNAME"
 		RET=1
 	fi
 done

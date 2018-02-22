@@ -3,8 +3,8 @@
 # Install/Update EC2 tools in the AWS instance
 
 # We need to be root
-if [ $CHECK -eq 0 -a $(id -u) -ne 0 ]; then
-	echo "Need to be root!" 1>&2
+if [ $(id -u) -ne 0 ]; then
+	printf "Need to be root!\n" 1>&2
 	exit
 fi
 
@@ -12,24 +12,24 @@ fi
 # ec2-metadata
 #
 if [ -x /usr/local/bin/ec2-metadata ]; then
-	echo -n "Update "
+	printf "Update "
 else
-	echo -n "Install "
+	printf "Install "
 fi
-echo -n "ec2-metadata tool ... "
-cd /tmp
+printf "ec2-metadata tool ... "
+cd /tmp || exit
 rm -f ec2-metadata
 wget -q http://s3.amazonaws.com/ec2metadata/ec2-metadata
-if [ $? -ne 0 -o ! -f ec2-metadata ]; then
-	echo "download FAILED"
+if [ $? -ne 0 ] || [ ! -f ec2-metadata ]; then
+	printf "download FAILED\n"
 else
 	if [ $(head -n 1 ec2-metadata | grep -c '#!') -ne 1 ]; then
-		echo "FAILED: file is not a shell script"
+		printf "FAILED: file is not a shell script\n"
 		rm ec2-metadata
 	else
 		chmod 755 ec2-metadata
 		mv -f ec2-metadata /usr/local/bin/
-		echo "OK"
+		printf "OK\n"
 	fi
 fi
 
@@ -39,67 +39,67 @@ fi
 SSM_BINDIR=/usr/bin
 [ -d $SSM_BINDIR ] || exit
 if [ -x $SSM_BINDIR/amazon-ssm-agent ]; then
-	echo -n "Update "
+	printf "Update "
 else
-	echo -n "Install "
+	printf "Install "
 fi
-echo "amazon-ssm-agent ..."
+printf "amazon-ssm-agent ...\n"
 
-if [ ! -x "$(which go)" ]; then
-	echo "ERROR: Golang not found. Install 'golang' first."
+if [ -z "$(command -v go)" ]; then
+	printf "ERROR: Golang not found. Install 'golang' first.\n"
 	exit
 fi
-if [ ! -x "$(which git)" ]; then
-	echo "ERROR: git not found. Install 'git' first."
+if [ -z "$(command -v git)" ]; then
+	printf "ERROR: git not found. Install 'git' first.\n"
 	exit
-fi
-
-# stop service if running
-if [ "$(pgrep runsvdir)" -a -d /etc/service/amazon-ssm-agent ]; then
-	echo "Stop service ..."
-	sv stop amazon-ssm-agent
 fi
 
 SSM_SRCDIR=/usr/lib/go-1.7/src/github.com/aws
-[ -d $SSM_SRCDIR ] || mkdir -p $SSM_SRCDIR
-cd $SSM_SRCDIR
+[ -d "$SSM_SRCDIR" ] || mkdir -p "$SSM_SRCDIR"
+cd "$SSM_SRCDIR" || exit
 if [ -d amazon-ssm-agent ]; then
 	# update: git pull
-	cd amazon-ssm-agent
+	cd amazon-ssm-agent || exit
 	git pull
+	
 else
 	# install: git clone
 	#git clone https://github.com/aws/amazon-ssm-agent
 	git clone https://github.com/cloux/amazon-ssm-agent
-	cd amazon-ssm-agent
-	[ $? -eq 0 ] || exit
+	cd amazon-ssm-agent || exit
 fi
 # link the codebase to /usr/src, to make it more "visible"
-ln -sf $SSM_SRCDIR/amazon-ssm-agent /usr/src/
+ln -sf "$SSM_SRCDIR/amazon-ssm-agent" /usr/src/
 
-echo "Get additional tools ..." 
+printf "Get additional tools ...\n"
 make get-tools
-echo "Build ..."
+printf "Build ...\n"
 make build-linux
 [ $? -eq 0 ] || exit
 
+# stop service if running
+if [ "$(pgrep runsvdir)" ] && [ -d /etc/service/amazon-ssm-agent ]; then
+	printf "Stop service ...\n"
+	sv stop amazon-ssm-agent
+fi
+
 # install compiled ssm-agent
-echo "Installing compiled amazon-ssm-agent into the system..."
+printf "Installing compiled amazon-ssm-agent into the system ...\n"
 cp -vf bin/linux_amd64/* $SSM_BINDIR/
 [ -d /etc/amazon/ssm ] || mkdir -p /etc/amazon/ssm
 cp -vf bin/amazon-ssm-agent.json.template /etc/amazon/ssm/
 cp -vn bin/amazon-ssm-agent.json.template /etc/amazon/ssm/amazon-ssm-agent.json
 cp -vn bin/seelog_unix.xml /etc/amazon/ssm/seelog.xml
 
- # cleanup (240 MB -> 175 MB)
-echo "Cleanup ..."
-make clean
-#rm -rf "$SSM_SRCDIR"
-
 # start service after update
-if [ "$(pgrep runsvdir)" -a -d /etc/service/amazon-ssm-agent ]; then
-	echo "Start service ..."
+if [ "$(pgrep runsvdir)" ] && [ -d /etc/service/amazon-ssm-agent ]; then
+	printf "Start service ...\n"
 	sv start amazon-ssm-agent
 fi
 
-echo "DONE"
+# cleanup (240 MB -> 175 MB)
+printf "Cleanup ...\n"
+make clean
+#rm -rf "$SSM_SRCDIR"
+
+printf "DONE\n"

@@ -2,16 +2,17 @@
 #
 # Hiawatha Webserver (https://www.hiawatha-webserver.org)
 exec 2>&1
-[ -x "$(which hiawatha 2>/dev/null)" ] || exit 0
+DAEMON="$(command -v hiawatha)"
+[ -x "$DAEMON" ] || exit 0
 
 # Set Hostname parameter in hiawatha.conf to current public IP
 CONFIG_FILE=/etc/hiawatha/hiawatha.conf
 if [ -w "$CONFIG_FILE" ]; then
 	HOSTNAME_IP=$(grep -i -m 1 'Hostname\s*=\s*[0-9.]*$' "$CONFIG_FILE" 2>/dev/null | grep -o '[0-9.]*')
-	PUBLIC_IP=$(wget -qO- http://checkip.amazonaws.com 2>/dev/null)
-	if [ "$HOSTNAME_IP" -a "$PUBLIC_IP" -a "$HOSTNAME_IP" != "$PUBLIC_IP" ]; then
+	PUBLIC_IP=$(curl http://checkip.amazonaws.com 2>/dev/null)
+	if [ "$HOSTNAME_IP" ] && [ "$PUBLIC_IP" ] && [ "$HOSTNAME_IP" != "$PUBLIC_IP" ]; then
 		sed -i "s/Hostname\\s*=\\s*[0-9.]*\$/Hostname = $PUBLIC_IP/i" "$CONFIG_FILE"
 	fi
 fi
 
-exec hiawatha -d -c /etc/hiawatha >/dev/null
+exec "$DAEMON" -d -c /etc/hiawatha >/dev/null

@@ -3,7 +3,7 @@
 # man-db cron daily
 
 # run only if can be started nicely
-[ -x "$(which ionice 2>/dev/null)" ] || exit 1
+[ "$(command -v ionice)" ] || exit 1
 
 iosched=0
 # Don't try to change I/O priority in a vserver or OpenVZ.

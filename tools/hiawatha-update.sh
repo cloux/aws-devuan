@@ -18,16 +18,16 @@ MY_ROOT=/usr/src/hiawatha
 
 # Make sure that I'm root
 if [ "$(id -u)" != "0" ]; then
-	echo "$0 - This script must be run as root!" 1>&2
+	printf "Need to be root!\n" 1>&2
 	exit 1
 fi
 
-if [ ! -x "$(which hiawatha)" ]; then
-	echo "Hiawatha not found. Install dependencies..."
+if [ -z "$(command -v hiawatha)" ]; then
+	printf "Hiawatha not found. Install dependencies ...\n"
 	APTINST=
-	if [ -x "$(which aptitude)" ]; then
+	if [ "$(command -v aptitude)" ]; then
 		APTINST=aptitude
-	elif [ -x "$(which apt-get)" ]; then
+	elif [ "$(command -v apt-get)" ]; then
 		APTINST=apt-get
 	fi
 	if [ "$APTINST" ]; then
@@ -35,12 +35,12 @@ if [ ! -x "$(which hiawatha)" ]; then
 		         libxslt1-dev libc6-dev libssl-dev zlib1g-dev dpkg-dev \
 		         debhelper fakeroot apache2-utils php php-cgi procps wget
 	else
-		echo "WARNING: Apt packaging system not found, dependencies installation skipped."
+		printf "WARNING: Apt packaging system not found, dependencies installation skipped.\n"
 	fi
 fi
 
-if [ ! -x "$(which lsof)" ]; then
-	echo "ERROR: lsof not found, exiting."
+if [ -z "$(command -v lsof)" ]; then
+	printf "ERROR: lsof not found, exiting.\n"
 	exit 1
 fi
 
@@ -49,47 +49,46 @@ cd "$MY_ROOT" || exit 1
 
 LATEST=$(wget -q -O - http://www.hiawatha-webserver.org/latest)
 if [ -z "$LATEST" ]; then
-	echo "ERROR: Hiawatha version number downloading failed"
+	printf "ERROR: Hiawatha version number downloading failed.\n"
 	exit 1
 fi
-if [ -s $MY_ROOT/hiawatha-$LATEST.tar.gz ]; then
-	echo "Latest Hiawatha v$LATEST already downloaded."
+if [ -s "$MY_ROOT/hiawatha-$LATEST.tar.gz" ]; then
+	printf "Latest Hiawatha v%s already downloaded.\n" "$LATEST"
 	exit 0
 fi
 
-echo -n "Downloading new Hiawatha v$LATEST ..."
-wget -q -O $MY_ROOT/hiawatha-$LATEST.tar.gz http://www.hiawatha-webserver.org/files/hiawatha-$LATEST.tar.gz
-if [ -s $MY_ROOT/hiawatha-$LATEST.tar.gz ]; then
-	echo "OK"
+printf "Downloading new Hiawatha v%s ..." "$LATEST"
+wget -q -O "$MY_ROOT/hiawatha-$LATEST.tar.gz" "http://www.hiawatha-webserver.org/files/hiawatha-$LATEST.tar.gz"
+if [ -s "$MY_ROOT/hiawatha-$LATEST.tar.gz" ]; then
+	printf "OK\n"
 else
-	echo "ERROR"
-	rm -f $MY_ROOT/hiawatha-$LATEST.tar.gz
+	printf "ERROR\n"
+	rm -f "$MY_ROOT/hiawatha-$LATEST.tar.gz"
 	exit 1
 fi
 
-echo -n "Unpacking..."
-tar -xzf $MY_ROOT/hiawatha-$LATEST.tar.gz >/dev/null
+printf "Unpacking..."
+tar -xzf "$MY_ROOT/hiawatha-$LATEST.tar.gz" >/dev/null
 if [ $? -ne 0 ]; then
-	echo "ERROR"
+	printf "ERROR\n"
 	exit 1
 fi
-echo "OK"
+printf "OK\n"
 
-if [ ! -d $MY_ROOT/hiawatha-$LATEST ]; then
-	echo "ERROR: hiawatha-$LATEST directory not found."
+if [ ! -d "$MY_ROOT/hiawatha-$LATEST" ]; then
+	printf "ERROR: hiawatha-%s directory not found.\n" "$LATEST"
 	exit 1
 fi
 
 EC=1
-if [ -x "$(which dpkg)" ]; then
-	echo "Compiling and packaging..."
-	cd $MY_ROOT/hiawatha-$LATEST/extra
-	$MY_ROOT/hiawatha-$LATEST/extra/make_debian_package
+if [ "$(command -v dpkg)" ]; then
+	printf "Compiling and packaging ...\n"
+	cd "$MY_ROOT/hiawatha-$LATEST/extra" || exit
+	"$MY_ROOT/hiawatha-$LATEST/extra/make_debian_package"
 
-	DEBPAK=$(ls -1 $MY_ROOT/hiawatha-$LATEST/hiawatha_$LATEST\_*.deb 2>/dev/null | tail -n 1)
+	DEBPAK=$(ls -1 "$MY_ROOT/hiawatha-$LATEST/hiawatha_$LATEST\_*.deb" 2>/dev/null | tail -n 1)
 	if [ ! -s "$DEBPAK" ]; then
-		echo -e "\nFAILED"
-		echo "DEB package not found!"
+		printf "\nFAILED\n"
 		exit 1
 	fi
 
@@ -106,8 +105,8 @@ if [ -x "$(which dpkg)" ]; then
 		fi
 	fi
 
-	echo "Installing new ${DEBPAK##*/}..."
-	dpkg -i --force-all $DEBPAK
+	printf "Installing new %s ...\n" "${DEBPAK##*/}"
+	dpkg -i --force-all "$DEBPAK"
 	EC=$?
 
 	# start hiawatha after update
@@ -119,31 +118,32 @@ if [ -x "$(which dpkg)" ]; then
 
 	mv "$DEBPAK" "$MY_ROOT"
 else
-	echo "Cmake build..."
-	mkdir build && cd build
+	printf "Cmake build ...\n"
+	mkdir build
+	cd build || exit
 	cmake ..
 	if [ $? -eq 0 ]; then
-		echo "Make install..."
+		printf "Make install ...\n"
 		make install/strip
 		EC=$?
 	fi
 fi
 
-echo -n "Removing temp files..."
-cd $MY_ROOT
-rm -rf $MY_ROOT/hiawatha-$LATEST
-echo "DONE"
+printf "Removing temp files ..."
+cd "$MY_ROOT" || exit
+rm -rf "$MY_ROOT/hiawatha-$LATEST"
+printf "DONE\n"
 
 if [ $EC -eq 0 ]; then
 	MSG="Hiawatha webserver successfully updated to v$LATEST."
 else
 	MSG="Hiawatha webserver update to v$LATEST FAILED."
 fi
-echo $MSG
+printf "%s\n" "$MSG"
 
 # Email results
 if [ "$MAILTO" ]; then
-	echo "$MSG" | mail -s "$(hostname 2>/dev/null) (IP $(hostname -i 2>/dev/null)) - Hiawatha update v$LATEST" "$MAILTO"
+	printf "%s\n" "$MSG" | mail -s "$(hostname 2>/dev/null) (IP $(hostname -i 2>/dev/null)) - Hiawatha update v$LATEST" "$MAILTO"
 fi
 
 exit $EC

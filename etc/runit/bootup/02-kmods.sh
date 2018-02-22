@@ -18,29 +18,29 @@ modules_files() {
 	local add_etc_modules=true
 
 	for dir in $modules_load_dirs; do
-		[ -d $dir ] || continue
-		for file in $(run-parts --list --regex='\.conf$' $dir 2> /dev/null || true); do
+		[ -d "$dir" ] || continue
+		for file in $(run-parts --list --regex='\.conf$' "$dir" 2> /dev/null || true); do
 			local base=${file##*/}
 			if echo -n "$processed" | grep -qF " $base "; then
 				continue
 			fi
-			if [ "$add_etc_modules" -a -L $file -a "$(readlink -f $file)" = /etc/modules ]; then
+			if [ "$add_etc_modules" ] && [ -L "$file" ] && [ "$(readlink -f "$file")" = /etc/modules ]; then
 				add_etc_modules=
 			fi
 			processed="$processed$base "
-			echo $file
+			echo "$file"
 		done
 	done
 
 	if [ "$add_etc_modules" ]; then
-		echo /etc/modules
+		printf "/etc/modules\n"
 	fi
 }
 
 files=$(modules_files)
 if [ "$files" ]; then
 	grep -h '^[^#]' $files |
-	while read module args; do
+	while read -r module args; do
 		[ "$module" ] || continue
 		msg "+ modprobe '$module'"
 		modprobe "$module" "$args"

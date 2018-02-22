@@ -27,9 +27,9 @@ fi
 if [[ $1 = *@* ]]; then
 	ssh -i "$SSH_KEYFILE" "$1"
 elif [ "$1" ]; then
-	ssh -i "$SSH_KEYFILE" $SSH_USER@$1
+	ssh -i "$SSH_KEYFILE" "$SSH_USER"@"$1"
 elif [ "$DEFAULT_SERVER_ADDR" ]; then
-	ssh -i "$SSH_KEYFILE" ${SSH_USER}@${DEFAULT_SERVER_ADDR}
+	ssh -i "$SSH_KEYFILE" "$SSH_USER"@"$DEFAULT_SERVER_ADDR"
 else
 	echo "Enter parameter: IPADDR, or USER@ADDR"
 fi

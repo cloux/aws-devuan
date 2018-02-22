@@ -1,29 +1,29 @@
-#!/bin/bash
+#!/bin/sh
 #
 # runit service deactivation
 # (cloux@rote.ch)
 
 if [ $# -eq 0 ]; then
-	echo "Enter Runit service names as a parameter."
-	echo "Supervised services are listed in /etc/service/"
+	printf "Enter Runit service names as a parameter.\n"
+	printf "Supervised services are listed in /etc/service/\n"
 	exit 0
 fi
 
 # process all services provided as command line parameters
 RET=0
-for SRV in ${@}; do
+for SRV in "$@"; do
 	SRVNAME=${SRV##*/}
 	if [ ! -d "/etc/service/$SRVNAME" ]; then
 		if [ -d "/etc/sv/$SRVNAME" ]; then
-			echo "Info: Runit service '$SRVNAME' is already inactive"
+			printf "Runit service '%s' is already inactive\n" "$SRVNAME"
 		else
-			echo "Warning: Runit service definition '/etc/sv/$SRVNAME' doesn't exist and cannot be activated or deactivated"
+			printf "WARNING: Runit service definition '/etc/sv/%s' doesn't exist and cannot be activated or deactivated\n" "$SRVNAME"
 		fi
 		continue
 	fi
 	rm "/etc/service/$SRVNAME" 2>/dev/null
 	if [ $? -ne 0 ]; then
-		echo "ERROR: Runit service '$SRVNAME' deactivation failed"
+		printf "ERROR: Runit service '%s' deactivation failed\n" "$SRVNAME"
 		RET=1
 	fi
 done

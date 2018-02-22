@@ -10,17 +10,17 @@ msg "Service activation:"
 if [ -d /etc/sv/irqbalance ]; then
 	#CPU_COUNT=$(grep -c '^processor' /proc/cpuinfo)
 	CPU_COUNT=$(nproc --all 2>/dev/null)
-	echo -n "   CPUs detected: $CPU_COUNT, "
+	printf "   CPUs detected: %s, " "$CPU_COUNT"
 	if [ $CPU_COUNT -gt 1 ]; then
-		echo -n "activate irqbalance ..."
-		RET=$(/etc/runit/svactivate irqbalance >/dev/null 2>/dev/null)
+		printf "activate irqbalance ... "
+		RET=$(/etc/runit/svactivate irqbalance 2>&1)
 	else
-		echo -n "deactivate irqbalance ..."
-		RET=$(/etc/runit/svdeactivate irqbalance >/dev/null 2>/dev/null)
+		printf "deactivate irqbalance ... "
+		RET=$(/etc/runit/svdeactivate irqbalance 2>&1)
 	fi
 	if [ $? -eq 0 ]; then
 		msg_ok
 	else
-		echo " $RET"
+		printf "%s\n" "$RET"
 	fi
 fi

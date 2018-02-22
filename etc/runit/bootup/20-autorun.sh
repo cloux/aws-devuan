@@ -11,8 +11,8 @@ msg "Starting autorun scripts in parallel..."
 
 OUTPUT=/dev/null
 for f in /etc/runit/autorun/*; do
-	[ -x $f ] || continue
+	[ -x "$f" ] || continue
 	msg "  '$f'"
 	[ -d /var/log ] && OUTPUT=/var/log/autorun-${f##*/}.log
-	nohup $f >${OUTPUT} 2>&1 &
+	nohup "$f" >"$OUTPUT" 2>&1 &
 done

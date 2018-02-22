@@ -3,6 +3,6 @@
 
 [ -n "$VIRTUALIZATION" ] && return 0
 
-msg "Initializing swap..."
+msg "Initializing swap ..."
 swapon -a 2>&1
 

@@ -4,7 +4,7 @@
 msg() {
     # bold
     #printf "\033[1m=> $@\033[m\n"
-    printf "=> $@\n"
+    printf "=> %s\n" "$@"
 }
 
 msg_ok() {
@@ -16,22 +16,22 @@ msg_ok() {
 msg_error() {
     # bold/red
     #printf "\033[1m\033[31mERROR: $@\033[m\n"
-    printf "ERROR: $@\n"
+    printf "ERROR: %s\n" "$@"
 }
 
 msg_warn() {
     # bold/yellow
     #printf "\033[1m\033[33mWARNING: $@\033[m"
-    printf "WARNING: $@\n"
+    printf "WARNING: %s\n" "$@"
 }
 
 emergency_shell() {
     # NOTE: emergency shell would cause the EC2 Instance hanging on boot
     #       Amazon EC2 is available only over ssh, with no direct terminal access
     return 0
-    echo
-    echo "Cannot continue due to errors above, starting emergency shell."
-    echo "When ready type exit to continue booting."
+    printf "\n"
+    printf "Cannot continue due to errors above, starting emergency shell.\n"
+    printf "When ready type exit to continue booting.\n"
     /bin/sh -l
 }
 
@@ -45,9 +45,8 @@ detect_virt() {
 
 deactivate_vgs() {
    _group=${1:-All}
-   if [ -x /sbin/vgchange -o -x /bin/vgchange ]; then
-       vgs=$(vgs|wc -l)
-       if [ $vgs -gt 0 ]; then
+   if [ -x /sbin/vgchange ] || [ -x /bin/vgchange ]; then
+       if [ $(vgs | wc -l) -gt 0 ]; then
            msg "Deactivating $_group LVM Volume Groups..."
            vgchange -an
        fi

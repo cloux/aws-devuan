@@ -16,8 +16,8 @@ CONFIG_DIR=/etc/openvpn
 CONFIG_FILE=${CONFIG_DIR}/${NAME}.conf
 OPTARGS=""
 
-[ -x $DAEMON ] || exit 0
-[ -f $CONFIG_FILE ] || exit 0
+[ -x "$DAEMON" ] || exit 0
+[ -f "$CONFIG_FILE" ] || exit 0
 [ -f /etc/default/openvpn ] && . /etc/default/openvpn
 
 # tun using the "subnet" topology confuses the routing code that wrongly
@@ -34,7 +34,7 @@ if grep -q '^[[:space:]]*dev[[:space:]]*tun' $CONFIG_FILE && grep -q '^[[:space:
 		if [ "$SAVED_DEFAULT_SEND_REDIRECTS" -ne 0 ]; then
 			sysctl -w net.ipv4.conf.default.send_redirects=0 > /dev/null
 		fi
-		echo -n "$SAVED_DEFAULT_SEND_REDIRECTS" > /run/openvpn-${NAME}.SEND_REDIRECTS 2>/dev/null
+		printf "%s" "$SAVED_DEFAULT_SEND_REDIRECTS" > /run/openvpn-${NAME}.SEND_REDIRECTS 2>/dev/null
 	fi
 fi
 

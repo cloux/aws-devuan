@@ -26,7 +26,7 @@ fi
 
 # move socklog commands into usual paths
 if [ -d /command ]; then
-	echo "Move socklog commands from /command/* into usual paths"
+	printf "Move socklog commands from /command/* into usual paths\n"
 	for cmdlink in $(find /command -type l 2>/dev/null); do
 		cp --dereference --remove-destination "$cmdlink" /usr/local/bin/
 		[ $? -eq 0 ] && rm "$cmdlink" 2>/dev/null
