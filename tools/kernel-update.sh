@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Check/Download/Unpack/Compile the latest Linux kernel from www.kernel.org.
 # Save progress into /usr/src/linux-NEW/compile.log
@@ -157,9 +157,9 @@ LOGFILE=${LOGFILE##*/}
 [ "$LOGFILE" ] || LOGFILE=compile.log
 
 # from here on, pipe everything to stdout and compile.log
-printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M:%S')" > \
-        "/usr/src/$KERNEL_DIR/$LOGFILE"
-exec &> >(tee -a "/usr/src/$KERNEL_DIR/$LOGFILE")
+exec 1> >(tee -a "/usr/src/$KERNEL_DIR/$LOGFILE")
+exec 2>&1
+printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M:%S')"
 
 printf "Configure ...\n"
 if [ "$CONFIGTYPE" = "ask" ]; then
