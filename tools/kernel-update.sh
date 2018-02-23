@@ -98,7 +98,7 @@ printf "Latest %s version: %s (%s)\n" "$MONIKER" "$KERNEL_VERSION" "$KERNEL_DATE
 rm "$RELEASES_FILE"
 
 if [ -e "/boot/vmlinuz-$KERNEL_VERSION" ]; then
-	printf "We already have that one."
+	printf "We already have that one.\n"
 	exit
 fi
 
