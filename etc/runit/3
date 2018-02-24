@@ -24,7 +24,7 @@ else
 fi
 
 msg "Waiting for services to stop..."
-msg "Further messages will not be logged to disk\n----"
+msg "Further messages will not be logged to disk"
 sv -w70 force-stop /etc/service/*
 sv exit /etc/service/*
 
@@ -65,4 +65,4 @@ if [ -z "$VIRTUALIZATION" ]; then
 	fi
 fi
 
-msg "Triggering reboot...\n----"
+msg "Triggering reboot..."

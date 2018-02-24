@@ -118,7 +118,7 @@ fi
 # Download
 cd /usr/src || exit 1
 if [ ! -e "$KERNEL_FILE" ]; then
-	printf "Downloading ...\n"
+	printf "\nDownloading ...\n"
 	wget --progress=dot:giga "$KERNEL_LINK"
 	if [ $? -ne 0 ]; then
 		printf "ERROR: kernel download failed.\n"
@@ -157,11 +157,12 @@ LOGFILE=${LOGFILE##*/}
 [ "$LOGFILE" ] || LOGFILE=compile.log
 
 # from here on, pipe everything to stdout and compile.log
+# NOTE: needs bash!
 exec 1> >(tee -a "/usr/src/$KERNEL_DIR/$LOGFILE")
 exec 2>&1
 printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M:%S')"
 
-printf "Configure ...\n"
+printf "\nConfigure ...\n"
 if [ "$CONFIGTYPE" = "ask" ]; then
 	# use same configuration as previous kernel, ask user for new symbols
 	make oldconfig
@@ -186,14 +187,14 @@ make -j $JOBS
 END=$(date +%s.%N)
 
 if [ -s vmlinux ]; then
-	printf "Install modules ...\n"
+	printf "\nInstall modules ...\n"
 	make modules_install
 
 	# do not generate initrd if the feature is disabled in the kernel
 	# see /etc/kernel/postinst.d/initramfs-tools hook script
 	[ $(grep -c 'BLK_DEV_INITRD *= *y' .config) -eq 0 ] && export INITRD=No
 
-	printf "Install kernel ...\n"
+	printf "\nInstall kernel ...\n"
 	make install
 
 	printf "DONE! Compile time using %s threads [s.ms]: " "$JOBS"
@@ -205,13 +206,13 @@ printf "scale=3; (%s - %s)/1\n" "$END" "$START" | bc
 [ -e "/boot/vmlinuz-$KERNEL_VERSION" ] || exit 1
 
 # apply dkms
-dkms autoinstall 2>/dev/null
+[ "$(command -v dkms)" ] && dkms autoinstall 2>/dev/null
 
 # clean up automatically, if the free space left is less than the size of this kernel
 FREE_SPACE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
 KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
 if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
-	printf "Free space left is only %s MB, Cleanup ...\n" "$FREE_SPACE_MB"
+	printf "\nFree space left is only %s MB, Cleanup ...\n" "$FREE_SPACE_MB"
 	make clean
 	# keep only "include", "arch" and "scripts"
 	find . -mindepth 1 -maxdepth 1 -type d ! -iname 'arch' ! -iname 'include' ! -iname 'scripts' -exec rm -rf '{}' \;
@@ -223,22 +224,28 @@ fi
 OLD_KERNELS=""
 CUR_KERNEL=$(uname -r)
 if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
+	printf "\nKernel cleanup ..."
 	printf "Current active kernel: %s\n" "$CUR_KERNEL"
 	printf "   New updated kernel: %s\n" "$KERNEL_VERSION"
 	OLD_KERNELS=$(find /boot -maxdepth 1 -type f -name "vmlinuz*" ! -name "*$CUR_KERNEL" ! -name "*$KERNEL_VERSION" ! -name "*memtest*" -printf '%f ')
 	OLD_KERNELS=$(printf "%s" "$OLD_KERNELS" | sed 's/vmlinuz-//g')
-	printf "     Obsolete kernels: %s\n" "$OLD_KERNELS"
-	printf "Deleting obsolete kernels ..."
-	find /boot -maxdepth 1 -type f ! -name "*$CUR_KERNEL" ! -name "*$KERNEL_VERSION" ! -name "*memtest*" -delete
-	printf "OK\nDeleting obsolete modules in /lib/modules ..."
-	for OLD_KERNEL in $OLD_KERNELS; do
-		[ -d "/lib/modules/$OLD_KERNEL" ] && rm -rf "/lib/modules/$OLD_KERNEL"
-	done
-	printf "OK\nDeleting obsolete sources in /usr/src ..."
-	for OLD_KERNEL in $OLD_KERNELS; do
-		[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
-	done
-	printf "OK\n"
+	printf "     Obsolete kernels: "
+	if [ "$OLD_KERNELS" ]; then
+		printf "%s\n" "$OLD_KERNELS"
+		printf "Deleting obsolete kernels ..."
+		find /boot -maxdepth 1 -type f ! -name "*$CUR_KERNEL" ! -name "*$KERNEL_VERSION" ! -name "*memtest*" -delete
+		printf "OK\nDeleting obsolete modules in /lib/modules ..."
+		for OLD_KERNEL in $OLD_KERNELS; do
+			[ -d "/lib/modules/$OLD_KERNEL" ] && rm -rf "/lib/modules/$OLD_KERNEL"
+		done
+		printf "OK\nDeleting obsolete sources in /usr/src ..."
+		for OLD_KERNEL in $OLD_KERNELS; do
+			[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
+		done
+		printf "OK\n"
+	else
+		printf "none\n"
+	fi
 elif [ "$CLEANUP" = "y" ]; then
 	printf "WARNING: unable to determine current kernel, skipping /boot cleanup.\n"
 fi
@@ -247,7 +254,7 @@ fi
 # the /boot path can be shared with other systems that need the same kernel, see 'kernel-pull-binary.sh'
 if [ "$SHARE" = "y" ] && [ -d "/lib/modules/$KERNEL_VERSION" ]; then
 	cd /lib/modules
-	printf "Pack modules into /boot for sharing ..."
+	printf "\nPack modules into /boot for sharing ..."
 	tar czf "/boot/modules-$KERNEL_VERSION.tgz" "$KERNEL_VERSION"
 	printf "OK\n"
 	# mark the latest available version into /boot/latest
