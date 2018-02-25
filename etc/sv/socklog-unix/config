@@ -1,4 +1,4 @@
 # Which socklog-type services will be logged.
 # A template must be available for each service.
 #
-SOCKLOG_SERVICES=(allservices cron dhclient)
+SOCKLOG_SERVICES="allservices cron dhclient"

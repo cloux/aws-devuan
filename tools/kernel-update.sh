@@ -46,7 +46,7 @@ SHARE=y
 
 # parse parameters
 CHECK=0
-for PARAM in $@; do
+for PARAM in "$@"; do
 	if [ "$PARAM" = "-c" ]; then
 		CHECK=1
 	else

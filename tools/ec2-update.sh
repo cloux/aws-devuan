@@ -90,6 +90,8 @@ cp -vf bin/linux_amd64/* $SSM_BINDIR/
 cp -vf bin/amazon-ssm-agent.json.template /etc/amazon/ssm/
 cp -vn bin/amazon-ssm-agent.json.template /etc/amazon/ssm/amazon-ssm-agent.json
 cp -vn bin/seelog_unix.xml /etc/amazon/ssm/seelog.xml
+# stop flooding the /dev/console (see bootlogd: /var/log/boot.log)
+sed -i 's/.*<console.*\/>.*//' /etc/amazon/ssm/seelog.xml
 
 # start service after update
 if [ "$(pgrep runsvdir)" ] && [ -d /etc/service/amazon-ssm-agent ]; then
