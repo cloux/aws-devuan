@@ -1,0 +1,40 @@
+#!/bin/sh
+# delete all kernels except the currently booted
+#
+# (cloux@rote.ch)
+
+CUR_KERNEL=$(uname -r)
+
+if [ ! -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
+	printf "WARNING: unable to determine the current kernel.\n"
+	exit
+fi
+
+# echo date format
+DATEFMT='%Y-%m-%d_%H:%M:%S.%N'
+
+printf "%s: Kernel cleanup\n" "$(date "+$DATEFMT")"
+printf "Current active kernel: %s\n" "$CUR_KERNEL"
+
+OLD_KERNELS=$(find /boot -maxdepth 1 -type f -name "vmlinuz*" ! -name "*$CUR_KERNEL" ! -name "*memtest*" -printf '%f ')
+OLD_KERNELS=$(printf "%s" "$OLD_KERNELS" | sed 's/vmlinuz-//g')
+
+printf "     Obsolete kernels: "
+if [ "$OLD_KERNELS" ]; then
+	printf "%s\n" "$OLD_KERNELS"
+	printf "Deleting obsolete kernels ..."
+	find /boot -maxdepth 1 -type f ! -name "*$CUR_KERNEL" ! -name "*memtest*" -delete
+
+	printf "OK\nDeleting obsolete modules and sources ..."
+	for OLD_KERNEL in $OLD_KERNELS; do
+		[ -d "/lib/modules/$OLD_KERNEL" ] && rm -rf "/lib/modules/$OLD_KERNEL"
+		[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
+	done
+	printf "OK\n"
+
+else
+	printf "none\n"
+fi
+
+printf "%s: DONE\n" "$(date "+$DATEFMT")"
+exit

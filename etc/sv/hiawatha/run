@@ -5,14 +5,24 @@ exec 2>&1
 DAEMON="$(command -v hiawatha)"
 [ -x "$DAEMON" ] || exit 0
 
-# Set Hostname parameter in hiawatha.conf to current public IP
-CONFIG_FILE=/etc/hiawatha/hiawatha.conf
-if [ -w "$CONFIG_FILE" ]; then
+CONFIG_PATH=/etc/hiawatha
+CONFIG_FILE="$CONFIG_PATH"/hiawatha.conf
+
+if [ -s "$CONFIG_FILE" ]; then
+	# Set Hostname parameter in hiawatha.conf to current public IP
 	HOSTNAME_IP=$(grep -i -m 1 'Hostname\s*=\s*[0-9.]*$' "$CONFIG_FILE" 2>/dev/null | grep -o '[0-9.]*')
 	PUBLIC_IP=$(curl http://checkip.amazonaws.com 2>/dev/null)
 	if [ "$HOSTNAME_IP" ] && [ "$PUBLIC_IP" ] && [ "$HOSTNAME_IP" != "$PUBLIC_IP" ]; then
 		sed -i "s/Hostname\\s*=\\s*[0-9.]*\$/Hostname = $PUBLIC_IP/i" "$CONFIG_FILE"
 	fi
+
+	# ensure /var/log/hiawatha is owned by www-data
+	SERVER_USER=$(grep -i -m 1 '^ServerId\s*=' "$CONFIG_FILE" 2>/dev/null | grep -o '[^ ]*$')
+	LOGDIR=$(grep -i -m 1 '^SystemLogfile\s*=' "$CONFIG_FILE" 2>/dev/null | grep -o '/.*/')
+	if [ "$SERVER_USER" ] && [ "$LOGDIR" ]; then
+		[ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
+		chown "$SERVER_USER": "$LOGDIR"
+	fi
 fi
 
-exec "$DAEMON" -d -c /etc/hiawatha >/dev/null
+exec "$DAEMON" -d -c "$CONFIG_PATH" >/dev/null

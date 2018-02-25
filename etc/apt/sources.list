@@ -2,9 +2,9 @@
 #deb http://security.debian.org/ jessie/updates main contrib non-free
 #deb http://cloudfront.debian.net/debian jessie-updates main contrib non-free
 
-#deb http://auto.mirror.devuan.org/merged jessie          main
-#deb http://auto.mirror.devuan.org/merged jessie-updates  main
-#deb http://auto.mirror.devuan.org/merged jessie-security main
+deb http://auto.mirror.devuan.org/merged jessie          main
+deb http://auto.mirror.devuan.org/merged jessie-updates  main
+deb http://auto.mirror.devuan.org/merged jessie-security main
 deb http://auto.mirror.devuan.org/merged ascii          main
 deb http://auto.mirror.devuan.org/merged ascii-updates  main
 deb http://auto.mirror.devuan.org/merged ascii-security main

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Benchmark AWS EC2 - Operating System's startup time in seconds.
 # Measured as time between instance state reported as "running"
@@ -21,7 +21,7 @@ if [ -z "$instance_id" ]; then
 fi
 
 # fill instance_* global info variables
-function get_instance_info () {
+get_instance_info () {
 	INSTANCE_INFO=$(aws ec2 describe-instances --profile $profile --instance-ids="$instance_id" 2>/dev/null)
 	instance_type=$(echo "$INSTANCE_INFO" | grep 'INSTANCES\s' | cut -f 10)
 	instance_subnet=$(echo "$INSTANCE_INFO" | grep 'PLACEMENT\s' | cut -f 2)
@@ -29,8 +29,8 @@ function get_instance_info () {
 	instance_uri=$(echo "$INSTANCE_INFO" | grep 'INSTANCES\s' | cut -f 15)
 }
 
-function start_instance () {
-	echo -n "Start instance ... "
+start_instance () {
+	printf "Start instance ... "
 	aws ec2 start-instances --profile $profile --instance-ids="$instance_id" 2>/dev/null >/dev/null
 	while true; do
 		get_instance_info
@@ -40,7 +40,7 @@ function start_instance () {
 	echo "OK"
 }
 
-function get_instance_URI () {
+get_instance_URI () {
 	if [ -z "$instance_uri" ]; then
 		echo "Wait for URI ... "
 		while [ -z "$instance_uri" ]; do
@@ -49,7 +49,7 @@ function get_instance_URI () {
 		done
 		echo "OK"
 	fi
-	if [[ "$instance_uri" =~ compute.*\.amazonaws\.com ]]; then
+	if [ "$(printf "%s" "$instance_uri" | grep 'compute.*\.amazonaws\.com')" ]; then
 		echo " Instance URI: $instance_uri"
 	else
 		echo "Error: invalid instance URI: $instance_uri"
@@ -57,18 +57,18 @@ function get_instance_URI () {
 	fi
 }
 
-function wait_for_ssh () {
-	echo -n "  Wait for SSH "
+wait_for_ssh () {
+	printf "  Wait for SSH "
 	while true; do
 		#nc -w 1 -4z "$instance_uri" 22 2>/dev/null >/dev/null; [ $? -eq 0 ] && break
 		[ "$(ssh-keyscan -4 -T 1 "$instance_uri" 2>/dev/null)" ] && break
-		echo -n "."
+		printf "."
 	done
 	echo " OK"
 }
 
-function stop_instance () {
-	echo -n " Stop instance ... "
+stop_instance () {
+	printf " Stop instance ... "
 	aws ec2 stop-instances --profile $profile --instance-ids="$instance_id" 2>/dev/null >/dev/null
 	while [ "$instance_state" != "stopped" ]; do
 		get_instance_info
@@ -87,7 +87,8 @@ if [ "$instance_state" != "stopped" ]; then
 	if [ -z "$instance_state" ]; then
 		echo  "Instance $instance_id not found in AWS '$profile' profile."
 	else
-		echo -e "Instance $instance_id is $instance_state.\nStop the instance and then start the benchmark again."
+		printf "Instance %s is %s.\n" "$instance_id" "$instance_state"
+		printf "Stop the instance and then start the benchmark again.\n"
 	fi
 	exit
 fi
@@ -105,7 +106,7 @@ for i in $(seq 1 $cycles); do
 	wait_for_ssh
 	END=$(date +%s.%N)
 	stop_instance
-	echo -e "  Bootup Time: \033[1;95m$(echo "scale=1; ($END - $START)/1" | bc)\033[0m sec"
+	printf "  Bootup Time: \033[1;95m%s\033[0m sec\n" "$(echo "scale=1; ($END - $START)/1" | bc)"
 	echo "=========================================="
 done
 

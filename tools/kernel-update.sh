@@ -224,7 +224,7 @@ fi
 OLD_KERNELS=""
 CUR_KERNEL=$(uname -r)
 if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
-	printf "\nKernel cleanup ..."
+	printf "\nKernel cleanup ...\n"
 	printf "Current active kernel: %s\n" "$CUR_KERNEL"
 	printf "   New updated kernel: %s\n" "$KERNEL_VERSION"
 	OLD_KERNELS=$(find /boot -maxdepth 1 -type f -name "vmlinuz*" ! -name "*$CUR_KERNEL" ! -name "*$KERNEL_VERSION" ! -name "*memtest*" -printf '%f ')
@@ -263,5 +263,7 @@ fi
 
 # if obsolete kernels were found and deleted, regenerate grub
 [ "$OLD_KERNELS" ] && update-grub 2>/dev/null
+
+printf "\nDONE\n"
 
 exit
