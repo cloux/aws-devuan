@@ -1,6 +1,6 @@
-#deb http://cloudfront.debian.net/debian jessie main contrib non-free
-#deb http://security.debian.org/ jessie/updates main contrib non-free
-#deb http://cloudfront.debian.net/debian jessie-updates main contrib non-free
+#deb http://cloudfront.debian.net/debian testing main contrib non-free
+#deb http://security.debian.org/ testing/updates main contrib non-free
+#deb http://cloudfront.debian.net/debian testing-updates main contrib non-free
 
 deb http://auto.mirror.devuan.org/merged jessie          main
 deb http://auto.mirror.devuan.org/merged jessie-updates  main
