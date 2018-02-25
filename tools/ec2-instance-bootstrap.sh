@@ -13,21 +13,19 @@
 
 # Make sure that I'm root
 if [ $(id -u) -ne 0 ]; then
-	echo "$0 - This script must be run as root!"
+	printf "Need to be root!\n"
 	exit 1
 fi
 
 if [ "$1" != "force" ]; then
-	echo "WARNING:"
-	echo "After shutdown, this instance will not be accessible anymore!"
-	echo "Do not proceed, if not absolutely sure, that an AMI"
-	echo "exported from this instance will start properly!!!"
-	echo
-	echo "This will remove all history, logs, and SSH keys!"
-	echo "Instance will shutdown, can be exported as AMI and"
-	echo "terminated afterwards."
-	echo
-	echo "To proceed, run this with 'force' parameter."
+	printf "WARNING:\n"
+	printf "After shutdown, this instance will not be accessible anymore!\n"
+	printf "Do not proceed, if not absolutely sure, that an AMI\n"
+	printf "exported from this instance will start properly!!!\n\n"
+	printf "This will remove all history, logs, and SSH keys!\n"
+	printf "Instance will shutdown, can be exported as AMI and\n"
+	printf "terminated afterwards.\n\n"
+	printf "To proceed, run this with 'force' parameter.\n"
 	exit
 fi
 
@@ -55,10 +53,10 @@ printf "OK\n"
 
 printf "Deleting logfiles ..."
 rm -f /var/log/boot.log* /var/log/cloud-init*.log* /var/log/dmesg.log* \
-  /var/log/apt/history.log* /var/log/apt/term.log* /var/log/hiawatha/* \
-  /var/log/pure*.log /var/log/autorun*.log* /var/log/lastlog \
-  /var/log/wtmp* /var/log/btmp* /var/backups/* \
-  /var/log/amazon/ssm/*.log 2>/dev/null
+ /var/log/apt/history.log* /var/log/apt/term.log* /var/log/hiawatha/* \
+ /var/log/pure*.log /var/log/autorun*.log* /var/log/lastlog \
+ /var/log/wtmp* /var/log/btmp* /var/backups/* \
+ /var/log/amazon/ssm/*.log 2>/dev/null
 find /var/log -type f -iname current -delete
 find /var/log -type f -iname '@*' -delete
 find /var/log -type f -iname '*.gz' -delete
