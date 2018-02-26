@@ -18,7 +18,7 @@ This project aims to provide a viable alternative to the systemd-monotheistic AW
 ---
 ## Why bother?
 
-For more better comparison of available init systems and detailed analyse of the real world systemd performance, see http://cloux.org/init/#systemd .
+For a better comparison of available init systems and detailed analyse of the real world systemd performance, see http://cloux.org/init/#systemd .
 
 systemd became the single most widespread Linux init system. And it doesn't just do init, it also does login, pam, getty, syslog, udev, cryptsetup, cron, at, dbus, acpi, gnome-session, autofs, tcpwrappers, audit, chroot, mount<sup>([1](https://systemd-free.org))</sup>, network management, DNS, Firewall, UEFI<sup>([2](http://without-systemd.org/wiki/index.php/Arguments_against_systemd#Scope_creep))</sup>, su<sup>([3](https://linux.slashdot.org/story/15/08/29/1526217/systemd-absorbs-su-command-functionality))</sup>, HTTP server<sup>([4](https://www.freedesktop.org/software/systemd/man/systemd-journal-gatewayd.service.html))</sup> ... and on saturdays it also does your laundry. Adopted by all major distributions, there seems to be no real alternative. systemd is not just a default software choice. Many packages depend directly on it, which makes it IMPOSSIBLE to remove or switch to something else later on. Once you run an OS with systemd, that's it, you're stuck with it, for better or worse, so help you God. And even if you use systemd on a daily basis and everything goes well, you might want to have some alternative. So, what alternatives are available?
 
