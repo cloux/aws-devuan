@@ -138,7 +138,7 @@ if [ $NEEDED_MB -gt $FREE_MB ]; then
 fi
 
 printf "Unpacking ...\n"
-tar -Jxf "$KERNEL_FILE"
+tar xJf "$KERNEL_FILE"
 if [ $? -ne 0 ]; then
 	printf "ERROR: Unpacking /usr/src/%s Failed!\n" "$KERNEL_FILE"
 	exit 1
