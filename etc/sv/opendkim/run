@@ -1,9 +1,9 @@
 #!/bin/sh
 exec 2>&1
 
-DAEMON=/usr/sbin/opendkim
+DAEMON=$(command -v opendkim)
 [ -x "$DAEMON" ] || exit 0
 
 [ -r /etc/opendkim.conf ] && CONF="-x /etc/opendkim.conf"
 
-exec $DAEMON -f $CONF
+exec "$DAEMON" -f $CONF

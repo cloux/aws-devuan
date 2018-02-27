@@ -1,5 +1,4 @@
 #!/bin/sh -eu
 sv start rpcbind || exit 0
 /usr/sbin/rpc.nfsd --no-nfs-version 2 --no-nfs-version 3 "$(nproc)"
-sv start rpc.mountd
 exec chpst -L supervise/runlock chpst -l supervise/runlock true

@@ -1,9 +1,0 @@
-#!/bin/sh
-# Loads kernel parameters that are specified in /etc/sysctl.conf
-exec 2>&1
-
-SYSCTL=/sbin/sysctl
-
-[ -x $SYSCTL ] || exit 0
-
-exec $SYSCTL --quiet --ignore --system

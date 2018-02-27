@@ -1,10 +1,16 @@
 #!/bin/sh
+# (cloux@rote.ch)
 exec 2>&1
+
+NAME=dovecot
+DAEMON=$(command -v "$NAME")
+[ -x "$DAEMON" ] || exit
 
 # Service instancing; name the runsv dir "dovecot" if unsure
 dovecot_config_file=/etc/dovecot/"${PWD##*/}".conf
+[ -f "$dovecot_config_file" ] || exit
 
 # N.B. Dovecot legitimately uses this dir for state, not just dumping a pidfile into:
 install -m 0755 -d "$(/usr/bin/doveconf -h base_dir -c "$dovecot_config_file")"
 
-exec /usr/sbin/dovecot -F -c "$dovecot_config_file"
+exec "$DAEMON" -F -c "$dovecot_config_file"

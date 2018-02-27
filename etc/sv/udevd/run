@@ -1,7 +1,7 @@
 #!/bin/sh
 exec 2>&1
 
-[ -x /sbin/udevd -a -x /sbin/udevadm ] || exit 0
+([ -x /sbin/udevd ] && [ -x /sbin/udevadm ]) || exit
 
 # udevd could be started unsupervised in the early init.
 # kill the old daemon first

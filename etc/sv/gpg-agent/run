@@ -3,4 +3,4 @@ exec 2>&1
 DAEMON=$(command -v gpg-agent)
 [ -x "$DAEMON" ] || exit 0
 gpgconf --kill gpg-agent
-exec $DAEMON --supervised
+exec "$DAEMON" --supervised

@@ -1,0 +1,17 @@
+#!/bin/sh
+# Monitor system downtime
+# NOTE: default logging facility is syslog: deamon
+#
+# (cloux@rote.ch)
+exec 2>&1
+
+NAME=downtimed
+DAEMON=$(command -v "$NAME")
+[ -x "$DAEMON" ] || exit
+
+[ -r ./conf ] && . ./conf
+
+[ "$FSYNC" = "n" ] && PAR_DISABLE_FSYNC="-S"
+(printf "%s" "$RESOLUTION" | grep -q '^[0-9]*$') && PAR_SPEED="-s $RESOLUTION"
+
+exec "$DAEMON" -F -p none $PAR_DISABLE_FSYNC $PAR_SPEED

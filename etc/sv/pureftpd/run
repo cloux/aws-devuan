@@ -12,17 +12,17 @@ DAEMON="$(command -v pure-ftpd-wrapper)"
 # get authentication suffix: ldap/mysql/postgresql
 SUFFIX=
 PGCONF=$($DAEMON --show-options 2>/dev/null)
-if [ "$(printf "%s" "$PGCONF" | grep ldap)" ]; then
+if (printf "%s" "$PGCONF" | grep -q ldap); then
 	SUFFIX="ldap"
-elif [ "$(printf "%s" "$PGCONF" | grep mysql)" ]; then
+elif (printf "%s" "$PGCONF" | grep -q mysql); then
 	SUFFIX="mysql"
-elif [ "$(printf "%s" "$PGCONF" | grep pgsql)" ]; then
+elif (printf "%s" "$PGCONF" | grep -q pgsql); then
 	SUFFIX="postgresql"
 fi
 
 # always use real external IP for passive mode
 PUBLIC_IP="$(curl http://checkip.amazonaws.com 2>/dev/null)"
-[ "$PUBLIC_IP" ] && echo "$PUBLIC_IP" > $CONF_DIR/ForcePassiveIP
+[ "$PUBLIC_IP" ] && printf "%s\n" "$PUBLIC_IP" > $CONF_DIR/ForcePassiveIP
 
 echo "No" > $CONF_DIR/Daemonize
 exec $DAEMON $SUFFIX

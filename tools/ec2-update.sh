@@ -61,9 +61,10 @@ if [ -d amazon-ssm-agent ]; then
 	# update: git pull
 	cd amazon-ssm-agent || exit
 	git pull
-	
 else
-	# install: git clone
+	# clone repository
+	# NOTE: as of 2018-02-26, the official aws repository is buggy and won't compile.
+	#       pull from cloux until fixed
 	#git clone https://github.com/aws/amazon-ssm-agent
 	git clone https://github.com/cloux/amazon-ssm-agent
 	cd amazon-ssm-agent || exit

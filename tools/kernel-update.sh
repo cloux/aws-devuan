@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
-# Check/Download/Unpack/Compile the latest Linux kernel from www.kernel.org.
-# Save progress into /usr/src/linux-NEW/compile.log
+# Check/Download/Compile the latest Linux kernel from https://www.kernel.org.
+# If in GUI, show notification balloon if a new kernel is available.
+# Save compilation progress into /usr/src/linux-NEW/compile.log
 #
 # Usage: kernel-update [moniker] [-c]
 #
@@ -79,7 +80,7 @@ else
 	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po "[^{]+\"$MONIKER\"[^}]+}[^}]*" | head -n 1)
 fi
 if [ -z "$JSON" ]; then
-	echo "Moniker section for '$MONIKER' not found. Abort."
+	echo "ERROR: JSON moniker section for '$MONIKER' not found."
 	exit 1
 fi
 KERNEL_DATE=$(printf "%s" "$JSON" | grep -Po 'isodate[^,}]+' | grep -Po '\d[^"]+')
@@ -190,14 +191,14 @@ if [ -s vmlinux ]; then
 	printf "\nInstall modules ...\n"
 	make modules_install
 
-	# do not generate initrd if the feature is disabled in the kernel
-	# see /etc/kernel/postinst.d/initramfs-tools hook script
-	[ $(grep -c 'BLK_DEV_INITRD *= *y' .config) -eq 0 ] && export INITRD=No
+	# Do not generate initrd if the feature is disabled in the kernel.
+	# See /etc/kernel/postinst.d/initramfs-tools hook script
+	[ $(grep -ic 'BLK_DEV_INITRD *= *y' .config) -eq 0 ] && export INITRD=No
 
 	printf "\nInstall kernel ...\n"
 	make install
 
-	printf "DONE! Compile time using %s threads [s.ms]: " "$JOBS"
+	printf "Compilation finished using %s threads after [s.ms]: " "$JOBS"
 else
 	printf "Compilation FAILED after [s.ms]: "
 fi
@@ -243,6 +244,8 @@ if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
 			[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
 		done
 		printf "OK\n"
+		printf "Regenerate grub ...\n"
+		update-grub 2>/dev/null
 	else
 		printf "none\n"
 	fi
@@ -260,9 +263,6 @@ if [ "$SHARE" = "y" ] && [ -d "/lib/modules/$KERNEL_VERSION" ]; then
 	# mark the latest available version into /boot/latest
 	printf "%s" "$KERNEL_VERSION" > /boot/latest
 fi
-
-# if obsolete kernels were found and deleted, regenerate grub
-[ "$OLD_KERNELS" ] && update-grub 2>/dev/null
 
 printf "\nDONE\n"
 

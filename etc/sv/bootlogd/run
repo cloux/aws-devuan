@@ -1,9 +1,14 @@
 #!/bin/sh
 exec 2>&1
 
-[ -x /sbin/bootlogd ] || exit 0
+LOGFILE=/var/log/boot.log
+[ -r ./config ] && . ./config
+
+NAME=bootlogd
+DAEMON=$(command -v "$NAME")
+[ -x "$DAEMON" ] || exit 0
 
 # stop any bootlog daemons running outside of runsvdir
-killall --quiet --exact bootlogd
+killall --quiet --exact "$NAME"
 
-exec /sbin/bootlogd -d -c -l /var/log/boot.log
+exec $DAEMON -d -c -l "$LOGFILE"
