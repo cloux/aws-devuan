@@ -13,34 +13,34 @@
 
 This project aims to provide a viable alternative to the systemd-monotheistic AWS offering. The goal is to track progress and maintain documentation for a fast, stable and secure general-purpose operating system for [Amazon EC2](https://aws.amazon.com/ec2/).
 
-[Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [Ascii](https://devuan.org/os/releases), which runs SysVinit by default, was modified to use [Runit](http://smarden.org/runit/) instead. All changes regarding this switch are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
+[Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [Ascii](https://devuan.org/os/releases), which runs SysVinit by default, was modified to use [Runit](http://cloux.org/init/#runit) instead. All relevant changes are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
 
 ---
 ## Why bother?
 
-Because of systemd, and its real world performance: http://cloux.org/init/#systemd
+Because of systemd and its real world performance: http://cloux.org/init/#systemd
 
 systemd became the single most widespread Linux init system. And it doesn't just do init, it also does login, pam, getty, syslog, udev, cryptsetup, cron, at, dbus, acpi, gnome-session, autofs, tcpwrappers, audit, chroot, mount<sup>([1](https://systemd-free.org))</sup>, network management, DNS, Firewall, UEFI<sup>([2](http://without-systemd.org/wiki/index.php/Arguments_against_systemd#Scope_creep))</sup>, su<sup>([3](https://linux.slashdot.org/story/15/08/29/1526217/systemd-absorbs-su-command-functionality))</sup>, HTTP server<sup>([4](https://www.freedesktop.org/software/systemd/man/systemd-journal-gatewayd.service.html))</sup> ... and on saturdays it also does your laundry. Adopted by all major distributions, there seems to be no real alternative. systemd is not just a default software choice. Many packages depend directly on it, which makes it IMPOSSIBLE to remove or switch to something else later on. Once you run an OS with systemd, that's it, you're stuck with it, for better or worse, so help you God. And even if you use systemd on a daily basis and everything goes well, you might want to have some alternative. So, what alternatives are available?
 
 ### EC2 Linux AMI Comparison
 
-Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-02:
+Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 
-| AMI Name | [Init System](https://devuan.org/os/init-freedom/) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> <sup>([&pm;SD](https://en.wikipedia.org/wiki/Standard_deviation))</sup> | License | 
+| AMI Name | [Init System](http://cloux.org/init) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> <sup>([&pm;SD](https://en.wikipedia.org/wiki/Standard_deviation))</sup> | License | 
 | :---  | :--- | :--- | :--- | :--- | :--- | :--- |
-| Amazon Linux AMI 2017.09.1 | systemd | Quick Start | rpm | 8 GB | 11.8&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | [EULA](https://aws.amazon.com/agreement/) |
-| Amazon Linux 2 LTS Candidate AMI 2017.12.0 | systemd | Quick Start | rpm | 8 GB | 30.2&nbsp;s&nbsp;<sup>(&pm;1.6)</sup> | [EULA](https://aws.amazon.com/agreement/) |
-| Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | systemd | Quick Start | rpm | 10 GB | 20.4&nbsp;s&nbsp;<sup>(&pm;1.7)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
-| SUSE Linux Enterprise Server 12 SP3 | systemd | Quick Start | rpm | 10 GB | 46.4&nbsp;s&nbsp;<sup>(&pm;0.5)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
-| Ubuntu Server 16.04 LTS | systemd | Quick Start | apt | 8 GB | 16.8&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
-| CentOS 7 | systemd | Marketplace | rpm | 8 GB | 21.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | Free |
-| Debian GNU/Linux 9.3 Stretch | systemd | Marketplace | apt | 8 GB | 8.0&nbsp;s&nbsp;<sup>(&pm;0.7)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
-| **Devuan Ascii 2018-02-14** | [**Runit**](https://en.wikipedia.org/wiki/Runit) | **Community** | **apt** | **4 GB** | **5.1&nbsp;s**&nbsp;<sup>(&pm;0.8)</sup> | [**Free**](https://devuan.org/os/free-software) |
+| Amazon Linux AMI 2017.09.1 | SysVinit | Quick Start | rpm | 8 GB | 7.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Amazon Linux 2 LTS Candidate AMI 2017.12.0 | systemd | Quick Start | rpm | 8 GB | 26.6&nbsp;s&nbsp;<sup>(&pm;0.2)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | systemd | Quick Start | rpm | 10 GB | 13.0&nbsp;s&nbsp;<sup>(&pm;0.5)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
+| SUSE Linux Enterprise Server 12 SP3 | systemd | Quick Start | rpm | 10 GB | 44.2&nbsp;s&nbsp;<sup>(&pm;1.3)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
+| Ubuntu Server 16.04 LTS | systemd | Quick Start | apt | 8 GB | 10.5&nbsp;s&nbsp;<sup>(&pm;1.6)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
+| CentOS 7 | systemd | Marketplace | rpm | 8 GB | 15.0&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | Free |
+| Debian GNU/Linux 9.3 Stretch | systemd | Marketplace | apt | 8 GB | 7.0&nbsp;s&nbsp;<sup>(&pm;0.9)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
+| **Devuan Ascii 2018-02-14** | [**Runit**](http://cloux.org/init/#runit) | **Community** | **apt** | **4 GB** | **5.1&nbsp;s**&nbsp;<sup>(&pm;0.8)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
-<sup>\*1) Smallest possible volume storage size for a new instance</sup>  
+<sup>\*1) Smallest possible storage size for a new instance</sup>  
 <sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
-This is not a comprehensive comparison, some OS might disqualify for other reasons, like their limited [instance type](https://aws.amazon.com/ec2/instance-types/) support. While [Gentoo](https://gentoo.org) uses [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) and not systemd, most of the Gentoo AMIs are limited to just a few instance types, therefore it's not considered a general-purpose system on EC2 and is not included in the comparison (also, the latest version doesn't run on t2.micro). However, if it works for your use case, Gentoo is definitely worth a try.
+This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try. While Amazon Linux 2017 supports SysVinit, it is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
 
 All major Linux distributions already transitioned to systemd. If you want to use something else on Amazon EC2, you are pretty much out of luck. This is where the **Devuan Ascii + Runit** distribution comes in:
 
@@ -49,7 +49,7 @@ All major Linux distributions already transitioned to systemd. If you want to us
 
 Currently available Devuan AMI offers:
 
- * [**Runit**](http://smarden.org/runit/) as init and service supervisor
+ * [**Runit**](http://cloux.org/init/#runit) as init and service supervisor
  * Small footprint with only **4 GB** minimal EBS volume size
  * Fast direct boot **without Initrd**
  * Custom [compiled](tools/kernel-update.sh) stable kernel from https://www.kernel.org
@@ -147,7 +147,7 @@ This repository is maintained by _cloux@rote.ch_
 
 ### Disclaimer
 
-I am not involved in the development, nor in any way affiliated with any particular init system. I do not participate in any discussion or flamewar about init. I am not a fanboy, nor a hater. I do not have any personal feelings towards any init, or any other software, or it's developers. As a sysadmin, I could not care less which init system is in use. As long as it works. And in the case it doesn't, I want to have a solid alternative available. Also, I do not claim fitness of this project for any particular purpose, and do not take any responsibility for it's use. You should always choose your system and all of it's components very carefully, if something breaks it's on you. See [license](#license).
+I am not involved or in any way affiliated with the development of any particular init system. I do not participate in any public discussion or flamewar about init. I am not a fanboy, nor a hater. I do not have any personal feelings towards any init, or any other software, or its developers. As a sysadmin I could not care less which init system is in use. As long as it works. And in the case it doesn't, I want to have a solid alternative. Also, I do not claim fitness of this project for any particular purpose, and do not take any responsibility for its use. You should always choose your system and all of its components very carefully, if something breaks it's on you. See [license](#license).
 
 _NOTE:_ Much of the Runit base structure is "borrowed" from the [void-runit](https://github.com/voidlinux/void-runit), and modified to integrate with Devuan inside cloud environment.
 
