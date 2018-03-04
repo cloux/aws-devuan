@@ -61,11 +61,15 @@ rm -f /var/log/boot.log* /var/log/cloud-init*.log* /var/log/dmesg.log* \
  /var/log/apt/history.log* /var/log/apt/term.log* /var/log/hiawatha/* \
  /var/log/pure*.log /var/log/autorun*.log* /var/log/lastlog \
  /var/log/wtmp* /var/log/btmp* /var/backups/* \
- /var/log/amazon/ssm/*.log 2>/dev/null
+ /var/log/amazon/ssm/*.log /var/log/aptitude 2>/dev/null
 find /var/log -type f -iname current -delete
 find /var/log -type f -iname '@*' -delete
 find /var/log -type f -iname '*.gz' -delete
 find /var/log -type f -iname '*.xz' -delete
+printf "OK\n"
+
+printf "Deleting /var/lib/cloud/instances ..."
+rm -rf /var/lib/cloud/instances/*
 printf "OK\n"
 
 printf "\nAfter shutdown, instance can be exported as AMI.\n"

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # Check/Download/Compile the latest Linux kernel from https://www.kernel.org.
 # If in GUI, show notification balloon if a new kernel is available.
@@ -157,9 +157,6 @@ cd "$KERNEL_DIR"
 LOGFILE=${LOGFILE##*/}
 [ "$LOGFILE" ] || LOGFILE=compile.log
 
-# from here on, pipe everything to stdout and compile.log
-# NOTE: needs bash!
-exec 1> >(tee -a "/usr/src/$KERNEL_DIR/$LOGFILE")
 exec 2>&1
 printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M:%S')"
 
@@ -182,24 +179,28 @@ fi
 [ $? -ne 0 ] && JOBS=0
 [ $JOBS -gt 0 ] || JOBS=$(nproc --all 2>/dev/null)
 
+printf "Logfile: %s\n" "/usr/src/$KERNEL_DIR/$LOGFILE"
 printf "Compile using %s threads ...\n" "$JOBS"
 START=$(date +%s.%N)
-make -j $JOBS
+make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE"
 END=$(date +%s.%N)
+printf "DONE\n"
 
 if [ -s vmlinux ]; then
-	printf "\nInstall modules ...\n"
-	make modules_install
+	printf "\nInstall modules ..."
+	make modules_install >>"/usr/src/$KERNEL_DIR/$LOGFILE"
+	printf "OK\n"
 
 	# Do not generate initrd if the feature is disabled in the kernel.
 	# See /etc/kernel/postinst.d/initramfs-tools hook script
-	[ $(grep -ic 'BLK_DEV_INITRD *= *y' .config) -eq 0 ] && export INITRD=No
+	(grep -iq 'BLK_DEV_INITRD *= *y' .config) || export INITRD=No
 
 	printf "\nInstall kernel ...\n"
 	make install
 
 	printf "Compilation finished using %s threads after [s.ms]: " "$JOBS"
 else
+	tail -n 15 "/usr/src/$KERNEL_DIR/$LOGFILE"
 	printf "Compilation FAILED after [s.ms]: "
 fi
 printf "scale=3; (%s - %s)/1\n" "$END" "$START" | bc
