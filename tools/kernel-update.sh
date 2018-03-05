@@ -61,10 +61,12 @@ if [ $CHECK -eq 0 ] && [ $(id -u) -ne 0 ]; then
 	exit 1
 fi
 
+#
+# Get information about the latest kernel on kernel.org
+#
+printf "Searching for kernel update ...\n"
 # JSON file with current kernel information.
 RELEASES_LINK=https://www.kernel.org/releases.json
-
-printf "Searching for kernel update ...\n"
 cd /tmp || exit 1
 wget -q -N "$RELEASES_LINK"
 RELEASES_FILE=$(printf "%s" "$RELEASES_LINK" | grep -Po '(?<=/)[^"/]+$')
@@ -72,13 +74,14 @@ if [ ! -e "$RELEASES_FILE" ]; then
 	printf "ERROR: Link %s not available!\n" "$RELEASES_LINK"
 	exit 1
 fi
-
 if [ "$MONIKER" = "stable" ]; then
 	LATEST_STABLE_VER=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po '"latest_stable"[^}]+' | grep -Po '\d[^"}]+')
 	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po "[^{]+\"$LATEST_STABLE_VER\"[^}]+}[^}]*")
 else
 	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po "[^{]+\"$MONIKER\"[^}]+}[^}]*" | head -n 1)
 fi
+# remove temporary JSON kernel info file
+rm "$RELEASES_FILE"
 if [ -z "$JSON" ]; then
 	echo "ERROR: JSON moniker section for '$MONIKER' not found."
 	exit 1
@@ -94,16 +97,14 @@ KERNEL_VERSION=$(printf "%s" "$JSON" | grep -Po 'version[^,}]+' | grep -Po '\d[^
 KERNEL_VERSION=$(printf "%s" "$KERNEL_VERSION" | sed 's/\.0\.0-/.0-/')
 
 printf "Latest %s version: %s (%s)\n" "$MONIKER" "$KERNEL_VERSION" "$KERNEL_DATE"
-
-# remove temporary JSON kernel info file
-rm "$RELEASES_FILE"
-
 if [ -e "/boot/vmlinuz-$KERNEL_VERSION" ]; then
 	printf "We already have that one.\n"
 	exit
 fi
 
-# if we are just checking, notify the user and exit
+#
+# If checking, notify the user and exit
+#
 if [ $CHECK -ne 0 ]; then
 	printf "This is a new kernel, you may update.\n"
 	# show notification balloon in GUI environment
@@ -116,7 +117,15 @@ if [ $CHECK -ne 0 ]; then
 	exit
 fi
 
+#
+# Start Kernel Update
+#
+exec 2>&1
+printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M:%S')"
+
+#
 # Download
+#
 cd /usr/src || exit 1
 if [ ! -e "$KERNEL_FILE" ]; then
 	printf "\nDownloading ...\n"
@@ -127,7 +136,9 @@ if [ ! -e "$KERNEL_FILE" ]; then
 	fi
 fi
 
-# is there enough free space in /usr/src ?
+#
+# Check free space in /usr/src
+#
 FREE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
 # rough estimate how much do we need
 KERNEL_SIZE_MB=$(du --block-size=M "$KERNEL_FILE" | grep -o '^[0-9]*')
@@ -138,6 +149,9 @@ if [ $NEEDED_MB -gt $FREE_MB ]; then
 	exit 1
 fi
 
+#
+# Unpack
+#
 printf "Unpacking ...\n"
 tar xJf "$KERNEL_FILE"
 if [ $? -ne 0 ]; then
@@ -153,32 +167,39 @@ if [ ! -d "$KERNEL_DIR" ]; then
 fi
 cd "$KERNEL_DIR"
 
+#
+# Configure (see CONFIGTYPE variable)
+#
+printf "\nConfigure "
 # clean up logfile variable
 LOGFILE=${LOGFILE##*/}
 [ "$LOGFILE" ] || LOGFILE=compile.log
-
-exec 2>&1
-printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M:%S')"
-
-printf "\nConfigure ...\n"
 if [ "$CONFIGTYPE" = "ask" ]; then
 	# use same configuration as previous kernel, ask user for new symbols
+	printf "'%s' ...\n" "$CONFIGTYPE"
 	make oldconfig
 elif [ "$CONFIGTYPE" = "menu" ]; then
 	# same as "old", then run ncurses configuration tool for additional changes
+	printf "'%s' ...\n" "$CONFIGTYPE"
 	make oldconfig
 	make menuconfig
 else
 	# by default, run automatic unattended update: use previous kernel config, 
 	# and apply default values for new symbols
+	printf "'unattended' ...\n"
 	make olddefconfig
 fi
 
-# if JOBS not properly set, use all CPU cores
+#
+# Define compiler threads (see JOBS variable)
+#
 [ $JOBS -gt 0 ] 2>/dev/null
 [ $? -ne 0 ] && JOBS=0
 [ $JOBS -gt 0 ] || JOBS=$(nproc --all 2>/dev/null)
 
+#
+# Compile
+#
 printf "Logfile: %s\n" "/usr/src/$KERNEL_DIR/$LOGFILE"
 printf "Compile using %s threads ...\n" "$JOBS"
 START=$(date +%s.%N)
@@ -186,6 +207,9 @@ make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE"
 END=$(date +%s.%N)
 printf "DONE\n"
 
+#
+# Install
+#
 if [ -s vmlinux ]; then
 	printf "\nInstall modules ..."
 	make modules_install >>"/usr/src/$KERNEL_DIR/$LOGFILE"
@@ -207,10 +231,15 @@ printf "scale=3; (%s - %s)/1\n" "$END" "$START" | bc
 
 [ -e "/boot/vmlinuz-$KERNEL_VERSION" ] || exit 1
 
-# apply dkms
+#
+# Apply dkms
+#
 [ "$(command -v dkms)" ] && dkms autoinstall 2>/dev/null
 
-# clean up automatically, if the free space left is less than the size of this kernel
+#
+# Clean up
+#
+# force cleanup if the free space left is less than the size of this kernel
 FREE_SPACE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
 KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
 if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
@@ -222,7 +251,9 @@ if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
 	find ./arch -mindepth 1 -maxdepth 1 -type d ! -iname 'x86*' -exec rm -rf '{}' \; 2>/dev/null
 fi
 
-# delete obsolete kernels
+#
+# Delete obsolete kernels (see CLEANUP variable)
+#
 OLD_KERNELS=""
 CUR_KERNEL=$(uname -r)
 if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
@@ -245,8 +276,7 @@ if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
 			[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
 		done
 		printf "OK\n"
-		printf "Regenerate grub ...\n"
-		update-grub 2>/dev/null
+		update-grub
 	else
 		printf "none\n"
 	fi
@@ -254,7 +284,9 @@ elif [ "$CLEANUP" = "y" ]; then
 	printf "WARNING: unable to determine current kernel, skipping /boot cleanup.\n"
 fi
 
-# pack new kernel modules into /boot
+#
+# Pack new kernel modules into /boot (see SHARE variable)
+#
 # the /boot path can be shared with other systems that need the same kernel, see 'kernel-pull-binary.sh'
 if [ "$SHARE" = "y" ] && [ -d "/lib/modules/$KERNEL_VERSION" ]; then
 	cd /lib/modules
