@@ -1,0 +1,28 @@
+#
+#  Configuration for kernel-update.sh
+#
+
+# Linux kernel branch
+MONIKER=stable
+
+# How to run kernel configuration:
+# "ask"  - use config from previous kernel, ask user for new symbols
+# "menu" - same as "ask", then run ncurses tool for modifications
+# empty (default) - use config from previous kernel, and apply defaults for
+#                   new symbols. Fully automated, for unattended upgrades.
+#CONFIGTYPE=ask
+CONFIGTYPE=
+
+# Number of simultaneous compilation jobs.
+# If not set, detect and use all CPU cores.
+JOBS=
+
+# Compilation log will go into: /usr/src/kernel-VERSION/$LOGFILE
+LOGFILE=compile.log
+
+# Delete obsolete kernels, keep only the currently used and the new one
+CLEANUP=y
+
+# Pack kernel modules into an archive in /boot for sharing.
+# Useful when combined with a webserver, and kernel-pull-binary.sh
+SHARE=y

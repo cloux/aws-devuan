@@ -1,13 +1,11 @@
 #!/bin/sh
 #
 # Check/Download/Compile the latest Linux kernel from https://www.kernel.org.
-# If in GUI, show notification balloon if a new kernel is available.
-# Save compilation progress into /usr/src/linux-NEW/compile.log
+# If checking in GUI, show notification balloon if a new kernel is available.
 #
 # Usage: kernel-update [moniker] [-c]
 #
-#        moniker: stable, mainline, longterm, linux-next...
-#                 Go for stable version if empty.
+#        moniker: stable, mainline, longterm, linux-next, etc.
 #             -c: just check if new version is available, don't update
 #
 # dependencies: wget bc libncurses5-dev
@@ -16,11 +14,14 @@
 # (cloux@rote.ch)
 ###########################################################
 
+# Linux kernel branch
+MONIKER=stable
+
 # How to run kernel configuration:
 # "ask"  - use config from previous kernel, ask user for new symbols
 # "menu" - same as "ask", then run ncurses tool for modifications
-# empty (default) - use config from previous kernel, and apply defaults
-#                   for new symbols. Fully automated, for unattended upgrades.
+# empty (default) - use config from previous kernel, and apply defaults for
+#                   new symbols. Fully automated, for unattended upgrades.
 #CONFIGTYPE=ask
 CONFIGTYPE=
 
@@ -28,17 +29,17 @@ CONFIGTYPE=
 # If not set, detect and use all CPU cores.
 JOBS=
 
-# default kernel branch
-MONIKER=stable
-
-# Compilation log will be: /usr/src/kernel-VERSION/$LOGFILE
+# Compilation log will go into: /usr/src/kernel-VERSION/$LOGFILE
 LOGFILE=compile.log
 
-# Delete obsolete kernels, keep only the currently used and the newly compiled
-CLEANUP=y
+# Delete obsolete kernels, keep only the currently used and the new one
+#CLEANUP=y
+CLEANUP=
 
-# Pack kernel modules into an archive in /boot for sharing?
-SHARE=y
+# Pack kernel modules into an archive in /boot for sharing.
+# Useful when combined with a webserver, and kernel-pull-binary.sh
+#SHARE=y
+SHARE=
 
 ###########################################################
 
