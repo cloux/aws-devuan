@@ -77,8 +77,8 @@ The setup differences compared to a clean Devuan installation mainly address run
  * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
  * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
  * Socklog (http://smarden.org/socklog/install.html)
- * _amazon-ssm-agent_ and _ec2-metadata_, see [ec2-update.sh](tools/ec2-update.sh)
- * additional [tools](tools/) in _/usr/local/bin_
+ * [amazon-ssm-agent](tools/install-amazon-ssm-agent.sh) and [ec2-metadata](tools/install-ec2-metadata.sh)
+ * more [tools](tools/) in _/usr/local/bin_
 
 Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
@@ -117,12 +117,12 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
 
 ### System Updates
 
- * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from kernel.org
+ * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from [kernel.org](https://www.kernel.org)
+ * [kernel-pull-binary.sh](tools/kernel-pull-binary.sh) - get latest kernel from a server which compiled it with _kernel-update.sh_
  * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
  * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by [certbot](https://certbot.eff.org/#devuanother-other)
- * [ec2-update.sh](tools/ec2-update.sh) - update [ec2-metadata](https://aws.amazon.com/code/ec2-instance-metadata-query-tool/) and [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent)
 
-   NOTE: these scripts are included in _/usr/local/bin_ inside the AMI
+NOTE: these scripts are included in _/usr/local/bin_ inside the AMI
 
 ---
 ## ToDo
