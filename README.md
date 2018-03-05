@@ -28,7 +28,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 
 | AMI Name | [Init System](http://cloux.org/init) | Category | Packages | EBS Size<sup>*1</sup> | Boot Time<sup>*2</sup> <sup>([&pm;SD](https://en.wikipedia.org/wiki/Standard_deviation))</sup> | License | 
 | :---  | :--- | :--- | :--- | :--- | :--- | :--- |
-| Amazon Linux AMI 2017.09.1 | SysVinit | Quick Start | rpm | 8 GB | 7.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://aws.amazon.com/agreement/) |
+| Amazon Linux AMI 2017.09.1 | upstart | Quick Start | rpm | 8 GB | 7.2&nbsp;s&nbsp;<sup>(&pm;1.1)</sup> | [EULA](https://aws.amazon.com/agreement/) |
 | Amazon Linux 2 LTS Candidate AMI 2017.12.0 | systemd | Quick Start | rpm | 8 GB | 26.6&nbsp;s&nbsp;<sup>(&pm;0.2)</sup> | [EULA](https://aws.amazon.com/agreement/) |
 | Red Hat Enterprise Linux [7.4](https://access.redhat.com/articles/3135091) | systemd | Quick Start | rpm | 10 GB | 13.0&nbsp;s&nbsp;<sup>(&pm;0.5)</sup> | [EULA](https://www.redhat.com/en/about/agreements) |
 | SUSE Linux Enterprise Server 12 SP3 | systemd | Quick Start | rpm | 10 GB | 44.2&nbsp;s&nbsp;<sup>(&pm;1.3)</sup> | [EULA](https://www.suse.com/company/legal/#c), [Terms](https://www.suse.com/products/terms_and_conditions.pdf) |
@@ -40,7 +40,8 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 <sup>\*1) Smallest possible storage size for a new instance</sup>  
 <sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
-This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try. While Amazon Linux 2017 supports SysVinit, it is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
+This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try.  
+Amazon Linux 2017.09 looks like it's running SysVinit, but PID1 uses [obsolete](https://launchpad.net/upstart/+series) upstart v0.6.5. Either way, Amazon Linux is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
 
 All major Linux distributions already transitioned to systemd. If you want to use something else on Amazon EC2, you are pretty much out of luck. This is where the **Devuan Ascii + Runit** distribution comes in:
 
