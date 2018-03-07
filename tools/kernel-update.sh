@@ -47,20 +47,28 @@ SHARE=
 [ -r /etc/default/kernel-update ] && . /etc/default/kernel-update
 
 # parse parameters
-CHECK=0
+CHECK=""
 for PARAM in "$@"; do
 	if [ "$PARAM" = "-c" ]; then
-		CHECK=1
+		CHECK="Y"
 	else
 		MONIKER="$PARAM"
 	fi
 done
 
 # We need to be root to install new kernel
-if [ $CHECK -eq 0 ] && [ $(id -u) -ne 0 ]; then
+if [ -z "$CHECK" ] && [ $(id -u) -ne 0 ]; then
 	printf "Need to be root to update kernel!\n" 1>&2
 	exit 1
 fi
+
+# Check dependencies
+for DEP in wget bc; do
+	if [ -z "$(command -v $DEP)" ]; then
+		printf "ERROR: Please install '%s' to continue.\n" "$DEP"
+		exit 1
+	fi
+done
 
 #
 # Get information about the latest kernel on kernel.org
@@ -106,7 +114,7 @@ fi
 #
 # If checking, notify the user and exit
 #
-if [ $CHECK -ne 0 ]; then
+if [ "$CHECK" ]; then
 	printf "This is a new kernel, you may update.\n"
 	# show notification balloon in GUI environment
 	if [ "$(command -v notify-send)" ]; then
