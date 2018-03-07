@@ -148,7 +148,7 @@ This repository is maintained by _cloux@rote.ch_
 
 ### Disclaimer
 
-I am not involved or in any way affiliated with the development of any particular init system. I do not participate in any public discussion or flamewar about init. I am not a fanboy, nor a hater. I do not have any personal feelings towards any init, or any other software, or its developers. As a sysadmin I could not care less which init system is in use. As long as it works. And in the case it doesn't, I want to have a solid alternative. Also, I do not claim fitness of this project for any particular purpose, and do not take any responsibility for its use. You should always choose your system and all of its components very carefully, if something breaks it's on you. See [license](#license).
+I am not involved or in any way affiliated with the development of any particular init system. I do not participate in any public discussion or flamewar about init. I am not a fanboy, nor a hater. I do not have any personal feelings towards any init, or any other software, or its developers. As a sysadmin I could not care less which init system is in use, as long as it works. Also, I do not claim fitness of this project for any particular purpose and do not take any responsibility for its use. You should always choose your system and all of its components very carefully, if something breaks it's on you. See [license](#license).
 
 _NOTE:_ Much of the Runit base structure is "borrowed" from the [void-runit](https://github.com/voidlinux/void-runit), and modified to integrate with Devuan inside cloud environment.
 
