@@ -41,7 +41,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 <sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
 This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try.  
-Amazon Linux 2017.09 looks like it's running SysVinit, but PID1 uses [obsolete](https://launchpad.net/upstart/+series) upstart v0.6.5. Either way, Amazon Linux is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
+Amazon Linux 2017.09 looks like it's running SysVinit, but PID1 uses [obsolete](https://launchpad.net/upstart/+series) upstart v0.6.5. Either way, this OS is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
 
 All major Linux distributions already transitioned to systemd. If you want to use something else on Amazon EC2, you are pretty much out of luck. This is where the **Devuan Ascii + Runit** distribution comes in:
 
