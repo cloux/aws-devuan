@@ -210,7 +210,7 @@ fi
 # Compile
 #
 printf "Logfile: %s\n" "/usr/src/$KERNEL_DIR/$LOGFILE"
-printf "Compile using %s threads ...\n" "$JOBS"
+printf "Compile using %s threads ..." "$JOBS"
 START=$(date +%s.%N)
 make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE"
 END=$(date +%s.%N)
@@ -222,7 +222,7 @@ printf "DONE\n"
 if [ -s vmlinux ]; then
 	printf "\nInstall modules ..."
 	make modules_install >>"/usr/src/$KERNEL_DIR/$LOGFILE"
-	printf "OK\n"
+	printf "DONE\n"
 
 	# Do not generate initrd if the feature is disabled in the kernel.
 	# See /etc/kernel/postinst.d/initramfs-tools hook script
@@ -231,10 +231,10 @@ if [ -s vmlinux ]; then
 	printf "\nInstall kernel ...\n"
 	make install
 
-	printf "Compilation finished using %s threads after [s.ms]: " "$JOBS"
+	printf "\nCompilation FINISHED after [s.ms]: "
 else
 	tail -n 15 "/usr/src/$KERNEL_DIR/$LOGFILE"
-	printf "Compilation FAILED after [s.ms]: "
+	printf "\nCompilation FAILED after [s.ms]: "
 fi
 printf "scale=3; (%s - %s)/1\n" "$END" "$START" | bc
 
@@ -243,22 +243,7 @@ printf "scale=3; (%s - %s)/1\n" "$END" "$START" | bc
 #
 # Apply dkms
 #
-[ "$(command -v dkms)" ] && dkms autoinstall 2>/dev/null
-
-#
-# Clean up
-#
-# force cleanup if the free space left is less than the size of this kernel
-FREE_SPACE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
-KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
-if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
-	printf "\nFree space left is only %s MB, Cleanup ...\n" "$FREE_SPACE_MB"
-	make clean
-	# keep only "include", "arch" and "scripts"
-	find . -mindepth 1 -maxdepth 1 -type d ! -iname 'arch' ! -iname 'include' ! -iname 'scripts' -exec rm -rf '{}' \;
-	# in arch, keep only "x86" and "x86_64"
-	find ./arch -mindepth 1 -maxdepth 1 -type d ! -iname 'x86*' -exec rm -rf '{}' \; 2>/dev/null
-fi
+[ "$(command -v dkms)" ] && dkms autoinstall >>"/usr/src/$KERNEL_DIR/$LOGFILE"
 
 #
 # Delete obsolete kernels (see CLEANUP variable)
@@ -285,12 +270,27 @@ if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
 			[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
 		done
 		printf "OK\n"
-		update-grub
+		/usr/sbin/update-grub
 	else
 		printf "none\n"
 	fi
 elif [ "$CLEANUP" = "y" ]; then
 	printf "WARNING: unable to determine current kernel, skipping /boot cleanup.\n"
+fi
+
+#
+# Clean up
+#
+# force cleanup if the free space left is less than the size of this kernel
+FREE_SPACE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
+KERNEL_SRC_MB=$(du --summarize --block-size=M . | grep -o '^[0-9]*')
+if [ $KERNEL_SRC_MB -gt $FREE_SPACE_MB ]; then
+	printf "\nFree space left is only %s MB, Cleanup ...\n" "$FREE_SPACE_MB"
+	make clean
+	# keep only "include", "arch" and "scripts"
+	find . -mindepth 1 -maxdepth 1 -type d ! -iname 'arch' ! -iname 'include' ! -iname 'scripts' -exec rm -rf '{}' \;
+	# in arch, keep only "x86" and "x86_64"
+	find ./arch -mindepth 1 -maxdepth 1 -type d ! -iname 'x86*' -exec rm -rf '{}' \; 2>/dev/null
 fi
 
 #
