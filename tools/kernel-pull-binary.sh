@@ -66,6 +66,6 @@ rm -f "modules-$LATEST.tgz"
 printf "OK\n"
 
 # use the new kernel
-update-grub
+/usr/sbin/update-grub
 
 exit
