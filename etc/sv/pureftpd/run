@@ -24,5 +24,5 @@ fi
 PUBLIC_IP="$(curl http://checkip.amazonaws.com 2>/dev/null)"
 [ "$PUBLIC_IP" ] && printf "%s\n" "$PUBLIC_IP" > $CONF_DIR/ForcePassiveIP
 
-echo "No" > $CONF_DIR/Daemonize
+printf "No\n" > $CONF_DIR/Daemonize
 exec $DAEMON $SUFFIX

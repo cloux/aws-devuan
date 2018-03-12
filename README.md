@@ -55,7 +55,7 @@ Currently available Devuan AMI offers:
  * Fast direct boot **without Initrd**
  * Custom [compiled](tools/kernel-update.sh) stable kernel from https://www.kernel.org
     * Included network drivers Amazon ENA v1.3.0K (25Gb) + Intel ixgbevf 4.1.0-k (10Gb)
- * Fully automated AMI release process, always with the latest kernel 
+ * Fully automated AMI release cycle, always with the latest kernel 
  * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
@@ -71,7 +71,7 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Preinstalled tools from Devuan repository
 
-    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet whois
+    # apt-get install acpid apache2-utils aptitude certbot cpulimit curl dnsutils ethtool eudev fuse gawk htop incron iptraf kexec-tools lsof lynx mc multitail ncdu ncftp nfs-common nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet whois
 
 #### Compiled from source
 

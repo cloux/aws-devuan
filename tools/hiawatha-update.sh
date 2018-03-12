@@ -16,6 +16,31 @@ PATH=/usr/local/sbin:/usr/sbin:/sbin:$PATH
 # working directory
 MY_ROOT=/usr/src/hiawatha
 
+
+# stop hiawatha on supervised init
+hiawatha_stop () {
+	if [ -z "$(runlevel 2>/dev/null | grep -v unknown)" ]; then
+		mv -n /etc/init.d/hiawatha /etc/init.d/hiawatha.dpkg
+		rm -f /etc/init.d/hiawatha; touch /etc/init.d/hiawatha
+		if [ "$(pgrep runsvdir)" ]; then
+			# runit supervisor
+			sv stop hiawatha
+		elif [ "$(pgrep s6-svscan)" ]; then
+			# s6 supervisor
+			s6-svc -wd hiawatha
+		fi
+	fi
+}
+
+# start hiawatha on supervised init
+hiawatha_start () {
+	if [ "$(pgrep runsvdir)" ]; then
+		sv start hiawatha
+	elif [ "$(pgrep s6-svscan)" ]; then
+		s6-svc -u hiawatha
+	fi
+}
+
 # Make sure that I'm root
 if [ "$(id -u)" != "0" ]; then
 	printf "Need to be root!\n" 1>&2
@@ -92,29 +117,15 @@ if [ "$(command -v dpkg)" ]; then
 		exit 1
 	fi
 
-	# stop hiawatha on supervised init:
-	if [ -z "$(runlevel 2>/dev/null | grep -v unknown)" ]; then
-		mv -n /etc/init.d/hiawatha /etc/init.d/hiawatha.dpkg
-		rm -f /etc/init.d/hiawatha; touch /etc/init.d/hiawatha
-		if [ "$(pgrep runsvdir)" ]; then
-			# runit supervisor
-			sv stop hiawatha
-		elif [ "$(pgrep s6-svscan)" ]; then
-			# s6 supervisor
-			s6-svc -wd hiawatha
-		fi
-	fi
+	# stop hiawatha on supervised init
+	hiawatha_stop
 
 	printf "Installing new %s ...\n" "${DEBPAK##*/}"
 	dpkg -i --force-all "$DEBPAK"
 	EC=$?
 
 	# start hiawatha after update
-	if [ "$(pgrep runsvdir)" ]; then
-		sv start hiawatha
-	elif [ "$(pgrep s6-svscan)" ]; then
-		s6-svc -u hiawatha
-	fi
+	hiawatha_start
 
 	mv "$DEBPAK" "$MY_ROOT"
 else
@@ -123,9 +134,13 @@ else
 	cd build || exit
 	cmake ..
 	if [ $? -eq 0 ]; then
+		# stop hiawatha on supervised init
+		hiawatha_stop
 		printf "Make install ...\n"
 		make install/strip
 		EC=$?
+		# start hiawatha after update
+		hiawatha_start
 	fi
 fi
 
