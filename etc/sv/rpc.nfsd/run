@@ -1,4 +1,6 @@
-#!/bin/sh -eu
-sv start rpcbind || exit 0
+#!/bin/sh
+exec 2>&1
+[ -x /usr/sbin/rpc.nfsd ] || exit
+sv start rpcbind || exit
 /usr/sbin/rpc.nfsd --no-nfs-version 2 --no-nfs-version 3 "$(nproc)"
 exec chpst -L supervise/runlock chpst -l supervise/runlock true

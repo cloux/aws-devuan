@@ -1,2 +1,2 @@
 #!/bin/sh -eu
-test -r /proc/fs/nfsd/threads -a "$(cat /proc/fs/nfsd/threads)" -gt 0
+[ -r /proc/fs/nfsd/threads ] && [ "$(cat /proc/fs/nfsd/threads)" -gt 0 ]
