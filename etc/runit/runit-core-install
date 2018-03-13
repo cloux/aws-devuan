@@ -4,22 +4,22 @@
 # (cloux@rote.ch)
 
 if [ "$(readlink /sbin/shutdown)" != "/etc/runit/shutdown" ]; then
-	mv -bn /sbin/shutdown /sbin/shutdown.dpkg
+	mv -f /sbin/shutdown /sbin/shutdown.dpkg
 	ln -s /etc/runit/shutdown /sbin/shutdown
 fi
 
 if [ "$(readlink /sbin/halt)" != "/etc/runit/shutdown" ]; then
-	mv -bn /sbin/halt /sbin/halt.dpkg
+	mv -f /sbin/halt /sbin/halt.dpkg
 	ln -s /etc/runit/shutdown /sbin/halt
 fi
 
 if [ "$(readlink /sbin/reboot)" != "/etc/runit/ctrlaltdel" ]; then
-	mv -bn /sbin/reboot /sbin/reboot.dpkg
+	mv -f /sbin/reboot /sbin/reboot.dpkg
 	ln -s /etc/runit/ctrlaltdel /sbin/reboot
 fi
 
 if [ ! -f /sbin/svactivate ]; then
-	echo "Link sv commands..."
+	printf "Link sv commands ...\n"
 	ln -sf /etc/runit/svactivate /sbin/
 	ln -sf /etc/runit/svdeactivate /sbin/
 fi
