@@ -1,3 +1,0 @@
-Package: *
-Pin: origin "cloudfront.debian.net"
-Pin-Priority: 10
