@@ -15,6 +15,14 @@ Package: openssh*
 Pin: version 1:7.1*
 Pin-Priority: 1001
 
+Package: openvpn
+Pin: version 2.3*
+Pin-Priority: 1001
+
 Package: rpcbind
 Pin: version 0.2.1*
+Pin-Priority: 1001
+
+Package: xserver-xorg-core xwayland
+Pin: version 2:1.16*
 Pin-Priority: 1001

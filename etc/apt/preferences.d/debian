@@ -2,6 +2,6 @@ Package: *
 Pin: origin "cloudfront.debian.net"
 Pin-Priority: 500
 
-Package: base-files bsdutils init* libprocps6 mount openssh* util-linux
+Package: base-files bsdutils init* libprocps6 mount openssh* util-linux uuid-runtime
 Pin: release o=Debian
 Pin-Priority: -1
