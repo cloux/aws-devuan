@@ -212,7 +212,7 @@ fi
 printf "Logfile: %s\n" "/usr/src/$KERNEL_DIR/$LOGFILE"
 printf "Compile using %s threads ..." "$JOBS"
 START=$(date +%s.%N)
-make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE"
+nice -n 1 make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE"
 END=$(date +%s.%N)
 printf "DONE\n"
 
