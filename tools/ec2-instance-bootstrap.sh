@@ -24,15 +24,6 @@ if [ "$1" != "force" ]; then
 	exit
 fi
 
-# delete history
-printf "Delete history ..."
-rm -f /root/.bash_history 2>/dev/null
-find /home -maxdepth 2 -type f -iname .bash_history -delete
-find /home -type f -iname history -delete
-find /home -type f -iname dead.letter -delete
-find /root -type f -iname dead.letter -delete
-printf "OK\n"
-
 # delete package cache
 printf "Delete apt cache ..."
 aptitude --quiet=2 clean >/dev/null
@@ -65,6 +56,14 @@ printf "OK\n"
 
 printf "Delete /var/lib/amazon/ssm ..."
 rm -rf /var/lib/amazon/ssm/*
+printf "OK\n"
+
+printf "Delete history ..."
+find /home -type f -iname history -delete
+find /home -type f -iname dead.letter -delete
+find /root -type f -iname dead.letter -delete
+find /home -maxdepth 2 -type f -iname .bash_history -delete
+history -c && history -w
 printf "OK\n"
 
 printf "DONE. The instance can be shutdown and exported as AMI.\n"
