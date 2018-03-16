@@ -63,7 +63,6 @@ find /home -type f -iname history -delete
 find /home -type f -iname dead.letter -delete
 find /root -type f -iname dead.letter -delete
 find /home -maxdepth 2 -type f -iname .bash_history -delete
-history -c && history -w
 printf "OK\n"
 
 printf "DONE. The instance can be shutdown and exported as AMI.\n"
