@@ -111,7 +111,7 @@ if [ "$(command -v dpkg)" ]; then
 	cd "$MY_ROOT/hiawatha-$LATEST/extra" || exit
 	"$MY_ROOT/hiawatha-$LATEST/extra/make_debian_package"
 
-	DEBPAK=$(ls -1 "$MY_ROOT/hiawatha-$LATEST/hiawatha_$LATEST\_*.deb" 2>/dev/null | tail -n 1)
+	DEBPAK=$(ls -1 "$MY_ROOT/hiawatha-$LATEST/hiawatha_$LATEST"_*.deb 2>/dev/null | tail -n 1)
 	if [ ! -s "$DEBPAK" ]; then
 		printf "\nFAILED\n"
 		exit 1
