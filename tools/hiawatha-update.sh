@@ -43,7 +43,7 @@ hiawatha_start () {
 
 # Make sure that I'm root
 if [ "$(id -u)" != "0" ]; then
-	printf "Need to be root!\n" 1>&2
+	printf "Need to be root!\n"
 	exit 1
 fi
 
@@ -73,9 +73,9 @@ fi
 cd "$MY_ROOT" || exit 1
 
 LATEST=$(wget -q -O - https://www.hiawatha-webserver.org/latest 2>/dev/null)
-if [ -z "$(printf "%s" "$LATEST" | grep '^[0-9][0-9.]*$')" ]; then
-	printf "ERROR: Hiawatha version number downloading failed.\n"
-	exit 1
+if [ -z "$(printf "%s" "$LATEST" | head -n 1 | grep '^[0-9][0-9.]*$')" ]; then
+	printf "WARNING: Hiawatha latest version checking failed.\n"
+	exit 0
 fi
 if [ -s "$MY_ROOT/hiawatha-$LATEST.tar.gz" ]; then
 	printf "Latest Hiawatha v%s already downloaded.\n" "$LATEST"
@@ -87,12 +87,12 @@ wget -q -O "$MY_ROOT/hiawatha-$LATEST.tar.gz" "https://www.hiawatha-webserver.or
 if [ -s "$MY_ROOT/hiawatha-$LATEST.tar.gz" ]; then
 	printf "OK\n"
 else
-	printf "ERROR\n"
+	printf "FAILED\n"
 	rm -f "$MY_ROOT/hiawatha-$LATEST.tar.gz"
-	exit 1
+	exit 0
 fi
 
-printf "Unpacking..."
+printf "Unpacking ..."
 tar -xzf "$MY_ROOT/hiawatha-$LATEST.tar.gz" >/dev/null
 if [ $? -ne 0 ]; then
 	printf "ERROR\n"
