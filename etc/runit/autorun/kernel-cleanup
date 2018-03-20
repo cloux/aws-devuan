@@ -23,7 +23,7 @@ printf "     Obsolete kernels: "
 if [ "$OLD_KERNELS" ]; then
 	printf "%s\n" "$OLD_KERNELS"
 	printf "Deleting obsolete kernels ..."
-	find /boot -maxdepth 1 -type f ! -name "*$CUR_KERNEL" ! -name "*memtest*" -delete
+	find /boot -maxdepth 1 -type f ! -name "*$CUR_KERNEL*" ! -name "*memtest*" ! -name 'latest' -delete
 
 	printf "OK\nDeleting obsolete modules and sources ..."
 	for OLD_KERNEL in $OLD_KERNELS; do
