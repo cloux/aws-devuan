@@ -241,11 +241,6 @@ printf "scale=3; (%s - %s)/1\n" "$END" "$START" | bc
 [ -e "/boot/vmlinuz-$KERNEL_VERSION" ] || exit 1
 
 #
-# Apply dkms
-#
-[ "$(command -v dkms)" ] && dkms autoinstall >>"/usr/src/$KERNEL_DIR/$LOGFILE"
-
-#
 # Delete obsolete kernels (see CLEANUP variable)
 #
 OLD_KERNELS=""

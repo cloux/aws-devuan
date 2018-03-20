@@ -8,6 +8,6 @@ install --mode=755 /dev/null /run/runit.stopit
 rm -f /run/runit.reboot /run/runit.kexecreboot
 
 # Proceed with shutdown process
-echo "$MSG" | wall --nobanner
+printf "%s\n" "$MSG" | wall --nobanner
 
 /sbin/runit-init 0

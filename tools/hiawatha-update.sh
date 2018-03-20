@@ -72,8 +72,8 @@ fi
 [ -d "$MY_ROOT" ] || mkdir -p "$MY_ROOT"
 cd "$MY_ROOT" || exit 1
 
-LATEST=$(wget -q -O - http://www.hiawatha-webserver.org/latest)
-if [ -z "$LATEST" ]; then
+LATEST=$(wget -q -O - https://www.hiawatha-webserver.org/latest 2>/dev/null)
+if [ -z "$(printf "%s" "$LATEST" | grep '^[0-9][0-9.]*$')" ]; then
 	printf "ERROR: Hiawatha version number downloading failed.\n"
 	exit 1
 fi
@@ -83,7 +83,7 @@ if [ -s "$MY_ROOT/hiawatha-$LATEST.tar.gz" ]; then
 fi
 
 printf "Downloading new Hiawatha v%s ..." "$LATEST"
-wget -q -O "$MY_ROOT/hiawatha-$LATEST.tar.gz" "http://www.hiawatha-webserver.org/files/hiawatha-$LATEST.tar.gz"
+wget -q -O "$MY_ROOT/hiawatha-$LATEST.tar.gz" "https://www.hiawatha-webserver.org/files/hiawatha-$LATEST.tar.gz"
 if [ -s "$MY_ROOT/hiawatha-$LATEST.tar.gz" ]; then
 	printf "OK\n"
 else

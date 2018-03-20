@@ -8,7 +8,8 @@ GRUB_TIMEOUT=0
 GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
 
 # Append parameters to the linux kernel command line for non-recovery entries
-GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0,115200 net.ifnames=0"
+# NOTE: eudev default behavior is "net.ifnames=0", override with "net.ifnames=1"
+GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0,115200"
 
 # Append parameters to the linux kernel command line
 GRUB_CMDLINE_LINUX="rootfstype=ext4 init=/sbin/runit-init"
