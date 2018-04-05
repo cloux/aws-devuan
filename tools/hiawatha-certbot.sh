@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # renew certificates, update the hiawatha certificate full chain
 # into /etc/letsencrypt/archive/$DOMAIN/hiawatha.pem
@@ -9,15 +9,17 @@
 # NOTE: TLSCertFile parameter in hiawatha.conf has to be set to:
 #       /etc/letsencrypt/archive/DOMAIN/hiawatha.pem
 #
+# (cloux@rote.ch)
 #########################################################################
-# Set this variable, if you want to be informed per email:
+# Set this variable if you want an email on certificate renewal
 # example: MAILTO=admin@yourserver.com
 MAILTO=
 #########################################################################
+exec 2>&1
 
 if [ -z "$(command -v certbot)" ]; then
-  printf "certbot not installed, exiting.\n"
-  exit 1
+	printf "ERROR: certbot not installed, exiting.\n"
+	exit 1
 fi
 
 # Kill the annoying certbot systemd auto-updater service.
@@ -61,15 +63,19 @@ if [ $RENEWED -eq 1 ]; then
 	printf "Generated New Hiawatha Certificate: %s/hiawatha.pem\n" "$LETSENCRYPT_DIR" | tee -a "$LOGFILE"
 
 	# restart services
-	if [ -e "/etc/service/hiawatha" ]; then
-		sv restart hiawatha 2>&1 | tee -a "$LOGFILE"
-	elif [ -e "/etc/init.d/hiawatha" ]; then
-		/etc/init.d/hiawatha restart 2>&1 | tee -a "$LOGFILE"
-	fi
-	if [ -e "/etc/service/dovecot" ]; then
-		sv restart dovecot 2>&1 | tee -a "$LOGFILE"
-	elif [ -e "/etc/init.d/dovecot" ]; then
-		/etc/init.d/dovecot restart 2>&1 | tee -a "$LOGFILE"
+	printf "Restarting services ...\n"
+	if [ "$(pgrep runsvdir)" ]; then
+		# runit supervisor
+		if [ -e "/etc/service/hiawatha" ] && [ "$(sv status hiawatha | grep '^run')" ]; then
+			sv restart hiawatha | tee -a "$LOGFILE"
+		fi
+		if [ -e "/etc/service/dovecot" ] && [ "$(sv status dovecot | grep '^run')" ]; then
+			sv restart dovecot | tee -a "$LOGFILE"
+		fi
+	elif [ "$(runlevel 2>/dev/null | grep -v unknown)" ]; then
+		# sysvinit
+		[ -x "/etc/init.d/hiawatha" ] && /etc/init.d/hiawatha restart | tee -a "$LOGFILE"
+		[ -x "/etc/init.d/dovecot" ] && /etc/init.d/dovecot restart | tee -a "$LOGFILE"
 	fi
 	printf "DONE\n" | tee -a "$LOGFILE"
 
