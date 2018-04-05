@@ -41,21 +41,20 @@ RENEWED=0
 DOMAINS=$(find "$LETSENCRYPT_BASE" -mindepth 1 -maxdepth 1 -type d -printf '%f ' 2>/dev/null)
 for DOMAIN in $DOMAINS; do
 	LETSENCRYPT_DIR="$LETSENCRYPT_BASE/$DOMAIN"
-	cat "$LETSENCRYPT_DIR/$(ls -t1 privkey* 2>/dev/null | head -n 1)" \
-	    "$LETSENCRYPT_DIR/$(ls -t1 fullchain* 2>/dev/null | head -n 1)" \
+	cat "$(ls -t1 "$LETSENCRYPT_DIR/privkey"* 2>/dev/null | head -n 1)" \
+	    "$(ls -t1 "$LETSENCRYPT_DIR/fullchain"* 2>/dev/null | head -n 1)" \
 	     >"$LETSENCRYPT_DIR/hiawatha.pem.new" 2>/dev/null
 	if [ -s "$LETSENCRYPT_DIR/hiawatha.pem.new" ]; then
 		NEWCERT="YES"
 		if [ -s "$LETSENCRYPT_DIR/hiawatha.pem" ]; then
 			NEWCERT=$(diff -q "$LETSENCRYPT_DIR/hiawatha.pem.new" "$LETSENCRYPT_DIR/hiawatha.pem" 2>/dev/null)
 		fi
-		if [ -z "$NEWCERT" ]; then
-			rm "$LETSENCRYPT_DIR/hiawatha.pem.new"
-		else
+		if [ "$NEWCERT" ]; then
 			mv -f "$LETSENCRYPT_DIR/hiawatha.pem.new" "$LETSENCRYPT_DIR/hiawatha.pem"
 			RENEWED=1
 		fi
 	fi
+	rm -f "$LETSENCRYPT_DIR/hiawatha.pem.new"
 done
 
 if [ $RENEWED -eq 1 ]; then
