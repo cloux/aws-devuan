@@ -63,7 +63,7 @@ if [ -z "$CHECK" ] && [ $(id -u) -ne 0 ]; then
 fi
 
 # Check dependencies
-for DEP in wget bc; do
+for DEP in wget bc bison flex; do
 	if [ -z "$(command -v $DEP)" ]; then
 		printf "ERROR: Please install '%s' to continue.\n" "$DEP"
 		exit 1
