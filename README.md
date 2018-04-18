@@ -61,7 +61,7 @@ Currently available Devuan AMI offers:
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
  * Preinstalled [cloud-init](https://cloud-init.io) v0.7.9
  * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.2
- * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org) v10.7, advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
+ * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
 
 _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenience, these services are preinstalled and activated, since they are not directly available from the repository. If you don't need it, simply use the _svdeactivate_ command, see [service management](#runit-service-management).
 

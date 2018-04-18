@@ -19,7 +19,7 @@ exec 2>&1
 
 # We need to be root
 if [ $(id -u) -ne 0 ]; then
-	echo "Need to be root!"
+	printf "Need to be root!\n"
 	exit
 fi
 

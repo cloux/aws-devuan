@@ -13,7 +13,14 @@ fi
 install --mode=0 /dev/null /run/runit.stopit
 install --mode=755 /dev/null /run/runit.reboot
 
-# Proceed with reboot process
-printf "%s\n" "$MSG" | wall --nobanner
+# print warning to all terminals
+printf "\n%s\n" "$MSG" | wall --nobanner
 
+# Proceed with reboot process
 /sbin/runit-init 6
+
+# Don't give the terminal back immediately, the user should not be doing
+# anything more, just wait for the reboot. If after 15 seconds
+# the machine still is not rebooted, probably something went wrong, then
+# give the terminal back. Ctrl+C gives the terminal back immediately.
+sleep 15

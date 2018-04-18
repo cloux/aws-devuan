@@ -28,7 +28,8 @@ if [ "$OLD_KERNELS" ]; then
 	printf "OK\nDeleting obsolete modules and sources ..."
 	for OLD_KERNEL in $OLD_KERNELS; do
 		[ -d "/lib/modules/$OLD_KERNEL" ] && rm -rf "/lib/modules/$OLD_KERNEL"
-		[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
+		KERNELSRC_DIR=$(printf "%s" "$OLD_KERNEL" | sed 's/\.0$//')
+		[ -d "/usr/src/linux-$KERNELSRC_DIR" ] && rm -rf "/usr/src/linux-$KERNELSRC_DIR"
 	done
 	printf "OK\n"
 

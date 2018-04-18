@@ -262,7 +262,8 @@ if [ "$CLEANUP" = "y" ] && [ -f "/boot/vmlinuz-$CUR_KERNEL" ]; then
 		done
 		printf "OK\nDeleting obsolete sources in /usr/src ..."
 		for OLD_KERNEL in $OLD_KERNELS; do
-			[ -d "/usr/src/linux-$OLD_KERNEL" ] && rm -rf "/usr/src/linux-$OLD_KERNEL"
+			KERNELSRC_DIR=$(printf "%s" "$OLD_KERNEL" | sed 's/\.0$//')
+			[ -d "/usr/src/linux-$KERNELSRC_DIR" ] && rm -rf "/usr/src/linux-$KERNELSRC_DIR"
 		done
 		printf "OK\n"
 		/usr/sbin/update-grub
@@ -274,7 +275,7 @@ elif [ "$CLEANUP" = "y" ]; then
 fi
 
 #
-# Clean up
+# Clean up /usr/src
 #
 # force cleanup if the free space left is less than the size of this kernel
 FREE_SPACE_MB=$(df --block-size=M --output=avail /usr/src | grep -o '[0-9]*')
