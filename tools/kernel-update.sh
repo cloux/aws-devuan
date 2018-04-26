@@ -77,7 +77,7 @@ printf "Searching for kernel update ...\n"
 # JSON file with current kernel information.
 RELEASES_LINK=https://www.kernel.org/releases.json
 cd /tmp || exit 1
-wget -q -N "$RELEASES_LINK"
+wget -q -N -4 "$RELEASES_LINK"
 RELEASES_FILE=$(printf "%s" "$RELEASES_LINK" | grep -Po '(?<=/)[^"/]+$')
 if [ ! -e "$RELEASES_FILE" ]; then
 	printf "ERROR: Link %s not available!\n" "$RELEASES_LINK"
@@ -138,7 +138,7 @@ printf "===================\n%s\n===================\n" "$(date '+%Y-%m-%d %H:%M
 cd /usr/src || exit 1
 if [ ! -e "$KERNEL_FILE" ]; then
 	printf "\nDownloading ...\n"
-	wget --progress=dot:giga "$KERNEL_LINK"
+	wget -4 --progress=dot:giga "$KERNEL_LINK"
 	if [ $? -ne 0 ]; then
 		printf "ERROR: kernel download failed.\n"
 		exit 1
@@ -212,7 +212,7 @@ fi
 printf "Logfile: %s\n" "/usr/src/$KERNEL_DIR/$LOGFILE"
 printf "Compile using %s threads ..." "$JOBS"
 START=$(date +%s.%N)
-nice -n 1 make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE"
+nice -n 1 make -j $JOBS >"/usr/src/$KERNEL_DIR/$LOGFILE" 2>&1
 END=$(date +%s.%N)
 printf "DONE\n"
 
