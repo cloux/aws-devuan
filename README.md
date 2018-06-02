@@ -71,7 +71,7 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Preinstalled tools from Devuan repository
 
-    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename runit screen sntop ssmtp sysv-rc-conf telnet whois
+    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit screen sntop ssmtp sysv-rc-conf telnet whois
 
 #### Compiled from source
 
@@ -122,6 +122,7 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
  * [kernel-pull-binary.sh](tools/kernel-pull-binary.sh) - get latest kernel from a server which compiled it with _kernel-update.sh_
  * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
  * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by [certbot](https://certbot.eff.org/#devuanother-other)
+ * [php-update.sh](tools/php-update.sh) - download, compile and install latest stable [PHP-FPM](http://php.net/manual/en/install.fpm.php) from [php.net](http://php.net)
 
 NOTE: these scripts are included in _/usr/local/bin_ inside the AMI
 

@@ -2,6 +2,7 @@
 #
 # Activate runit core, replace default sysvinit commands
 # (cloux@rote.ch)
+exec 2>/dev/null
 
 if [ "$(readlink /sbin/shutdown)" != "/etc/runit/shutdown" ]; then
 	mv -f /sbin/shutdown /sbin/shutdown.dpkg
