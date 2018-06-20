@@ -8,7 +8,7 @@ LOGUSER=daemon
 SOCKLOG_SERVICES=""
 
 [ -r ../config ] && . ../config
-[ -r config ] && . config
+[ -r ./config ] && . ./config
 
 LOGGED=""
 for SRV in $SOCKLOG_SERVICES; do

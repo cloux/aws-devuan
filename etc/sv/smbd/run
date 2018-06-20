@@ -1,0 +1,13 @@
+#!/bin/sh
+# Samba server
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v smbd)
+[ -x "$DAEMON" ] || exit
+
+CONFIG_FILE=/etc/samba/smb.conf
+[ -r ./conf ] && . ./conf
+[ -e "$CONFIG_FILE" ] && CONF_PARAM="--configfile=$CONFIG_FILE"
+
+exec "$DAEMON" --foreground --log-stdout $CONF_PARAM

@@ -1,3 +1,42 @@
 #!/bin/sh
+# NFS common client and server universal addresses to RPC program number mapper
+# Equivalent of /etc/init.d/nfs-common
+# (cloux@rote.ch)
 exec 2>&1
-exec /sbin/rpcbind -wf
+
+DAEMON=$(command -v rpcbind)
+[ -x "$DAEMON" ] || exit
+
+# Load config defaults
+[ -r /etc/default/nfs-common ] && . /etc/default/nfs-common
+# Autodetect missing settings
+[ -z "$NEED_GSSD" ] && grep -v '^\s*#' /etc/fstab | sed 's/\s\s*/\t/g' | \
+                       cut -s -f 4 | grep -q 'sec=krb5' && NEED_GSSD=yes
+[ -z "$NEED_STATD" ] && NEED_STATD=yes
+[ -z "$NEED_IDMAPD" ] && NEED_IDMAPD=yes
+# Allow local conf override
+[ -r ./conf ] && . ./conf
+
+# Activate/deactivate additional NFS support services as needed:
+#
+# GSSD is required for Kerberos mounts
+if [ "$NEED_GSSD" = "yes" ] && [ -x "$(command -v rpc.gssd)" ]; then
+	svactivate rpc.gssd
+else
+	svdeactivate rpc.gssd >/dev/null
+fi
+# STATD is only needed for NFSv2 and NFSv3
+if [ "$NEED_STATD" = "yes" ] && [ -x "$(command -v rpc.statd)" ]; then
+	svactivate rpc.statd
+else
+	svdeactivate rpc.statd >/dev/null
+fi
+# IDMAPD is only needed for NFSv4
+if [ "$NEED_IDMAPD" = "yes" ] && [ -x "$(command -v rpc.idmapd)" ]; then
+	svactivate rpc.idmapd
+else
+	svdeactivate rpc.idmapd >/dev/null
+fi
+
+# Run rpcbind daemon
+exec "$DAEMON" -wf

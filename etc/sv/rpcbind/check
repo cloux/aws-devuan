@@ -1,0 +1,5 @@
+#!/bin/sh
+# (cloux@rote.ch)
+
+# check if rpcbind service responds on localhost
+rpcinfo -p >/dev/null 2>/dev/null

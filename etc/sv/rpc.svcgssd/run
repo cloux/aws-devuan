@@ -1,0 +1,10 @@
+#!/bin/sh
+# Server-side RPCSEC_GSS daemon - provide strong security for NFS
+# Activated automatically from rpc.mountd
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v rpc.svcgssd)
+[ -x "$DAEMON" ] || exit
+
+exec "$DAEMON" -f

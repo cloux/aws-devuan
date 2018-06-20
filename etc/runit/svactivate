@@ -14,7 +14,8 @@ RET=0
 for SRV in "$@"; do
 	SRVNAME=${SRV##*/}
 	if [ -d "/etc/service/$SRVNAME" ]; then
-		printf "Runit service '%s' is already active\n" "$SRVNAME"
+		printf "Runit service '%s' is already active, starting it...\n" "$SRVNAME"
+		sv up $SRVNAME
 		continue
 	fi
 	if [ ! -d "/etc/sv/$SRVNAME" ]; then

@@ -28,10 +28,9 @@ fi
 # NOTE: this "disabling" has to be done periodically!!!
 #       Sadly, I was unable to find a better way to disable systemd
 #       updater, so this is a crude hack :/
-if [ -s "/lib/systemd/system/certbot.timer" ]; then
-	printf "" > /lib/systemd/system/certbot.timer
-	printf "" > /lib/systemd/system/certbot.service
-fi
+[ -s "/lib/systemd/system/certbot.timer" ] && printf "" > /lib/systemd/system/certbot.timer
+[ -s "/lib/systemd/system/certbot.service" ] && printf "" > /lib/systemd/system/certbot.service
+[ -s "/etc/cron.d/certbot" ] && printf "" > /etc/cron.d/certbot
 
 LETSENCRYPT_BASE=/etc/letsencrypt/archive
 LOGFILE="$LETSENCRYPT_BASE/renewal.log"

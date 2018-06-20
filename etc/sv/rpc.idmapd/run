@@ -1,0 +1,11 @@
+#!/bin/sh
+# NFSv4 kernel client and server ID <-> Name Mapper
+# Activated automatically from rpcbind
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v rpc.idmapd)
+[ -x "$DAEMON" ] || exit
+sv start rpcbind || exit
+
+exec "$DAEMON" -f

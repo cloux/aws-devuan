@@ -1,0 +1,13 @@
+#!/bin/sh
+# RPCSEC_GSS daemon - provide strong security for NFS
+# Activated automatically from rpcbind
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v rpc.gssd)
+[ -x "$DAEMON" ] || exit
+
+KEYTAB=/etc/krb5.keytab
+[ -f ./conf ] && . ./conf
+
+exec "$DAEMON" -f -k "$KEYTAB"

@@ -15,7 +15,7 @@ tty=${PWD##*-}
 [ -c /dev/"$tty" ] || tty=tty1
 
 # custom config
-[ -r conf ] && . ./conf
+[ -r ./conf ] && . ./conf
 
 GETTY=$(command -v agetty)
 if [ ! -x "$GETTY" ]; then

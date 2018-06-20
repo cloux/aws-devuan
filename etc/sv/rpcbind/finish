@@ -1,0 +1,10 @@
+#!/bin/sh
+# Stop NFS client and server support services
+# (cloux@rote.ch)
+exec >/dev/null
+
+# stop services that depend on rpcbind
+sv down rpc.mountd 
+sv down rpc.gssd
+sv down rpc.idmapd
+sv down rpc.statd

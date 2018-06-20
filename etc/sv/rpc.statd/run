@@ -1,0 +1,18 @@
+#!/bin/sh
+# Network Status Monitor - notify NFS peers of reboots. For NFS v2 and v3 only.
+# Activated automatically from rpcbind
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v rpc.statd)
+[ -x "$DAEMON" ] || exit
+
+# Load config
+[ -r /etc/default/nfs-common ] && . /etc/default/nfs-common
+
+# If possible, run the daemon as statd user
+if id statd >/dev/null 2>/dev/null; then
+	exec chpst -u statd "$DAEMON" --foreground $STATDOPTS
+else
+	exec "$DAEMON" --foreground $STATDOPTS
+fi

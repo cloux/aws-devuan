@@ -1,14 +1,13 @@
 #!/bin/sh
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
-MSG="System is going down..."
 
 # We check for this file in stage3 to halt or reboot
 install --mode=755 /dev/null /run/runit.stopit
 rm -f /run/runit.reboot /run/runit.kexecreboot
 
 # Proceed with shutdown process
-printf "\n%s\n" "$MSG" | wall --nobanner
+printf "\nSystem is going down...\n" | wall --nobanner
 
 /sbin/runit-init 0
 

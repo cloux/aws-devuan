@@ -111,10 +111,6 @@ fi
 #
 #make install
 make install-fpm | tee -a "../php-$PHP_VERSION.build.log"
-if [ $? -ne 0 ]; then
-	printf "\nERROR: installing PHP-FPM failed.\n"
-	exit
-fi
 
 #
 # Install extensions

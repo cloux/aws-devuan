@@ -1,5 +1,33 @@
 #!/bin/sh
+# NFS mount daemon - implements the server side of the NFS MOUNT protocol
+# Equivalent of /etc/init.d/nfs-kernel-server.
+# (cloux@rote.ch)
 exec 2>&1
-[ -x /usr/sbin/rpc.mountd ] || exit
-sv start rpc.nfsd || exit
-exec /usr/sbin/rpc.mountd --foreground --no-nfs-version 2 --no-nfs-version 3
+
+DAEMON=$(command -v rpc.mountd)
+[ -x "$DAEMON" ] || exit
+EXPORTFS=$(command -v exportfs)
+[ -x "$EXPORTFS" ] || exit
+
+# See if our running kernel supports NFSD
+if ! grep -qs '\snfsd$' /proc/filesystems; then
+	printf "No NFSD support in current kernel.\n"
+	exit
+fi
+
+# Load config
+[ -r /etc/default/nfs-kernel-server ] && . /etc/default/nfs-kernel-server
+[ -z "$NEED_SVCGSSD" ] && NEED_SVCGSSD=yes
+[ -r ./conf ] && . ./conf
+
+# Synchronize /var/lib/nfs/etab with /etc/exports and /etc/exports.d
+"$EXPORTFS" -r
+
+# Activate support services
+[ mountpoint -q "/proc/fs/nfsd" ] || mount -t nfsd nfsd /proc/fs/nfsd
+svactivate rpc.nfsd >/dev/null
+# SVCGSSD is only required for Kerberos exports
+[ "$NEED_SVCGSSD" = "yes" ] && [ -x "$(command -v rpc.svcgssd)" ]  && svactivate rpc.svcgssd
+
+# Run mountd
+exec "$DAEMON" --foreground $RPCMOUNTDOPTS

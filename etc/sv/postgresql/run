@@ -9,7 +9,7 @@ DAEMON="$(command -v pg_ctlcluster)"
 [ -x "$DAEMON"] || exit 0
 
 PGBINROOT="/usr/lib/postgresql/"
-[ -r ./config ] && . ./config
+[ -r ./conf ] && . ./conf
 [ -d "$PGBINROOT" ] || exit 1
 
 OPTIONS=

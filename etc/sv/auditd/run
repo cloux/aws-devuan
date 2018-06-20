@@ -3,7 +3,7 @@ exec 2>&1
 
 # load config files
 [ -r /etc/default/auditd ] && . /etc/default/auditd
-[ -r conf ] && . ./conf
+[ -r ./conf ] && . ./conf
 
 if [ -z "$(printf "%s" "$USE_AUGENRULES" | grep -i 'no')" ]; then
   [ -d /etc/audit/rules.d ] && /sbin/augenrules >/dev/null

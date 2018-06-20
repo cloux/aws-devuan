@@ -1,6 +1,22 @@
 #!/bin/sh
+# NFS server process - user level part of the NFS service
+# Activated automatically from rpc.mountd
+# (cloux@rote.ch)
 exec 2>&1
-[ -x /usr/sbin/rpc.nfsd ] || exit
-sv start rpcbind || exit
-/usr/sbin/rpc.nfsd --no-nfs-version 2 --no-nfs-version 3 "$(nproc)"
+
+DAEMON=$(command -v rpc.nfsd)
+[ -x "$DAEMON" ] || exit
+
+# Make sure the rpc.mountd daemon is activated
+svactivate rpc.mountd >/dev/null
+
+# Load config
+RPCNFSDCOUNT="$(nproc)"
+RPCNFSDPRIORITY=0
+[ -r /etc/default/nfs-kernel-server ] && . /etc/default/nfs-kernel-server
+# Allow local config override
+[ -r ./conf ] && . ./conf
+
+# Run nfsd kernel service. Doesn't have a foreground mode.
+nice -n $RPCNFSDPRIORITY "$DAEMON" -- $RPCNFSDCOUNT
 exec chpst -L supervise/runlock chpst -l supervise/runlock true

@@ -8,7 +8,7 @@ DAEMON=$(command -v sshd)
 ssh-keygen -A >/dev/null
 
 [ -r /etc/default/ssh ] && . /etc/default/ssh
-[ -r conf ] && . ./conf
+[ -r ./conf ] && . ./conf
 
 # Create the PrivSep empty dir if necessary
 if [ ! -d /var/run/sshd ]; then
