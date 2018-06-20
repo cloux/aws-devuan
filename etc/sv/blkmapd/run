@@ -8,7 +8,7 @@ DAEMON=$(command -v blkmapd)
 
 # Ensure that the RPC pipefs is available
 if ! (mount | grep -q '^rpc_pipefs'); then
-	printf "ERROR: rpc.idmapd requires rpc_pipefs to be mounted.\n"
+	printf "ERROR: blkmapd requires rpc_pipefs to be mounted.\n"
 	exit 1
 fi
 
