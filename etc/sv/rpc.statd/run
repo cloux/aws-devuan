@@ -10,9 +10,4 @@ DAEMON=$(command -v rpc.statd)
 # Load config
 [ -r /etc/default/nfs-common ] && . /etc/default/nfs-common
 
-# If possible, run the daemon as statd user
-if id statd >/dev/null 2>/dev/null; then
-	exec chpst -u statd "$DAEMON" --foreground $STATDOPTS
-else
-	exec "$DAEMON" --foreground $STATDOPTS
-fi
+exec "$DAEMON" --foreground $STATDOPTS

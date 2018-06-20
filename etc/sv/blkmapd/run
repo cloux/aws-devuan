@@ -1,14 +1,10 @@
 #!/bin/sh
-# RPCSEC_GSS daemon - provide strong security for NFS
-# Activated automatically from rpcbind
+# pNFS block layout mapping daemon
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v rpc.gssd)
+DAEMON=$(command -v blkmapd)
 [ -x "$DAEMON" ] || exit
-
-KEYTAB=/etc/krb5.keytab
-[ -f ./conf ] && . ./conf
 
 # Ensure that the RPC pipefs is available
 if ! (mount | grep -q '^rpc_pipefs'); then
@@ -16,4 +12,4 @@ if ! (mount | grep -q '^rpc_pipefs'); then
 	exit 1
 fi
 
-exec "$DAEMON" -f -k "$KEYTAB"
+exec "$DAEMON" -f

@@ -12,6 +12,7 @@ if [ -s "$CONFIG_FILE" ]; then
 	# Set Hostname parameter in hiawatha.conf to current public IP
 	HOSTNAME_IP=$(grep -i -m 1 'Hostname\s*=\s*[0-9.]*$' "$CONFIG_FILE" 2>/dev/null | grep -o '[0-9.]*')
 	PUBLIC_IP=$(curl http://checkip.amazonaws.com 2>/dev/null)
+	#PUBLIC_IP=$(curl -s https://api.ipify.org)
 	if [ "$HOSTNAME_IP" ] && [ "$PUBLIC_IP" ] && [ "$HOSTNAME_IP" != "$PUBLIC_IP" ]; then
 		sed -i "s/Hostname\\s*=\\s*[0-9.]*\$/Hostname = $PUBLIC_IP/i" "$CONFIG_FILE"
 	fi

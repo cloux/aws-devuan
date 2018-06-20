@@ -8,6 +8,7 @@ DAEMON=$(command -v rpc.mountd)
 [ -x "$DAEMON" ] || exit
 EXPORTFS=$(command -v exportfs)
 [ -x "$EXPORTFS" ] || exit
+sv start rpcbind || exit
 
 # See if our running kernel supports NFSD
 if ! grep -qs '\snfsd$' /proc/filesystems; then
@@ -16,6 +17,7 @@ if ! grep -qs '\snfsd$' /proc/filesystems; then
 fi
 
 # Load config
+[ -r /etc/default/nfs-common ] && . /etc/default/nfs-common
 [ -r /etc/default/nfs-kernel-server ] && . /etc/default/nfs-kernel-server
 [ -z "$NEED_SVCGSSD" ] && NEED_SVCGSSD=yes
 [ -r ./conf ] && . ./conf
@@ -28,6 +30,8 @@ fi
 svactivate rpc.nfsd >/dev/null
 # SVCGSSD is only required for Kerberos exports
 [ "$NEED_SVCGSSD" = "yes" ] && [ -x "$(command -v rpc.svcgssd)" ]  && svactivate rpc.svcgssd
+# IDMAPD might not be activated from rpcbind as common service, but is required for the server
+([ "$NEED_IDMAPD" != "no" ] && [ -x "$(command -v rpc.idmapd)" ]) && svactivate rpc.idmapd >/dev/null
 
 # Run mountd
 exec "$DAEMON" --foreground $RPCMOUNTDOPTS

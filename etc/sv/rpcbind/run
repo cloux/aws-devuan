@@ -13,7 +13,6 @@ DAEMON=$(command -v rpcbind)
 [ -z "$NEED_GSSD" ] && grep -v '^\s*#' /etc/fstab | sed 's/\s\s*/\t/g' | \
                        cut -s -f 4 | grep -q 'sec=krb5' && NEED_GSSD=yes
 [ -z "$NEED_STATD" ] && NEED_STATD=yes
-[ -z "$NEED_IDMAPD" ] && NEED_IDMAPD=yes
 # Allow local conf override
 [ -r ./conf ] && . ./conf
 
@@ -31,11 +30,17 @@ if [ "$NEED_STATD" = "yes" ] && [ -x "$(command -v rpc.statd)" ]; then
 else
 	svdeactivate rpc.statd >/dev/null
 fi
-# IDMAPD is only needed for NFSv4
-if [ "$NEED_IDMAPD" = "yes" ] && [ -x "$(command -v rpc.idmapd)" ]; then
+# IDMAPD is only needed for NFSv4 server. On more recent kernels,
+# the client uses nfsidmap instead, and only falls back to rpc.idmapd
+# if there was a problem running the nfsidmap program.
+if [ "$NEED_IDMAPD" = "no" ]; then
+	svdeactivate rpc.idmapd >/dev/null
+elif ([ "$NEED_IDMAPD" = "yes" ] || ! nfsidmap >/dev/null 2>/dev/null) && \
+      [ -x "$(command -v rpc.idmapd)" ]; then
 	svactivate rpc.idmapd
 else
-	svdeactivate rpc.idmapd >/dev/null
+	# make sure service goes up again, if activated by rpc.mountd
+	sv up rpc.idmapd >/dev/null
 fi
 
 # Run rpcbind daemon
