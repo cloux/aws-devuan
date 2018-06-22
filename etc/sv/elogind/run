@@ -1,0 +1,13 @@
+#!/bin/sh
+# Enable user and session management by elogind
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v elogind)
+[ -x "$DAEMON" ] || exit
+
+sv start dbus >/dev/null || exit
+sv check dbus >/dev/null || exit
+
+# run daemon, keep quiet about found buttons etc.
+exec "$DAEMON" >/dev/null 2>/dev/null

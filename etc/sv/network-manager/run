@@ -1,0 +1,9 @@
+#!/bin/sh
+# Network Manager - Daemon for automatically switching network connections.
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v NetworkManager)
+[ -x "$DAEMON" ] || exit
+
+exec "$DAEMON" --no-daemon

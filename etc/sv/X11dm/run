@@ -1,0 +1,32 @@
+#!/bin/sh
+# Start default X11 display manager
+# (cloux@rote.ch)
+exec 2>&1
+
+if grep -wqs text /proc/cmdline; then
+	printf "Not starting display manager, found 'text' in kernel commandline.\n"
+	exit
+fi
+
+if [ -r /etc/default/locale ]; then
+	. /etc/default/locale
+	export LANG LANGUAGE
+fi
+
+DEFAULT_DISPLAY_MANAGER_FILE=/etc/X11/default-display-manager
+if [ ! -r "$DEFAULT_DISPLAY_MANAGER_FILE" ]; then
+	printf "ERROR: Display manager could not be determined, missing %s\n" "$DEFAULT_DISPLAY_MANAGER_FILE"
+	exit
+fi
+
+DEFAULT_DISPLAY_MANAGER=$(head -n 1 "$DEFAULT_DISPLAY_MANAGER_FILE")
+if [ ! -x "$DEFAULT_DISPLAY_MANAGER" ]; then
+	printf "ERROR: Display manager '%s' cannot be executed.\n" "$DEFAULT_DISPLAY_MANAGER"
+	exit
+fi
+
+# make sure login manager is up
+sv start elogind >/dev/null || exit
+sv check elogind >/dev/null || exit
+
+exec "$DEFAULT_DISPLAY_MANAGER"

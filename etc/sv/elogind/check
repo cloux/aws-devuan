@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Is login manager available?
+loginctl list-sessions >/dev/null 2>/dev/null

@@ -1,0 +1,17 @@
+#!/bin/sh
+# Bluetooth daemon
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v bluetoothd)
+[ -x "$DAEMON" ] || exit
+
+# Start DBus
+sv up dbus >/dev/null
+
+# Configuration
+NOPLUGIN_OPTION=""
+[ -f /etc/default/bluetooth ] && . /etc/default/bluetooth
+[ -r ./conf ] && . ./conf
+
+exec "$DAEMON" --nodetach $NOPLUGIN_OPTION

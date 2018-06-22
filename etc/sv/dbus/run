@@ -1,5 +1,14 @@
 #!/bin/sh
+# System-wide dbus
 exec 2>&1
-#[ ! -d /run/dbus ] && install -m755 -g 22 -o 22 -d /run/dbus
+
+DAEMON=$(command -v dbus-daemon)
+[ -x "$DAEMON" ] || exit
+
 [ ! -d /run/dbus ] && install -m755 -d /run/dbus
-exec dbus-daemon --system --nofork --nopidfile --nosyslog
+
+# Create machine ID file
+UUIDGEN=$(command -v dbus-uuidgen)
+[ -x "$UUIDGEN" ] && "$UUIDGEN" --ensure
+
+exec "$DAEMON" --system --nofork --nopidfile --nosyslog
