@@ -15,7 +15,7 @@ DAEMON_ARGS="--keep-connection"
 
 # Wait for DBus
 sv start dbus >/dev/null || exit
-sv check dbus || exit
+sv check dbus >/dev/null || exit
 
 # Run daemon in foreground mode (--no-daemon)
-exec "$DAEMON" --no-daemon $DAEMON_ARGS
+exec "$DAEMON" --no-daemon $DAEMON_ARGS >/dev/null 2>/dev/null

@@ -1,0 +1,9 @@
+#!/bin/sh
+# DHCP and BOOTP IPv4+IPv6 Client
+# (cloux@rote.ch)
+exec 2>&1
+
+DAEMON=$(command -v dhcpcd)
+[ -x "$DAEMON" ] || exit
+
+exec "$DAEMON" --nobackground
