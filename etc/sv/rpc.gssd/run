@@ -4,7 +4,8 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v rpc.gssd)
+NAME=rpc.gssd
+DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
 
 KEYTAB=/etc/krb5.keytab
@@ -16,4 +17,8 @@ if ! (mount | grep -q '^rpc_pipefs'); then
 	exit 1
 fi
 
+# Terminate unsupervised instance
+pkill --exact "$NAME" 2>/dev/null
+
+# Run daemon
 exec "$DAEMON" -f -k "$KEYTAB"

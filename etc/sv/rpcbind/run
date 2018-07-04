@@ -4,7 +4,8 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v rpcbind)
+NAME=rpcbind
+DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
 
 # Load config defaults
@@ -42,6 +43,9 @@ else
 	# make sure service goes up again, if activated by rpc.mountd
 	sv up rpc.idmapd >/dev/null
 fi
+
+# Terminate unsupervised instance
+pkill --exact "$NAME" 2>/dev/null
 
 # Run rpcbind daemon
 exec "$DAEMON" -wf

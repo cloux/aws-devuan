@@ -4,7 +4,11 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v rpc.svcgssd)
+NAME=rpc.svcgssd
+DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
+
+# Terminate unsupervised instance
+pkill --exact "$NAME" 2>/dev/null
 
 exec "$DAEMON" -f

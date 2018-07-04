@@ -9,15 +9,18 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v rpc.idmapd)
+NAME=rpc.idmapd
+DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
-sv start rpcbind || exit
 
 # Ensure that the RPC pipefs is available
 if ! (mount | grep -q '^rpc_pipefs'); then
 	printf "ERROR: rpc.idmapd requires rpc_pipefs to be mounted.\n"
 	exit 1
 fi
+
+# Terminate unsupervised instance
+pkill --exact "$NAME" 2>/dev/null
 
 # Run daemon
 exec "$DAEMON" -f

@@ -4,7 +4,8 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v rpc.mountd)
+NAME=rpc.mountd
+DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
 EXPORTFS=$(command -v exportfs)
 [ -x "$EXPORTFS" ] || exit
@@ -32,6 +33,9 @@ svactivate rpc.nfsd >/dev/null
 [ "$NEED_SVCGSSD" = "yes" ] && [ -x "$(command -v rpc.svcgssd)" ]  && svactivate rpc.svcgssd
 # IDMAPD might not be activated from rpcbind as common service, but is required for the server
 ([ "$NEED_IDMAPD" != "no" ] && [ -x "$(command -v rpc.idmapd)" ]) && svactivate rpc.idmapd >/dev/null
+
+# Terminate unsupervised instance
+pkill --exact "$NAME" 2>/dev/null
 
 # Run mountd
 exec "$DAEMON" --foreground $RPCMOUNTDOPTS
