@@ -11,13 +11,13 @@ if [ -n "$IF_OPENVPN" ]; then
 	for vpn in $IF_OPENVPN; do
 		if [ "$(pgrep runsvdir)" ]; then
 			# runit supervisor
-			sv restart /etc/service/openvpn* >/dev/null || true
+			sv down /etc/service/openvpn* >/dev/null || true
 		elif [ -d $SYSTEMD ]; then
 			# systemd
-			$SYSTEMCTL --no-block start openvpn@$vpn
+			$SYSTEMCTL stop openvpn@$vpn
 		else
 			# sysvinit
-			$OPENVPN_INIT start $vpn
+			$OPENVPN_INIT stop $vpn
 		fi
 	done
 fi
