@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # openvpn runit service
-# If the service directory is "/etc/sv/openvpn-NAME", then a corresponding
+# If the service directory is /etc/sv/openvpn-NAME, then a corresponding
 # config file /etc/openvpn/NAME.conf must exist. If the service directory is
-# just "/etc/sv/openvpn", then /etc/openvpn/openvpn.conf must exist.
+# just /etc/sv/openvpn, then /etc/openvpn/openvpn.conf will be used.
 #
 # (cloux@rote.ch)
 
@@ -20,13 +20,13 @@ OPTARGS=""
 [ -f "$CONFIG_FILE" ] || exit 0
 [ -f /etc/default/openvpn ] && . /etc/default/openvpn
 
-# tun using the "subnet" topology confuses the routing code that wrongly
+# tun using the subnet topology confuses the routing code that wrongly
 # emits ICMP redirects for client to client communications
 SAVED_DEFAULT_SEND_REDIRECTS=0
-if grep -q '^[[:space:]]*dev[[:space:]]*tun' $CONFIG_FILE && grep -q '^[[:space:]]*topology[[:space:]]*subnet' $CONFIG_FILE ; then
-	# When using "client-to-client", OpenVPN routes the traffic itself without
+if grep -q '^\s*dev\s*tun' $CONFIG_FILE && grep -q '^\s*topology\s*subnet' $CONFIG_FILE ; then
+	# When using client-to-client, OpenVPN routes the traffic itself without
 	# involving the TUN/TAP interface so no ICMP redirects are sent
-	if ! grep -q '^[[:space:]]*client-to-client' $CONFIG_FILE ; then
+	if ! grep -q '^\s*client-to-client' $CONFIG_FILE ; then
 		sysctl -w net.ipv4.conf.all.send_redirects=0 > /dev/null
 		# Save the default value for send_redirects before disabling it
 		# to make sure the tun device is created with send_redirects disabled
@@ -36,6 +36,14 @@ if grep -q '^[[:space:]]*dev[[:space:]]*tun' $CONFIG_FILE && grep -q '^[[:space:
 		fi
 		printf "%s" "$SAVED_DEFAULT_SEND_REDIRECTS" > /run/openvpn-${NAME}.SEND_REDIRECTS 2>/dev/null
 	fi
+fi
+
+# ethN masquerading is required for VPN packet routing to work:
+if [ -z "$(iptables -t nat -L POSTROUTING | grep MASQUERADE)" ]; then
+	sysctl -w net.ipv4.ip_forward=1 > /dev/null
+	for i in $(ls -1 /sys/class/net 2>/dev/null | grep eth); do
+		iptables -t nat -A POSTROUTING -o $i -j MASQUERADE 2>/dev/null
+	done
 fi
 
 exec $DAEMON $OPTARGS --cd /etc/openvpn --config $CONFIG_FILE

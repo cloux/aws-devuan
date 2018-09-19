@@ -70,6 +70,9 @@ for DEP in wget bc bison flex; do
 	fi
 done
 
+# PATH needs /usr/sbin for update-grub to work
+printf "$PATH" | grep -q '/usr/sbin' || export PATH=$PATH:/usr/sbin
+
 #
 # Get information about the latest kernel on kernel.org
 #

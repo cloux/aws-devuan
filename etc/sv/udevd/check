@@ -1,2 +1,2 @@
-#!/bin/sh -eu
+#!/bin/sh
 udevadm settle --timeout=5 2>/dev/null
