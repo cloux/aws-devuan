@@ -1,5 +1,0 @@
-#!/bin/sh
-exec 2>&1
-
-# if bootlogd was disabled during incrond operation, start it again
-[ -e "/etc/service/bootlogd" ] && sv up bootlogd >/dev/null

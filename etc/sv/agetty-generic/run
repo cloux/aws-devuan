@@ -3,7 +3,7 @@
 # Run agetty on a terminal
 # (cloux@rote.ch)
 
-BAUD_RATE="115200 38400"
+BAUD_RATE="115200"
 TERM_NAME="linux"
 GETTY_ARGS=""
 
@@ -21,9 +21,9 @@ GETTY=$(command -v agetty)
 if [ ! -x "$GETTY" ]; then
 	GETTY=$(command -v getty)
 	[ -x "$GETTY" ] || exit 1
-	if [ "$tty" = "tty1" ]; then
-		GETTY_ARGS="--noclear"
-	fi
+fi
+if [ "$tty" = "tty1" ]; then
+	GETTY_ARGS="--noclear"
 fi
 
 exec setsid $GETTY $GETTY_ARGS -- $tty $BAUD_RATE "$TERM_NAME"

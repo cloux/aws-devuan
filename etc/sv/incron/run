@@ -1,15 +1,18 @@
 #!/bin/sh
+# The inotify cron daemon (incrond) monitors filesystem events
+# and executes commands defined in system and user tables.
+# (cloux@rote.ch)
 exec 2>&1
 
-INCROND=/usr/sbin/incrond
+NAME=incrond
+DAEMON=$(command -v $NAME)
+[ -x "$DAEMON" ] || exit
+
 INCROND_CONF=/etc/incron.conf
 
-[ -x "$INCROND" ] || exit 0
-
-# incron should run even without logging, so don't exit here if socklog fails:
+# WARNING:
+# If incrond can't connect to syslog service by openlog() call
+# it will keep polluting /dev/console.
 sv start socklog-unix >/dev/null
-# incron jobs keep polluting /dev/console, do not log that
-sv stop bootlogd >/dev/null
-killall --quiet --exact bootlogd
 
-exec "$INCROND" --foreground -f "$INCROND_CONF"
+exec "$DAEMON" --foreground -f "$INCROND_CONF"
