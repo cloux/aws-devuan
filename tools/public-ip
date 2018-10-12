@@ -6,9 +6,9 @@
 # WARNING: on AWS, http://instance-data/latest/meta-data/public-ipv4 
 #          will not reflect IP changes until instance restart!
 #          Query external server for the real external IP, it's slower but reliable.
-PUBLIC_IP=$(curl --max-time 5 -s http://checkip.amazonaws.com)
-[ "$PUBLIC_IP" ] || PUBLIC_IP=$(curl --max-time 5 -s http://ipecho.net/plain)
-#[ "$PUBLIC_IP" ] || PUBLIC_IP=$(curl --max-time 5 -s https://api.ipify.org)
+PUBLIC_IP=$(wget -q -O - --timeout=2 http://checkip.amazonaws.com)
+[ "$PUBLIC_IP" ] || PUBLIC_IP=$(wget -q -O - --timeout=2 http://ipecho.net/plain)
+#[ "$PUBLIC_IP" ] || PUBLIC_IP=$(wget -q -O - --timeout=2 https://api.ipify.org)
 printf "%s" "$PUBLIC_IP"
 
 # check if some of the DOMAINS point to me
@@ -17,7 +17,8 @@ if [ "$PUBLIC_IP" ] && [ -r /etc/default/public-domain ]; then
 	. /etc/default/public-domain
 	# show domain names that point to my public IP
 	for DOMAIN_NAME in $DOMAINS; do
-		DOMAIN_IP=$(dig +short "$DOMAIN_NAME" 2>/dev/null)
+		#DOMAIN_IP=$(dig +short "$DOMAIN_NAME" 2>/dev/null)
+		DOMAIN_IP=$(host -4 "$DOMAIN_NAME" 8.8.8.8 2>/dev/null | grep "$DOMAIN_NAME" | grep -o '[0-9.]*$')
 		[ "$PUBLIC_IP" = "$DOMAIN_IP" ] && printf " %s" "$DOMAIN_NAME"
 	done
 fi

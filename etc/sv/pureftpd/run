@@ -4,10 +4,22 @@
 exec 2>&1
 
 CONF_DIR=/etc/pure-ftpd/conf
-[ -d "$CONF_DIR" ] || exit 0
+[ -d "$CONF_DIR" ] || exit
 DAEMON="$(command -v pure-ftpd-wrapper)"
-[ -x "$DAEMON" ] || exit 0
+[ -x "$DAEMON" ] || exit
 [ -r /etc/default/pure-ftpd-common ] && . /etc/default/pure-ftpd-common
+
+# use valid external IP for passive mode
+PUBLIC_IP=$(public-ip 2>/dev/null)
+if printf "%s" "$PUBLIC_IP" | grep -iq '[a-z]'; then
+	# use external IP, if at least one of the DOMAINS in /etc/default/public-domain
+	# resolve to our external IP
+	PUBLIC_IP="$(printf "%s" "$PUBLIC_IP" | grep -o '^[0-9.]*')"
+else
+	# otherwise use first interface IP (hopefully this would be the LAN IP)
+	PUBLIC_IP="$(hostname -I 2>/dev/null | head -n 1 | grep -o '^[0-9.]*')"
+fi
+[ "$PUBLIC_IP" ] && printf "%s\n" "$PUBLIC_IP" > $CONF_DIR/ForcePassiveIP
 
 # get authentication suffix: ldap/mysql/postgresql
 SUFFIX=
@@ -19,10 +31,6 @@ elif (printf "%s" "$PGCONF" | grep -q mysql); then
 elif (printf "%s" "$PGCONF" | grep -q pgsql); then
 	SUFFIX="postgresql"
 fi
-
-# always use real external IP for passive mode
-PUBLIC_IP="$(curl http://checkip.amazonaws.com 2>/dev/null)"
-[ "$PUBLIC_IP" ] && printf "%s\n" "$PUBLIC_IP" > $CONF_DIR/ForcePassiveIP
 
 printf "No\n" > $CONF_DIR/Daemonize
 exec $DAEMON $SUFFIX

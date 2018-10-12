@@ -88,9 +88,9 @@ if [ ! -e "$RELEASES_FILE" ]; then
 fi
 if [ "$MONIKER" = "stable" ]; then
 	LATEST_STABLE_VER=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po '"latest_stable"[^}]+' | grep -Po '\d[^"}]+')
-	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po "[^{]+\"$LATEST_STABLE_VER\"[^}]+}[^}]*")
+	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po '[^{]+"'$LATEST_STABLE_VER'"[^}]+}[^}]*')
 else
-	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po "[^{]+\"$MONIKER\"[^}]+}[^}]*" | head -n 1)
+	JSON=$(tr -d ' \n' < "$RELEASES_FILE" | grep -Po '[^{]+"'$MONIKER'"[^}]+}[^}]*' | head -n 1)
 fi
 # remove temporary JSON kernel info file
 rm "$RELEASES_FILE"

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Manage local and letsencrypt certificates
+# (cloux@rote.ch)
+
+/usr/local/bin/hiawatha-certbot.sh

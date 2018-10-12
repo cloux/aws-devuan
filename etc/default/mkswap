@@ -1,0 +1,3 @@
+# The default path for a swap file
+# see /etc/runit/autorun/mkswap
+SWAP_PATH=
