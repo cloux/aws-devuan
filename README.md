@@ -62,6 +62,7 @@ Currently available Devuan AMI offers:
  * Preinstalled [cloud-init](https://cloud-init.io) v0.7.9
  * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.2
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
+ 	* Fully automated domain TLS certificate management, requests and renewals
 
 _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenience, these services are preinstalled and activated, since they are not directly available from the repository. If you don't need it, simply use the _svdeactivate_ command, see [service management](#runit-service-management).
 
@@ -69,7 +70,7 @@ _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenie
 
 The setup differences compared to a clean Devuan installation mainly address runit compatibility with Devuan and AWS EC2 environment integration:
 
-#### Preinstalled tools from Devuan repository
+#### Preinstalled tools
 
     # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit screen sntop ssmtp sysv-rc-conf telnet whois
 
@@ -121,18 +122,10 @@ In addition to standard Runit [service control](http://smarden.org/runit/sv.8.ht
  * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from [kernel.org](https://www.kernel.org)
  * [kernel-pull-binary.sh](tools/kernel-pull-binary.sh) - get latest kernel from a server which compiled it with _kernel-update.sh_
  * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
- * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - refresh letsencrypt certificates managed by [certbot](https://certbot.eff.org/#devuanother-other)
+ * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - request new, or refresh existing letsencrypt certificates using [certbot](https://certbot.eff.org/#devuanother-other)
  * [php-update.sh](tools/php-update.sh) - download, compile and install latest stable [PHP-FPM](http://php.net/manual/en/install.fpm.php) from [php.net](http://php.net)
 
 NOTE: these scripts are included in _/usr/local/bin_ inside the AMI
-
----
-## ToDo
-
- * Automate AMI propagation to all EC2 regions (currently us-east-1 only)
- * ~~Customize kernel, replace Devuan stock with stable branch from kernel\.org~~ DONE
- * ~~Speed up boot process, remove initrd~~ DONE
- * ~~Include the _amazon-ssm-agent_ (https://github.com/aws/amazon-ssm-agent)~~ DONE
 
 ---
 <a href="http://www.wtfpl.net"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png" align="right"></a>
