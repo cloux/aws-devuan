@@ -2,10 +2,10 @@
 #
 # Create and use swap file if no swap space has been defined.
 # Swap size will be the same as RAM, max 4GB.
-# Default swap path can be set in /etc/default/mkswap
+# Default swap path can be set in /etc/default/swapfile
 #
 
-# quit if there is already swap activated
+# quit if there is already active swap space
 if [ $(grep -ivc '^Filename' /proc/swaps 2>/dev/null) -ne 0 ]; then
 	printf "Swap is already active.\n"
 	exit
@@ -13,11 +13,14 @@ fi
 
 # default swapfile path
 SWAP_PATH=
-[ -s /etc/default/mkswap ] && . /etc/default/mkswap
-
+[ -s /etc/default/swapfile ] && . /etc/default/swapfile
 if [ ! -d "$SWAP_PATH" ]; then
-	printf "Error: swap path %s is not available.\n" "$SWAP_PATH"
-	exit
+	# wait for mount to finish after boot
+	sleep 2
+	if [ ! -d "$SWAP_PATH" ]; then
+		printf "Error: swap path %s is not available.\n" "$SWAP_PATH"
+		exit
+	fi
 fi
 
 # make unique swapfile name (from AWS instance name)
@@ -44,5 +47,5 @@ fi
 
 # enable swapfile
 [ -f "$SWAPFILE" ] && swapon -v "$SWAPFILE"
-printf "\nSwap status:\n\n"
+printf "\nSwap status:\n"
 swapon --summary
