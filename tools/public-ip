@@ -6,9 +6,11 @@
 # WARNING: on AWS, http://instance-data/latest/meta-data/public-ipv4 
 #          will not reflect IP changes until instance restart!
 #          Query external server for the real external IP, it's slower but reliable.
-PUBLIC_IP=$(wget -q -O - --timeout=2 http://checkip.amazonaws.com)
-[ "$PUBLIC_IP" ] || PUBLIC_IP=$(wget -q -O - --timeout=2 http://ipecho.net/plain)
-#[ "$PUBLIC_IP" ] || PUBLIC_IP=$(wget -q -O - --timeout=2 https://api.ipify.org)
+# WARNING: HTTPS will hang until CRNG gets initialized. HTTP is less secure,
+#          but has no nasty timeouts.
+PUBLIC_IP=$(wget -4q -O - --timeout=2 http://checkip.amazonaws.com 2>/dev/null)
+[ "$PUBLIC_IP" ] || PUBLIC_IP=$(wget -4q -O - --timeout=2 http://ipecho.net/plain 2>/dev/null)
+#[ "$PUBLIC_IP" ] || PUBLIC_IP=$(wget -4q -O - --timeout=2 http://api.ipify.org 2>/dev/null)
 printf "%s" "$PUBLIC_IP"
 
 # check if some of the DOMAINS point to me
