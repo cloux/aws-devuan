@@ -8,7 +8,7 @@
 #        moniker: stable, mainline, longterm, linux-next, etc.
 #             -c: just check if new version is available, don't update
 #
-# dependencies: wget bc libncurses5-dev
+# dependencies: wget bc bison flex lz4c libncurses5-dev
 #     optional: notify-send, for kernel check GUI notification support
 #
 # (cloux@rote.ch)
@@ -63,7 +63,7 @@ if [ -z "$CHECK" ] && [ $(id -u) -ne 0 ]; then
 fi
 
 # Check dependencies
-for DEP in wget bc bison flex; do
+for DEP in wget bc bison flex lz4c; do
 	if [ -z "$(command -v $DEP)" ]; then
 		printf "ERROR: Please install '%s' to continue.\n" "$DEP"
 		exit 1
