@@ -2,5 +2,6 @@
 exec 2>&1
 
 [ -r ./conf ] && . ./conf
+sv start socklog-unix >/dev/null
 
 exec acpid -f ${OPTS:=-l}

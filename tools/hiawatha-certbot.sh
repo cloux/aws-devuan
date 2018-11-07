@@ -113,12 +113,12 @@ if [ -x "$(command -v certbot)" ]; then
 	# Wait for kernel random nuber generator (crng) to initialize,
 	# certbot certonly will fail without it. Only relevant if started right after boot.
 	#
-	if [ -z "$(dmesg | grep -F 'crng init done')" ]; then
+	if [ -z "$(dmesg | grep 'crng.* done')" ]; then
 		printf "Wait for kernel crng to initialize ... "
 		TIMEOUT=300
 		COUNT=0
 		while [ $COUNT -lt $TIMEOUT ]; do
-			dmesg | grep -Fq 'crng init done' && break
+			dmesg | grep -q 'crng.* done' && break
 			sleep 2
 			COUNT=$(($COUNT+1))
 		done
@@ -128,7 +128,7 @@ if [ -x "$(command -v certbot)" ]; then
 			printf "OK\n"
 		fi
 	fi
-	
+
 	#
 	# Check/obtain new certificate for DOMAIN
 	#

@@ -7,6 +7,8 @@
 # (cloux@rote.ch)
 
 msg "Current time: $(date)"
+msg "CPU: $(grep -i 'model name' /proc/cpuinfo | head -n 1 | sed 's/[^:]*:\s*//') ($(nproc --all) Cores)"
+msg "RAM: $(grep MemTotal /proc/meminfo | sed 's/[^:]*:\s*//')"
 
 LOCAL_IP="$(hostname -I 2>/dev/null)"
 if [ "$LOCAL_IP" ]; then
@@ -14,3 +16,4 @@ if [ "$LOCAL_IP" ]; then
 #	PUBLIC_IP="$(/usr/local/bin/public-ip 2>/dev/null)"
 #	[ "$PUBLIC_IP" ] && msg "WAN IP: $PUBLIC_IP"
 fi
+
