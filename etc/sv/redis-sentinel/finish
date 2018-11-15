@@ -1,0 +1,13 @@
+#!/bin/sh
+# Redis Sentinel - high availability and monitor for Redis Server
+#
+# (cloux@rote.ch)
+exec 2>&1
+
+NAME=redis-sentinel
+
+# only run finish if run exited normally
+[ "$1" = "0" ] || exit
+
+[ -d /etc/redis/${NAME}.post-down.d ] && \
+  su redis -s /bin/sh -c "run-parts --exit-on-error /etc/redis/${NAME}.post-down.d"

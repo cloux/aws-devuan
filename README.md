@@ -72,7 +72,7 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Preinstalled tools
 
-    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit screen sntop ssmtp sysv-rc-conf telnet whois
+    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx lz4 mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit screen sntop ssmtp sysv-rc-conf telnet whois
 
 #### Compiled from source
 
