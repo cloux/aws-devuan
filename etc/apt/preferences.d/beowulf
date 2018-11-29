@@ -9,3 +9,7 @@ Pin-Priority: 1001
 Package: libfontconfig*
 Pin: release o=Devuan,a=testing
 Pin-Priority: 550
+
+Package: initramfs-tools
+Pin: release *
+Pin-Priority: -1

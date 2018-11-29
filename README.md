@@ -60,7 +60,7 @@ Currently available Devuan AMI offers:
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
  * Preinstalled [cloud-init](https://cloud-init.io) v18.3
- * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.2
+ * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.3
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
  	* Fully automated domain TLS certificate management, requests and renewals
 
