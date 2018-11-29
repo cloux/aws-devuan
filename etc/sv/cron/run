@@ -4,7 +4,6 @@ exec 2>&1
 DAEMON=/usr/sbin/cron
 [ -x "$DAEMON" ] || exit
 
-# Cron should run even without logging, so don't exit here if socklog fails to start
-sv start socklog-unix >/dev/null
+sv start socklog >/dev/null
 
 exec "$DAEMON" -f -l -L 1

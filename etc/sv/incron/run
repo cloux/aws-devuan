@@ -8,11 +8,10 @@ NAME=incrond
 DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
 
-INCROND_CONF=/etc/incron.conf
-
 # WARNING:
 # If incrond can't connect to syslog service by openlog() call
 # it will keep polluting /dev/console.
-sv start socklog-unix >/dev/null
+sv start socklog >/dev/null || sleep 1
+socklog-check 2>/dev/null || sleep 1
 
-exec "$DAEMON" --foreground -f "$INCROND_CONF"
+exec "$DAEMON" --foreground -f /etc/incron.conf

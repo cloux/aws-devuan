@@ -16,7 +16,7 @@ DAEMON="$(command -v $NAME)"
 [ -f "$CONFIG" ] && sed -i 's/^\s*daemonize\s*y.*/daemonize no/g' $CONFIG
 
 # end all other unsupervised processes
-[ "$(pgrep $NAME)" ] && pkill $NAME
+killall --quiet --exact "$NAME"
 [ "$(pgrep $NAME)" ] && exit
 
 exec chpst -u redis $DAEMON $CONFIG

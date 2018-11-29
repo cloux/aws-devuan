@@ -18,7 +18,7 @@ if ! (mount | grep -q '^rpc_pipefs'); then
 fi
 
 # Terminate unsupervised instance
-pkill --exact "$NAME" 2>/dev/null
+killall --quiet --exact "$NAME"
 
 # Run daemon
 exec "$DAEMON" -f -k "$KEYTAB"

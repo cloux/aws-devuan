@@ -6,4 +6,4 @@ exec 2>&1
 DAEMON=$(command -v dhcpcd)
 [ -x "$DAEMON" ] || exit
 
-exec "$DAEMON" --nobackground
+exec "$DAEMON" --nobackground --quiet 2>/dev/null

@@ -45,7 +45,7 @@ else
 fi
 
 # Terminate unsupervised instance
-pkill --exact "$NAME" 2>/dev/null
+killall --quiet --exact "$NAME"
 
 # Run rpcbind daemon
 exec "$DAEMON" -wf

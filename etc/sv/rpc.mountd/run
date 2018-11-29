@@ -35,7 +35,7 @@ svactivate rpc.nfsd >/dev/null
 ([ "$NEED_IDMAPD" != "no" ] && [ -x "$(command -v rpc.idmapd)" ]) && svactivate rpc.idmapd >/dev/null
 
 # Terminate unsupervised instance
-pkill --exact "$NAME" 2>/dev/null
+killall --quiet --exact "$NAME"
 
 # Run mountd
 exec "$DAEMON" --foreground $RPCMOUNTDOPTS

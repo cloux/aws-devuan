@@ -10,7 +10,7 @@ DAEMON="$(command -v $NAME)"
 [ -x "$DAEMON" ] || exit 1
 
 # end all other unsupervised processes
-[ "$(pgrep $NAME)" ] && pkill $NAME
+killall --quiet --exact "$NAME"
 [ "$(pgrep $NAME)" ] && exit
 
 # run pre-up scripts

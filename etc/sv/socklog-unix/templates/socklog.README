@@ -1,3 +1,0 @@
-This log facility is managed by socklog-unix.
-To enable/disable logging for socket-type services,
-edit the /etc/sv/socklog-unix/config file.

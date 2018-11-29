@@ -1,2 +1,2 @@
 #!/bin/sh
-killall hiawatha 2>/dev/null >/dev/null
+killall --quiet hiawatha

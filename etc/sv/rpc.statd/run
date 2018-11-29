@@ -12,6 +12,6 @@ DAEMON=$(command -v $NAME)
 [ -r /etc/default/nfs-common ] && . /etc/default/nfs-common
 
 # Terminate unsupervised instance
-pkill --exact "$NAME" 2>/dev/null
+killall --quiet --exact "$NAME"
 
 exec "$DAEMON" --foreground $STATDOPTS

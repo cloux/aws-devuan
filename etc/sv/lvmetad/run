@@ -10,4 +10,4 @@ DAEMON=$(command -v $NAME)
 # stop any unsupervised daemons
 killall --quiet --exact "$NAME"
 
-exec "$DAEMON" -f
+exec "$DAEMON" -f -l error >/dev/null 2>/dev/null

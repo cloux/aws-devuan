@@ -27,7 +27,6 @@ fi
 
 # make sure login manager is up
 sv start elogind >/dev/null || exit
-sv check elogind >/dev/null || exit
 
 if [ -r /etc/default/locale ]; then
 	. /etc/default/locale
