@@ -121,7 +121,7 @@ if [ "$CHECK" ]; then
 	printf "This is a new kernel, you may update.\n"
 	# show notification balloon in GUI environment
 	if [ "$(command -v notify-send)" ]; then
-		export DISPLAY=:0
+		export DISPLAY=$(who | grep $(id -un) | grep -o '[(].*[)]$' | grep -o '[^()]*')
 		notify-send --expire-time=30000 \
 		  --icon=/usr/share/icons/gnome/48x48/status/software-update-available.png \
 		"New $MONIKER kernel $KERNEL_VERSION found"

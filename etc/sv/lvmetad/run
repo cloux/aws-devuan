@@ -3,7 +3,11 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v lvmetad)
+NAME=lvmetad
+DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
+
+# stop any unsupervised daemons
+killall --quiet --exact "$NAME"
 
 exec "$DAEMON" -f

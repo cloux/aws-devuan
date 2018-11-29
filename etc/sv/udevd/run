@@ -1,10 +1,10 @@
 #!/bin/sh
 exec 2>&1
 
-([ -x /sbin/udevd ] && [ -x /sbin/udevadm ]) || exit
+[ -x /sbin/udevd ] || exit
 
 # udevd could be started unsupervised in the early init.
 # kill the old daemon first
-/sbin/udevadm control --exit
+/sbin/udevadm control --exit 2>/dev/null
 
 exec /sbin/udevd

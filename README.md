@@ -13,7 +13,7 @@
 
 This project aims to provide a viable alternative to the systemd-monotheistic AWS offering. The goal is to track progress and maintain documentation for a fast, stable and secure general-purpose operating system for [Amazon EC2](https://aws.amazon.com/ec2/).
 
-[Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [Ascii](https://devuan.org/os/releases), which runs SysVinit by default, was modified to use [Runit](http://cloux.org/init/#runit) instead. All relevant changes are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
+[Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [testing](https://devuan.org/os/releases) which runs SysVinit by default, was modified to use [Runit](http://cloux.org/init/#runit) instead. All relevant changes are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
 
 ---
 ## Why bother?
@@ -43,7 +43,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try.  
 Amazon Linux 2017.09 looks like it's running SysVinit, but PID1 uses [obsolete](https://launchpad.net/upstart/+series) upstart v0.6.5. Either way, this OS is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
 
-All major Linux distributions already transitioned to systemd. If you want to use something else on Amazon EC2, you are pretty much out of luck. This is where the **Devuan Ascii + Runit** distribution comes in:
+All major Linux distributions already transitioned to systemd. If you want to use something else on Amazon EC2, you are pretty much out of luck. This is where the **Devuan + Runit** distribution comes in:
 
 ---
 ## Features
@@ -59,7 +59,7 @@ Currently available Devuan AMI offers:
  * Easily configurable logging, with all logs being textfiles in _/var/log_
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
     * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
- * Preinstalled [cloud-init](https://cloud-init.io) v0.7.9
+ * Preinstalled [cloud-init](https://cloud-init.io) v18.3
  * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.2
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
  	* Fully automated domain TLS certificate management, requests and renewals
@@ -72,7 +72,7 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Preinstalled tools
 
-    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx lz4 mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit screen sntop ssmtp sysv-rc-conf telnet whois
+    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dh-runit dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx lz4 mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit runit-init screen sntop ssmtp sysv-rc-conf telnet whois zip
 
 #### Compiled from source
 
@@ -87,7 +87,7 @@ Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 ---
 ## Installation
 
-**"Devuan Ascii YYYY-MM-DD (Unofficial)"** AMIs are available in the Amazon EC2 **us-east-1** (N. Virginia) region in the **Community AMIs** category. This git repository serves as documentation and development base for Devuan AMIs inside AWS EC2, and cannot be directly used for AWS management, installation, or upgrades.
+**"Devuan Runit YYYY-MM-DD (Unofficial)"** AMIs are available in the Amazon EC2 **us-east-1** (N. Virginia) region in the **Community AMIs** category. This git repository serves as documentation and development base for Devuan AMIs inside AWS EC2, and cannot be directly used for AWS management, installation, or upgrades.
 
 Why **'Unofficial'**: This project is not affiliated with the official Devuan GNU/Linux distribution in any way.
 
@@ -102,20 +102,12 @@ A few useful commands to get you up and running. These Runit scripts are univers
  * For an easy access, use [ssh-login.sh](tools/ssh-login.sh)  
    or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
-### Shutdown and reboot
-
- * `shutdown` - simple immediate halt and power off. Does not accept any parameters.
- * `reboot` - immediate system reboot
- * `reboot soft` - reboot quickly without waiting for BIOS, see [kexec](http://horms.net/projects/kexec/)
- 
 ### Runit service management
 
 In addition to standard Runit [service control](http://smarden.org/runit/sv.8.html), these commands were added for convenience:
 
  * [svactivate](etc/runit/svactivate) - include and start services in Runit supervisor
  * [svdeactivate](etc/runit/svdeactivate) - stop service and disable supervision
- * [runit-core-install](etc/runit/runit-core-install) - integrate Runit into the system  
-   Useful after OS upgrade to keep commands like _reboot_ and _shutdown_ to work properly.
 
 ### System Updates
 

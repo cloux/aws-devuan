@@ -19,16 +19,20 @@ MY_ROOT=/usr/src/hiawatha
 
 # stop hiawatha on supervised init
 hiawatha_stop () {
-	if [ -z "$(runlevel 2>/dev/null | grep -v unknown)" ]; then
+	if [ "$(pgrep runsvdir)" ] || [ "$(pgrep s6-svscan)" ]; then
+		# daemontools-type service supervision
 		mv -n /etc/init.d/hiawatha /etc/init.d/hiawatha.dpkg
 		rm -f /etc/init.d/hiawatha; touch /etc/init.d/hiawatha
-		if [ "$(pgrep runsvdir)" ]; then
-			# runit supervisor
-			sv stop hiawatha
-		elif [ "$(pgrep s6-svscan)" ]; then
-			# s6 supervisor
-			s6-svc -wd hiawatha
-		fi
+		find /etc/rc*.d -iname '*hiawatha' -delete
+	fi
+	if [ "$(pgrep runsvdir)" ]; then
+		# runit supervisor
+		sv stop hiawatha
+	elif [ "$(pgrep s6-svscan)" ]; then
+		# s6 supervisor
+		s6-svc -wd hiawatha
+	else
+		/etc/init.d/hiawatha stop
 	fi
 }
 
@@ -38,6 +42,8 @@ hiawatha_start () {
 		sv start hiawatha
 	elif [ "$(pgrep s6-svscan)" ]; then
 		s6-svc -u hiawatha
+	else
+		/etc/init.d/hiawatha start
 	fi
 }
 

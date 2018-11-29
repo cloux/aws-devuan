@@ -1,10 +1,10 @@
-deb http://cloudfront.debian.net/debian testing main contrib non-free
-deb http://cloudfront.debian.net/debian testing-updates main contrib non-free
+#deb http://cloudfront.debian.net/debian testing main contrib non-free
+#deb http://cloudfront.debian.net/debian testing-updates main contrib non-free
 #deb http://security.debian.org/ testing/updates main contrib non-free
 
-#deb http://auto.mirror.devuan.org/merged jessie          main
-#deb http://auto.mirror.devuan.org/merged jessie-updates  main
-#deb http://auto.mirror.devuan.org/merged jessie-security main
 deb http://deb.devuan.org/merged ascii          main
 deb http://deb.devuan.org/merged ascii-updates  main
 deb http://deb.devuan.org/merged ascii-security main
+deb http://deb.devuan.org/merged beowulf          main contrib
+deb http://deb.devuan.org/merged beowulf-updates  main contrib
+deb http://deb.devuan.org/merged beowulf-security main contrib

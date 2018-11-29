@@ -8,13 +8,12 @@ exec 2>&1
 DAEMON="$(command -v pg_ctlcluster)"
 [ -x "$DAEMON" ] || exit 0
 
+NAME=
+OPTIONS=
+VERSION=
 PGBINROOT="/usr/lib/postgresql/"
 [ -r ./conf ] && . ./conf
 [ -d "$PGBINROOT" ] || exit 1
-
-OPTIONS=
-VERSION=
-NAME=
 [ -z "$VERSION" ] && VERSION=$(ls -1v $PGBINROOT | tail -n 1)
 [ -z "$NAME" ] && NAME=$(ls -1tr /etc/postgresql/$VERSION | tail -n 1)
 

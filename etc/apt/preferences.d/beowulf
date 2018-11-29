@@ -1,0 +1,11 @@
+Package: *
+Pin: release o=Devuan,a=stable
+Pin-Priority: 500
+
+Package: dbus libpolkit-* policykit-1 procps
+Pin: release o=Devuan,a=stable
+Pin-Priority: 1001
+
+Package: libfontconfig*
+Pin: release o=Devuan,a=testing
+Pin-Priority: 550

@@ -1,6 +1,11 @@
 # *-*- Shell Script -*-*
 # from VOID Linux (https://www.voidlinux.eu)
 
+if [ -f /sys/devices/system/cpu/microcode/reload ]; then
+	msg "Loading CPU microcode ..."
+	printf "1" > /sys/devices/system/cpu/microcode/reload
+fi
+
 if [ -f /var/lib/random-seed ]; then
 	msg "Initializing random seed ..."
 	cp /var/lib/random-seed /dev/urandom >/dev/null 2>&1 || true

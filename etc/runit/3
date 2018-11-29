@@ -25,8 +25,8 @@ fi
 
 msg "Waiting for services to stop..."
 msg "Further messages will not be logged to disk"
-sv -w70 force-stop /etc/service/*
 sv exit /etc/service/*
+sv -w10 force-stop /etc/service/*
 
 # rotate boot.log file
 mv -f /var/log/boot.log /var/log/boot.log.1

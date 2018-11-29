@@ -12,7 +12,7 @@ GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
 GRUB_CMDLINE_LINUX_DEFAULT="console=hvc0 console=ttyS0,115200"
 
 # Append parameters to the linux kernel command line
-GRUB_CMDLINE_LINUX="rootfstype=ext4 init=/sbin/runit-init"
+GRUB_CMDLINE_LINUX="rootfstype=ext4 init=/sbin/init"
 
 # Uncomment to enable BadRAM filtering, modify to suit your needs
 # This works with Linux (no patch required) and with any kernel that obtains

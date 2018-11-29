@@ -26,7 +26,28 @@ if [ -z "$(command -v git)" ]; then
 	exit
 fi
 
-SSM_SRCDIR=/usr/lib/go-1.7/src/github.com/aws
+#SSM_SRCDIR=/usr/lib/go-1.7/src/github.com/aws
+#SSM_SRCDIR=/usr/share/go/src/github.com/aws
+if [ ! -d /usr/lib/go ]; then
+	printf "ERROR: /usr/lib/go directory is missing. Is golang installed?\n"
+	exit
+fi
+
+# get stretchr/testify dependency
+STRETCHR_SRCDIR=/usr/lib/go/src/github.com/stretchr
+[ -d "$STRETCHR_SRCDIR" ] || mkdir -p "$STRETCHR_SRCDIR"
+cd "$STRETCHR_SRCDIR" || exit
+if [ -d testify ]; then
+	# update: git pull
+	cd testify || exit
+	git pull
+else
+	# clone repository
+	git clone https://github.com/stretchr/testify
+fi
+
+# get amazon-ssm-agent
+SSM_SRCDIR=/usr/lib/go/src/github.com/aws
 [ -d "$SSM_SRCDIR" ] || mkdir -p "$SSM_SRCDIR"
 cd "$SSM_SRCDIR" || exit
 if [ -d amazon-ssm-agent ]; then

@@ -1,2 +1,5 @@
 #!/bin/sh
-udevadm settle --timeout=5 2>/dev/null
+/sbin/udevadm settle --timeout=5 2>/dev/null
+
+# force nonzero exit status if udevd is not running
+pgrep udevd >/dev/null || exit 1

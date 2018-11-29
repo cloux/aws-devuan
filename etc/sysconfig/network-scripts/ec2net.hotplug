@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright (C) 2012 Amazon.com, Inc. or its affiliates.
 # All Rights Reserved.
@@ -15,19 +15,19 @@
 # specific language governing permissions and limitations under the
 # License.
 
-# skip runlevel check for runit system, do this only for systemd and sysvinit
-if [ -x "/sbin/runlevel" ]; then
+# skip runlevel check for runit-init, do this only for systemd and sysvinit
+[ -f /proc/1/cmdline ] || exit
+grep -q runit /proc/1/cmdline
+if [ $? -ne 0 ]; then
+  # During init and before the network service is started, metadata is not
+  # available. Exit without attempting to configure the elastic interface.
   RUNLEVEL=$(/sbin/runlevel 2>/dev/null | /usr/bin/cut -d\  -f2)
-  if [ "$RUNLEVEL" != "unknown" -a "$RUNLEVEL" != "5" ]; then
-    # During init and before the network service is started, metadata is not
-    # available. Exit without attempting to configure the elastic interface.
+  if [ "$RUNLEVEL" ] && [ "$RUNLEVEL" != "unknown" ] && [ "$RUNLEVEL" != "5" ]; then
     exit
   fi
 fi
 
-if [ -f /dev/.in_sysinit ]; then
-  exit
-fi
+[ -f /dev/.in_sysinit ] && exit
 
 . /etc/sysconfig/network-scripts/ec2net-functions
 
