@@ -47,7 +47,7 @@ rm -f /var/log/boot.log* /var/log/cloud-init*.log* /var/log/dmesg.log* \
  /var/log/pure*.log /var/log/autorun*.log* /var/log/dpkg.log* /var/log/lastlog \
  /var/log/wtmp* /var/log/btmp* /var/backups/* \
  /var/log/amazon/ssm/*.log /var/log/aptitude 2>/dev/null
-find /var/log -type f -iname current -o -iname '@*' -o -iname '*.gz' -o -iname '*.xz' -delete
+find /var/log -type f \( -iname current -o -iname '@*' -o -iname '*.gz' -o -iname '*.xz' \) -delete
 touch /var/log/lastlog
 printf "OK\n"
 
