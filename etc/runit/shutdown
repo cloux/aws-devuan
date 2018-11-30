@@ -2,6 +2,8 @@
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
+[ -x /sbin/runit-init ] || exit
+
 # We check for this file in stage3 to halt or reboot
 install --mode=755 /dev/null /run/runit.stopit
 rm -f /run/runit.reboot /run/runit.kexecreboot

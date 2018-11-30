@@ -2,6 +2,8 @@
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
+[ -x /sbin/runit-init ] || exit
+
 if [ "$1" = "soft" ]; then
   MSG="System is going down for soft reboot..."
   install --mode=755 /dev/null /run/runit.kexecreboot
