@@ -8,7 +8,15 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 . /etc/runit/functions
 msg "Entering Runit stage 2 ($0)"
 
+RUNLEVEL=default
+KERNEL_ARG=$(grep -o 'runlevel=[^ ]*' /proc/cmdline | grep -o '[^=]*$')
+if [ "$KERNEL_ARG" ] && [ -d /etc/runit/runsvdir/$KERNEL_ARG ]; then
+	msg "Runlevel detected: '$KERNEL_ARG' (via kernel cmdline)"
+	RUNLEVEL="$KERNEL_ARG"
+fi
+
 [ -x /etc/rc.local ] && /etc/rc.local
 
+runsvchdir $RUNLEVEL
 exec env - PATH=$PATH \
 runsvdir -P /etc/service 'log: ...................................................................................'
