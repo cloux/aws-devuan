@@ -1,5 +1,5 @@
 # *-*- Shell Script -*-*
-# from VOID Linux (https://www.voidlinux.eu)
+# from VOID Linux (https://www.voidlinux.org)
 
 msg "Cleanup ..."
 
@@ -14,3 +14,5 @@ install --mode=0 /dev/null /run/runit.stopit
 install --mode=755 /dev/null /run/runit.reboot
 # set soft reboot as the default operation
 #install --mode=755 /dev/null /run/runit.kexecreboot
+
+[ -x /etc/init.d/screen-cleanup ] && /etc/init.d/screen-cleanup start >/dev/null 2>/dev/null &

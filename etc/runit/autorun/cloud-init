@@ -7,11 +7,7 @@
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
 # make sure the network is up
-printf "Network: eth0 is %s\n" "$(cat /sys/class/net/eth0/operstate)"
-if [ "$(cat /sys/class/net/eth0/operstate)" != up ]; then
-	ifup --all --ignore-errors
-	printf "Network: eth0 is now %s\n\n" "$(cat /sys/class/net/eth0/operstate)"
-fi
+[ -f /etc/runit/autorun/networking ] && [ ! -x /etc/runit/autorun/networking ] && . /etc/runit/autorun/networking
 
 # AWS EC2 cloud-init, see /var/log/cloud-init.log
 [ -x "/usr/bin/cloud-init" ] || exit

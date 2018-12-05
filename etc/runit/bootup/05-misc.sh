@@ -1,5 +1,5 @@
 # *-*- Shell Script -*-*
-# from VOID Linux (https://www.voidlinux.eu)
+# from VOID Linux (https://www.voidlinux.org)
 
 if [ -f /sys/devices/system/cpu/microcode/reload ]; then
 	msg "Loading CPU microcode ..."

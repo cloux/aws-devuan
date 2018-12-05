@@ -1,5 +1,5 @@
 # *-*- Shell Script -*-*
-# from VOID Linux (https://www.voidlinux.eu)
+# from VOID Linux (https://www.voidlinux.org)
 
 # Some kernel modules must be loaded before starting udev(7).
 # Load them by looking at the output of `kmod static-nodes`.

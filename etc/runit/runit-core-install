@@ -13,13 +13,13 @@ fi
 # remove unnecessary runscripts from getty-run package
 if [ -d /etc/sv/getty-tty1 ]; then
 	printf "Remove default getty-tty runscripts ...\n"
-	svdeactivate getty-tty1 >/dev/null
+	svdeactivate /etc/service/getty-tty* >/dev/null
 	rm -rf /etc/sv/getty-tty*
 fi
 
-# move socklog commands into usual paths
+# move socklog commands away from /command
 if [ -d /command ]; then
-	printf "Move socklog commands from /command/* into usual paths\n"
+	printf "Move socklog commands from /command/* into /usr/local/bin\n"
 	for cmdlink in $(find /command -type l 2>/dev/null); do
 		cp --dereference --remove-destination "$cmdlink" /usr/local/bin/
 		[ $? -eq 0 ] && rm "$cmdlink" 2>/dev/null

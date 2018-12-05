@@ -14,4 +14,4 @@ DAEMON=$(command -v $NAME)
 sv start socklog >/dev/null || sleep 1
 socklog-check 2>/dev/null || sleep 1
 
-exec "$DAEMON" --foreground -f /etc/incron.conf
+exec "$DAEMON" --foreground -f /etc/incron.conf >/dev/null 2>/dev/null

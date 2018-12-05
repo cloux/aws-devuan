@@ -1,13 +1,15 @@
 #!/bin/sh
 #
 # Runit stage 3: halt or restart system
-# based on VOID Linux (https://www.voidlinux.eu)
-
+# based on VOID Linux (https://www.voidlinux.org)
 exec 2>&1
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin 
 
 . /etc/runit/functions
+
+msg "Entering Runit stage 3 ($0)"
+
 detect_virt
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 

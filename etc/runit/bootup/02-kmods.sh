@@ -1,5 +1,5 @@
 # *-*- Shell Script -*-*
-# from VOID linux (https://www.voidlinux.eu)
+# from VOID linux (https://www.voidlinux.org)
 exec 2>&1
 
 [ -n "$VIRTUALIZATION" ] && return 0

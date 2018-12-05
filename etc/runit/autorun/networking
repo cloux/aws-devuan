@@ -1,0 +1,54 @@
+#!/bin/sh
+# Raise network interfaces. 
+# Loosely based on /etc/init.d/networking
+# (cloux@rote.ch)
+
+RUN_DIR="/run/network"
+IFSTATE="$RUN_DIR/ifstate"
+STATEDIR="$RUN_DIR/state"
+CONFIGURE_INTERFACES=yes
+VERBOSE=no
+
+printf "Configure networking started at %s\n" "$(date '+%F_%T.%N')"
+
+[ -f /etc/default/networking ] && . /etc/default/networking
+verbose=""
+[ "$VERBOSE" = yes ] && verbose=-v
+
+if [ -x /sbin/udevadm ]; then
+	if [ -n "$(ifquery --list --exclude=lo)" ] || [ -n "$(ifquery --list --allow=hotplug)" ]; then
+		udevadm settle --timeout=5
+	fi
+fi
+
+if [ ! -d "$RUN_DIR" ]; then
+	if mkdir -p "$RUN_DIR" 2>/dev/null; then
+		chown root:netdev "$RUN_DIR" 2>/dev/null || printf "WARNING: can't chown %s\n" "$RUN_DIR"
+	else
+		printf "WARNING: can't create %s\n" "$RUN_DIR"
+	fi
+fi
+if [ ! -e "$IFSTATE" ]; then
+	touch "$IFSTATE" 2>/dev/null || printf "WARNING: can't initialize %s\n" "$IFSTATE"
+fi
+
+ifup_hotplug() {
+	if [ -d /sys/class/net ]; then
+		for iface in $(ifquery --list --allow=hotplug 2>/dev/null); do
+			link=${iface##:*}
+			link=${link##.*}
+			[ -e "/sys/class/net/$link" ] && \
+			[ "$(cat "/sys/class/net/$link/operstate" 2>/dev/null)" != up ] && \
+			ifup --ignore-errors $verbose "$iface"
+		done
+	fi
+}
+
+if [ "$CONFIGURE_INTERFACES" = no ]; then
+	printf "Not configuring network interfaces, see /etc/default/networking\n"
+else
+	ifup --all --ignore-errors $verbose
+	ifup_hotplug $verbose
+fi
+
+printf "Configure networking finished at: %s\n\n" "$(date '+%F_%T.%N')"

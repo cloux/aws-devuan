@@ -1,5 +1,5 @@
 # *-*- Shell Script -*-*
-# from VOID Linux (https://www.voidlinux.eu)
+# from VOID Linux (https://www.voidlinux.org)
 
 if [ -x /sbin/sysctl ] || [ -x /bin/sysctl ]; then
 	msg "Loading sysctl settings ..."

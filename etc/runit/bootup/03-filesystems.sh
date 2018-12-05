@@ -1,7 +1,7 @@
 # *-*- Shell Script -*-*
-# from VOID Linux (https://www.voidlinux.eu)
+# from VOID Linux (https://www.voidlinux.org)
 
-[ -n "$VIRTUALIZATION" ] && return 0
+[ "$VIRTUALIZATION" ] && return 0
 
 if [ -x /sbin/dmraid ] || [ -x /bin/dmraid ]; then
 	msg "Activating dmraid devices ..."
@@ -15,7 +15,7 @@ fi
 
 if [ -x /sbin/vgchange ] || [ -x /bin/vgchange ]; then
 	msg "Activating LVM devices ..."
-	vgchange --sysinit -a y 2>&1
+	vgchange --sysinit -a ay 2>&1
 fi
 
 if [ -e /etc/zfs/zpool.cache ] && [ -x /usr/bin/zfs ]; then
@@ -35,8 +35,8 @@ if [ -e /etc/zfs/zpool.cache ] && [ -x /usr/bin/zfs ]; then
 fi
 
 # Filesystem check
-[ -f /fastboot -o "$(grep fastboot /proc/cmdline)" ] && FASTBOOT=1
-[ -f /forcefsck -o "$(grep forcefsck /proc/cmdline)" ] && FORCEFSCK="-f"
+([ -f /fastboot ] || grep -q fastboot /proc/cmdline) && FASTBOOT=1
+([ -f /forcefsck ] || grep -q forcefsck /proc/cmdline) && FORCEFSCK="-f"
 MOUNT_RW=$(mount | grep -m 1 -c ' / .*[(\s,]rw[\s,)]')
 if [ -z "$FASTBOOT" ]; then
 	if [ "$FORCEFSCK" ]; then
@@ -59,7 +59,7 @@ if [ -z "$FASTBOOT" ]; then
 				MOUNT_RW=0
 			fi
 			msg "Repairing damaged rootfs:"
-			fsck -T / -- -p $FORCEFSCK
+			fsck -T / -- -p
 		fi
 	fi
 	msg "Checking non-root filesystems:"

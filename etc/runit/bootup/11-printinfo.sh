@@ -6,7 +6,7 @@
 #
 # (cloux@rote.ch)
 
-msg "Current time: $(date)"
+msg "Time: $(date --iso-8601=seconds)"
 msg "CPU: $(grep -i 'model name' /proc/cpuinfo | head -n 1 | sed 's/[^:]*:\s*//') ($(nproc --all) Cores)"
 msg "RAM: $(grep MemTotal /proc/meminfo | sed 's/[^:]*:\s*//')"
 

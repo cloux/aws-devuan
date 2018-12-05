@@ -21,13 +21,13 @@ DAEMON=$(command -v $NAME)
 #
 # GSSD is required for Kerberos mounts
 if [ "$NEED_GSSD" = "yes" ] && [ -x "$(command -v rpc.gssd)" ]; then
-	svactivate rpc.gssd
+	svactivate rpc.gssd >/dev/null
 else
 	svdeactivate rpc.gssd >/dev/null
 fi
 # STATD is only needed for NFSv2 and NFSv3
 if [ "$NEED_STATD" = "yes" ] && [ -x "$(command -v rpc.statd)" ]; then
-	svactivate rpc.statd
+	svactivate rpc.statd >/dev/null
 else
 	svdeactivate rpc.statd >/dev/null
 fi
@@ -36,9 +36,9 @@ fi
 # if there was a problem running the nfsidmap program.
 if [ "$NEED_IDMAPD" = "no" ]; then
 	svdeactivate rpc.idmapd >/dev/null
-elif ([ "$NEED_IDMAPD" = "yes" ] || ! nfsidmap >/dev/null 2>/dev/null) && \
+elif ([ "$NEED_IDMAPD" = "yes" ] || ! nfsidmap -d >/dev/null 2>/dev/null) && \
       [ -x "$(command -v rpc.idmapd)" ]; then
-	svactivate rpc.idmapd
+	svactivate rpc.idmapd >/dev/null
 else
 	# make sure service goes up again, if activated by rpc.mountd
 	sv up rpc.idmapd >/dev/null

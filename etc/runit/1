@@ -1,17 +1,16 @@
 #!/bin/sh
 #
 # Runit stage 1: one time bootup system tasks
-# based on VOID Linux (https://www.voidlinux.eu)
+# based on VOID Linux (https://www.voidlinux.org)
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
-# Skip fsck on boot. Use this for testing only, disable in production!
-#FASTBOOT=1
+BOOTSTART=$(date +%s.%N)
 
 # copy /dev/console messages to a logfile
 if [ -e /etc/service/bootlogd ] && [ -x /sbin/bootlogd ]; then
 	mountpoint -q /dev || mount -o mode=0755,nosuid -t devtmpfs dev /dev
-	mkdir -p -m0755 /dev/pts
+	[ -d /dev/pts ] || mkdir -m0755 /dev/pts
 	mountpoint -q /dev/pts || mount -o mode=0620,gid=5,nosuid,noexec -n -t devpts devpts /dev/pts
 	/sbin/bootlogd -c -l /var/log/boot.log
 fi
@@ -23,9 +22,6 @@ msg "Entering Runit stage 1 ($0)"
 
 [ -r /etc/rc.conf ] && . /etc/rc.conf
 detect_virt
-
-# rcS tasks are handled by 'bootup' scripts
-#/etc/init.d/rcS
 
 # Run bootup scripts
 for f in /etc/runit/bootup/*.sh; do
@@ -39,6 +35,5 @@ else
 	chmod 0644 /var/log/dmesg.log
 fi
 
-#[ -e /etc/runit/no-emulate-sysv ] || /etc/init.d/rc 5
-
-msg "Runit stage 1 complete, running stage 2..."
+BOOTTIME=$(printf "scale=3; (%s - %s)/1\n" $(date +%s.%N) $BOOTSTART | bc)
+msg "Runit stage 1 completed in $BOOTTIME sec, running stage 2..."

@@ -10,4 +10,4 @@ CONFIG_FILE=/etc/samba/smb.conf
 [ -r ./conf ] && . ./conf
 [ -e "$CONFIG_FILE" ] && CONF_PARAM="--configfile=$CONFIG_FILE"
 
-exec "$DAEMON" --foreground --log-stdout $CONF_PARAM
+exec "$DAEMON" --foreground --log-stdout $CONF_PARAM 2>&1
