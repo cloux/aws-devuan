@@ -35,7 +35,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 | Ubuntu Server 16.04 LTS | systemd | Quick Start | apt | 8 GB | 10.5&nbsp;s&nbsp;<sup>(&pm;1.6)</sup> | [EULA](https://www.ubuntu.com/legal/terms-and-policies/intellectual-property-policy)|
 | CentOS 7 | systemd | Marketplace | rpm | 8 GB | 15.0&nbsp;s&nbsp;<sup>(&pm;0.8)</sup> | Free |
 | Debian GNU/Linux 9.3 Stretch | systemd | Marketplace | apt | 8 GB | 7.0&nbsp;s&nbsp;<sup>(&pm;0.9)</sup> | [Free](https://d7umqicpi7263.cloudfront.net/eula/product/572488bb-fc09-4638-8628-e1e1d26436f4/060496c2-9fe5-4a95-9ab6-0ff2f7abb669.txt) |
-| **Devuan Ascii 2018-02-14** | [**Runit**](http://cloux.org/init/#runit) | **Community** | **apt** | **4 GB** | **5.1&nbsp;s**&nbsp;<sup>(&pm;0.8)</sup> | [**Free**](https://devuan.org/os/free-software) |
+| **Devuan Runit 2018-12-06** | [**Runit**](http://cloux.org/init/#runit) | **Community** | **apt** | **4 GB** | **3.6&nbsp;s**&nbsp;<sup>(&pm;0.9)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 <sup>\*1) Smallest possible storage size for a new instance</sup>  
 <sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
