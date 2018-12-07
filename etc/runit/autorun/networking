@@ -47,7 +47,7 @@ ifup_hotplug() {
 if [ "$CONFIGURE_INTERFACES" = no ]; then
 	printf "Not configuring network interfaces, see /etc/default/networking\n"
 else
-	ifup --all --ignore-errors $verbose
+	ifup --all --exclude=lo --ignore-errors $verbose
 	ifup_hotplug $verbose
 fi
 

@@ -14,4 +14,4 @@ DAEMON=$(command -v $NAME)
 # Terminate unsupervised instance
 killall --quiet --exact "$NAME"
 
-exec "$DAEMON" --foreground $STATDOPTS
+exec "$DAEMON" --foreground $STATDOPTS 2>/dev/null

@@ -1,28 +1,24 @@
-#! /bin/sh
+#!/bin/sh
 # Reload the OpenSSH server when an interface comes up, to allow it to start
 # listening on new addresses.
 
-set -e
-
 # Don't bother to restart sshd when lo is configured.
-[ "$IFACE" = lo ] && exit 0
+[ "$IFACE" = lo ] && exit
 
 # Only run from ifup.
-[ "$MODE" = start ] || exit 0
+[ "$MODE" = start ] || exit
 
 # OpenSSH only cares about inet and inet6. Get ye gone, strange people
 # still using ipx.
-([ "$ADDRFAM" != inet ] && [ "$ADDRFAM" != inet6 ]) && exit 0
+([ "$ADDRFAM" != inet ] && [ "$ADDRFAM" != inet6 ]) && exit
 
 # Is /usr mounted?
-[ -e /usr/sbin/sshd ] || exit 0
+[ -e /usr/sbin/sshd ] || exit
 
-if [ "$(pgrep runsvdir)" ]; then
-  sv restart ssh >/dev/null 2>/dev/null || true
-else
-  ([ ! -f /var/run/sshd.pid ] || [ "$(ps -p "$(cat /var/run/sshd.pid)" -o comm=)" != sshd ]) && exit 0
+if [ "$(pgrep runsvdir)" ] && [ -f /etc/service/ssh ]; then
+  sv restart ssh >/dev/null 2>/dev/null
+elif [ ! -f /etc/service/ssh ]; then
+  ([ ! -f /run/sshd.pid ] || [ "$(ps -p "$(cat /run/sshd.pid)" -o comm=)" != sshd ]) && exit
   # We'd like to use 'reload' here, but it has some problems; see #502444.
   invoke-rc.d ssh restart >/dev/null 2>/dev/null || true
 fi
-
-exit 0

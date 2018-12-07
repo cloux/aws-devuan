@@ -48,4 +48,4 @@ fi
 killall --quiet --exact "$NAME"
 
 # Run rpcbind daemon
-exec "$DAEMON" -wf
+exec "$DAEMON" -wf 2>/dev/null

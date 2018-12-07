@@ -12,12 +12,15 @@ else
 fi
 
 if [ "${_udevd}" ]; then
-	msg "Starting udev and waiting for devices to settle ..."
+	msg "Starting udev ..."
 	${_udevd} --daemon
 	udevadm trigger --action=add --type=subsystems
 	udevadm trigger --action=add --type=devices
 	# NOTE: Settle might wait very long (>30sec) for crng,
-	#       this random number generator initialization takes ages.
-	#       See: dmesg | grep 'random: crng init done'
-	udevadm settle  --timeout=1
+	#       this random number generator initialization takes ages,
+	#       see: dmesg | grep 'random: crng init done'
+	#       There is no need to block the system until udev finishes,
+	#       if a service needs a specific device, that service should wait.
+	#msg "Waiting for devices to settle ..."
+	#udevadm settle --timeout=1
 fi
