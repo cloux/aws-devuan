@@ -146,7 +146,7 @@ I will keep this project alive as long as I can, and as long as there is some in
 ### Thanks to
 
  * Devuan Project: https://devuan.org
- * Void Linux: https://www.voidlinux.eu
+ * Void Linux: https://www.voidlinux.org
  * Runit and Socklog author Gerrit Pape: https://smarden.org/pape
  * Hiawatha author Hugo Leisink: https://www.hiawatha-webserver.org
  * Flussence: https://gitlab.com/flussence/runit-scripts

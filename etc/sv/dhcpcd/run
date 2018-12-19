@@ -3,7 +3,12 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-DAEMON=$(command -v dhcpcd)
+NAME=dhcpcd
+DAEMON=$(command -v "$NAME")
 [ -x "$DAEMON" ] || exit
 
-exec "$DAEMON" --nobackground --quiet 2>/dev/null
+# stop daemon running outside of runsvdir
+"$DAEMON" --exit 2>/dev/null
+killall --quiet --exact "$NAME"
+
+exec "$DAEMON" --nobackground --master --lastlease --quiet 2>/dev/null
