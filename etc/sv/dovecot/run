@@ -13,4 +13,10 @@ dovecot_config_file=/etc/dovecot/"${PWD##*/}".conf
 # N.B. Dovecot legitimately uses this dir for state, not just dumping a pidfile into:
 install -m 0755 -d "$(/usr/bin/doveconf -h base_dir -c "$dovecot_config_file")"
 
+# ensure sysvinit compatibility - replace init.d script with symlink to sv
+if [ -f /etc/init.d/$NAME ] && [ ! -h /etc/init.d/$NAME ]; then
+	mv -f /etc/init.d/$NAME /etc/init.d/${NAME}.sysv
+	ln -sf "$(command -v sv)" /etc/init.d/$NAME
+fi
+
 exec "$DAEMON" -F -c "$dovecot_config_file"

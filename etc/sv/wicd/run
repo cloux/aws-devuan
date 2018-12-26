@@ -3,7 +3,7 @@
 # (cloux@rote.ch)
 exec 2>&1
 
-NAME=wicd
+NAME=${PWD##*/}
 DAEMON=$(command -v $NAME)
 [ -x "$DAEMON" ] || exit
 

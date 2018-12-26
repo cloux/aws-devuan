@@ -1,4 +1,15 @@
 #!/bin/sh
 exec 2>&1
+
+NAME=${PWD##*/}
+DAEMON="$(command -v $NAME)"
+[ -x "$DAEMON" ] || exit
+
+# ensure sysvinit compatibility - replace init.d script with symlink to sv
+if [ -f /etc/init.d/$NAME ] && [ ! -h /etc/init.d/$NAME ]; then
+	mv -f /etc/init.d/$NAME /etc/init.d/${NAME}.sysv
+	ln -sf "$(command -v sv)" /etc/init.d/$NAME
+fi
+
 # nginx only provides a config file option to run in the foreground:
-exec /usr/sbin/nginx -c /etc/nginx/nginx.conf -g 'daemon off;'
+exec "$DAEMON" -c /etc/nginx/nginx.conf -g 'daemon off;'

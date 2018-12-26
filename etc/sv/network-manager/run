@@ -6,4 +6,11 @@ exec 2>&1
 DAEMON=$(command -v NetworkManager)
 [ -x "$DAEMON" ] || exit
 
+# ensure sysvinit compatibility - replace init.d script with symlink to sv
+NAME=${PWD##*/}
+if [ -f /etc/init.d/$NAME ] && [ ! -h /etc/init.d/$NAME ]; then
+	mv -f /etc/init.d/$NAME /etc/init.d/${NAME}.sysv
+	ln -sf "$(command -v sv)" /etc/init.d/$NAME
+fi
+
 exec "$DAEMON" --no-daemon

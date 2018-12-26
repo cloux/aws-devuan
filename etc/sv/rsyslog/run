@@ -1,10 +1,15 @@
 #!/bin/sh
 exec 2>&1
-NAME=rsyslog
-DAEMON=/usr/sbin/rsyslogd
 
-# Exit if the package is not installed
-[ -x "$DAEMON" ] || exit 0
+NAME=${PWD##*/}
+DAEMON="$(command -v $NAME)"
+[ -x "$DAEMON" ] || exit
+
+# ensure sysvinit compatibility - replace init.d script with symlink to sv
+if [ -f /etc/init.d/$NAME ] && [ ! -h /etc/init.d/$NAME ]; then
+	mv -f /etc/init.d/$NAME /etc/init.d/${NAME}.sysv
+	ln -sf "$(command -v sv)" /etc/init.d/$NAME
+fi
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME

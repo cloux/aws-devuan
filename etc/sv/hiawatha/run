@@ -2,8 +2,10 @@
 #
 # Hiawatha Webserver (https://www.hiawatha-webserver.org)
 exec 2>&1
-DAEMON="$(command -v hiawatha)"
-[ -x "$DAEMON" ] || exit 0
+
+NAME=${PWD##*/}
+DAEMON="$(command -v $NAME)"
+[ -x "$DAEMON" ] || exit
 
 CONFIG_PATH=/etc/hiawatha
 CONFIG_FILE="$CONFIG_PATH"/hiawatha.conf
@@ -24,6 +26,12 @@ if [ -s "$CONFIG_FILE" ]; then
 		[ -d "$LOGDIR" ] || mkdir -p "$LOGDIR"
 		chown "$SERVER_USER": "$LOGDIR"
 	fi
+fi
+
+# ensure sysvinit compatibility - replace init.d script with symlink to sv
+if [ -f /etc/init.d/$NAME ] && [ ! -h /etc/init.d/$NAME ]; then
+	mv -f /etc/init.d/$NAME /etc/init.d/${NAME}.sysv
+	ln -sf "$(command -v sv)" /etc/init.d/$NAME
 fi
 
 exec "$DAEMON" -d -c "$CONFIG_PATH" >/dev/null

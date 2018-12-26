@@ -32,5 +32,8 @@ elif (printf "%s" "$PGCONF" | grep -q pgsql); then
 	SUFFIX="postgresql"
 fi
 
+# stop daemons running outside of runsvdir
+killall --quiet pure-ftpd
+
 printf "No\n" > $CONF_DIR/Daemonize
 exec $DAEMON $SUFFIX
