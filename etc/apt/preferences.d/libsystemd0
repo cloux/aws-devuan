@@ -18,6 +18,10 @@ Package: rpcbind
 Pin: version 0.2.1*
 Pin-Priority: 1001
 
+Package: libtirpc-common libtirpc3
+Pin: version 1.1.4-0.3
+Pin-Priority: 1001
+
 Package: xserver-xorg-core xwayland
 Pin: version 2:1.16*
 Pin-Priority: 1001
