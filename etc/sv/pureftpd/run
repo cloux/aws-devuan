@@ -36,4 +36,4 @@ fi
 killall --quiet pure-ftpd
 
 printf "No\n" > $CONF_DIR/Daemonize
-exec $DAEMON $SUFFIX
+exec $DAEMON $SUFFIX >/dev/null 2>/dev/null

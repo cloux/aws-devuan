@@ -56,7 +56,7 @@ printf "========================================================================
 if [ -f "$CERTDIR/$CERTNAME".crt ] && [ ! -h "$CERTDIR/$CERTNAME".crt ] && \
    [ "$(openssl x509 -in "$CERTDIR/$CERTNAME".crt -text -noout | grep Subject: | grep -o 'CN *=[^,]*' | grep -o '[^ ]*$')" = "$DOMAIN" ]; then
 	printf "Certificate for '%s': %s\n" "$DOMAIN" "$CERTDIR/$CERTNAME".crt | tee -a "$LOGFILE"
-else
+elif [ ! -h "$CERTDIR/$CERTNAME".crt ]; then
 	#
 	# Generate local self-signed certificate chain.
 	# For fully unattended operation, guessing the certificate parameters
@@ -80,6 +80,7 @@ else
 		        -subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$ORGANIZATION/OU=$UNIT/CN=$DOMAIN/emailAddress=$EMAIL" 2>&1 | tee -a "$LOGFILE"
 	fi
 	printf "Generate Client Key:\n" | tee -a "$LOGFILE"
+	rm -f "$CERTDIR/$CERTNAME".key "$CERTDIR/$CERTNAME".csr "$CERTDIR/$CERTNAME".crt
 	openssl req -newkey rsa:4096 -nodes -sha512 -keyform PEM -outform PEM \
 	        -keyout "$CERTDIR/$CERTNAME".key -out "$CERTDIR/$CERTNAME".csr \
 	        -subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$ORGANIZATION/OU=$UNIT/CN=$DOMAIN/emailAddress=$EMAIL" 2>&1 | tee -a "$LOGFILE"
@@ -93,7 +94,8 @@ else
 	rm -f "$CERTDIR"/SANdata
 	if [ -s "$CERTDIR/$CERTNAME".crt ]; then
 		# Build certificate chain
-		cat "$CERTDIR/$CERTNAME".crt "$CERTDIR/$CA_CRT" >fullchain.crt 2>/dev/null
+		rm -f "$CERTDIR"/fullchain.crt "$CERTDIR"/hiawatha.pem
+		cat "$CERTDIR/$CERTNAME".crt "$CERTDIR/$CA_CRT" >"$CERTDIR"/fullchain.crt 2>/dev/null
 		# Build Hiawatha TLScertFile
 		cat "$CERTDIR/$CERTNAME".key "$CERTDIR/$CERTNAME".crt "$CERTDIR/$CA_CRT" >"$CERTDIR"/hiawatha.pem 2>/dev/null
 		# Force service restart
