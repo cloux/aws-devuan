@@ -4,6 +4,27 @@
 # (cloux@rote.ch)
 exec 2>/dev/null
 
+if [ "$(readlink /sbin/shutdown)" != "/etc/runit/shutdown" ]; then
+	mv -f /sbin/shutdown /sbin/shutdown.dpkg
+	chmod 644 /sbin/shutdown.dpkg
+	ln -s /etc/runit/shutdown /sbin/shutdown
+fi
+if [ "$(readlink /sbin/halt)" != "/etc/runit/shutdown" ]; then
+	mv -f /sbin/halt /sbin/halt.dpkg
+	chmod 644 /sbin/halt.dpkg
+	ln -s /etc/runit/shutdown /sbin/halt
+fi
+if [ "$(readlink /sbin/reboot)" != "/etc/runit/ctrlaltdel" ]; then
+	mv -f /sbin/reboot /sbin/reboot.dpkg
+	chmod 644 /sbin/reboot.dpkg
+	ln -s /etc/runit/ctrlaltdel /sbin/reboot
+fi
+if [ "$(readlink /sbin/ctrlaltdel)" != "/etc/runit/ctrlaltdel" ]; then
+	mv -f /sbin/ctrlaltdel /sbin/ctrlaltdel.dpkg
+	chmod 644 /sbin/ctrlaltdel.dpkg
+	ln -s /etc/runit/ctrlaltdel /sbin/ctrlaltdel
+fi
+
 if [ ! -f /sbin/svactivate ]; then
 	printf "Link sv commands ...\n"
 	ln -sf /etc/runit/svactivate /sbin/

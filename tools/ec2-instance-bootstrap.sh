@@ -39,7 +39,7 @@ printf "OK\n"
 
 # stop log-creating services before deleting logfiles
 printf "Stop services:\n"
-sv stop $(find /etc/service/ -type l ! -iname 'ssh' ! -iname '*getty*')
+sv stop $(find /etc/service/ -type l ! -iname 'ssh' ! -iname '*getty*' ! -iname 'acpid')
 
 printf "Delete logfiles ..."
 rm -f /var/log/boot.log* /var/log/cloud-init*.log* /var/log/dmesg.log* \
