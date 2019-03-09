@@ -13,7 +13,7 @@
 
 This project aims to provide a viable alternative to the systemd-monotheistic AWS offering. The goal is to track progress and maintain documentation for a fast, stable and secure general-purpose operating system for [Amazon EC2](https://aws.amazon.com/ec2/).
 
-[Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. Devuan [testing](https://devuan.org/os/releases) which runs SysVinit by default, was modified to use [Runit](http://cloux.org/init/#runit) instead. All relevant changes are in this repository. Most of the code is directly applicable to other standalone Devuan-based distributions outside the cloud environment.
+[Devuan](https://devuan.org/os/) seems to be the [practical and stable](https://blog.ungleich.ch/en-us/cms/blog/2017/12/10/the-importance-of-devuan/) choice for administrators running servers in datacenters. [Devuan](https://devuan.org/os) which runs SysVinit by default was modified to use [Runit](http://cloux.org/init/#runit) as init and PID1 process. The AWS EC2 specific code is in this repository, the runit-init infrastructure is in the [runit-base](https://github.com/cloux/runit-base) repository, and the installation/update scripts are implemented as modules of [Simple Installer](https://github.com/cloux/sin).
 
 ---
 ## Why bother?
@@ -38,7 +38,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 | **Devuan Runit 2018-12-06** | [**Runit**](http://cloux.org/init/#runit) | **Community** | **apt** | **4 GB** | **3.6&nbsp;s**&nbsp;<sup>(&pm;0.9)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 <sup>\*1) Smallest possible storage size for a new instance</sup>  
-<sup>\*2) Determined by [ec2-benchmark-osboot.sh](tools/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
+<sup>\*2) Determined by [ec2-benchmark-osboot.sh](https://raw.githubusercontent.com/cloux/sin/master/ec2-tools/inst/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
 This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try.  
 Amazon Linux 2017.09 looks like it's running SysVinit, but PID1 uses [obsolete](https://launchpad.net/upstart/+series) upstart v0.6.5. Either way, this OS is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
@@ -53,16 +53,16 @@ Currently available Devuan AMI offers:
  * [**Runit**](http://cloux.org/init/#runit) as init and service supervisor
  * Small footprint with only **4 GB** minimal EBS volume size
  * Fast direct boot **without Initrd**
- * Custom [compiled](tools/kernel-update.sh) stable kernel from https://www.kernel.org
+ * Custom [compiled](https://raw.githubusercontent.com/cloux/sin/master/modules/kernel/install) stable kernel from https://www.kernel.org
     * Included network drivers Amazon ENA v1.3.0K (25Gb) + Intel ixgbevf 4.1.0-k (10Gb)
  * Fully automated AMI release cycle, always with the latest kernel 
  * Easily configurable logging, with all logs being textfiles in _/var/log_
-    * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout (e.g. ssh)
-    * _[socklog](http://smarden.org/socklog/)_ used for socket logging (e.g. dhclient or cron)
- * Preinstalled [cloud-init](https://cloud-init.io) v18.3
- * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent) v2.3
+    * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout
+    * _[socklog](http://smarden.org/socklog/)_ used as runit-compatible syslog facility
+ * Preinstalled [cloud-init](https://cloud-init.io)
+ * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent)
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
- 	* Fully automated domain TLS certificate management, requests and renewals
+ 	* Fully [automated](https://raw.githubusercontent.com/cloux/sin/master/modules/hiawatha/certbot) domain TLS certificate management, requests and renewals
 
 _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenience, these services are preinstalled and activated, since they are not directly available from the repository. If you don't need it, simply use the _svdeactivate_ command, see [service management](#runit-service-management).
 
@@ -76,11 +76,10 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Compiled from source
 
- * Linux stable kernel (https://www.kernel.org), see [kernel-update.sh](tools/kernel-update.sh)
- * Hiawatha webserver (http://www.hiawatha-webserver.org), see [hiawatha-update.sh](tools/hiawatha-update.sh)
- * Socklog (http://smarden.org/socklog/install.html)
- * [amazon-ssm-agent](tools/install-amazon-ssm-agent.sh) and [ec2-metadata](tools/install-ec2-metadata.sh)
- * more [tools](tools/) in _/usr/local/bin_
+ * Linux stable kernel (https://www.kernel.org), see [sin - kernel module](https://raw.githubusercontent.com/cloux/sin/master/modules/kernel/install)
+ * Hiawatha webserver (http://www.hiawatha-webserver.org), see [sin - hiawatha module](https://raw.githubusercontent.com/cloux/sin/master/modules/hiawatha/install)
+ * Socklog (http://smarden.org/socklog/install.html), see [sin - socklog module](https://raw.githubusercontent.com/cloux/sin/master/modules/socklog/install)
+ * [amazon-ssm-agent](https://raw.githubusercontent.com/cloux/sin/master/modules/amazon-ssm-agent/install), ec2-metadata and other [tools](https://github.com/cloux/sin/modules/ec2-tools/)
 
 Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
@@ -99,25 +98,22 @@ A few useful commands to get you up and running. These Runit scripts are univers
 ### Login
 
  * The default SSH user is **admin**
- * For an easy access, use [ssh-login.sh](tools/ssh-login.sh)  
+ * For an easy access, use [ssh-login](https://raw.githubusercontent.com/cloux/sin/master/modules/nettools/ssh-login)  
    or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
 ### Runit service management
 
 In addition to standard Runit [service control](http://smarden.org/runit/sv.8.html), these commands were added for convenience:
 
- * [svactivate](etc/runit/svactivate) - include and start services in Runit supervisor
- * [svdeactivate](etc/runit/svdeactivate) - stop service and disable supervision
+ * [svactivate](https://raw.githubusercontent.com/cloux/sin/master/modules/runit-init/inst/svactivate) - include and start services in Runit supervisor
+ * [svdeactivate](https://raw.githubusercontent.com/cloux/sin/master/modules/runit-init/inst/svdeactivate) - stop services and disable supervision
 
 ### System Updates
 
- * [kernel-update.sh](tools/kernel-update.sh) - download, compile and install new Linux kernel from [kernel.org](https://www.kernel.org)
- * [kernel-pull-binary.sh](tools/kernel-pull-binary.sh) - get latest kernel from a server which compiled it with _kernel-update.sh_
- * [hiawatha-update.sh](tools/hiawatha-update.sh) - download, compile and install new Hiawatha webserver
- * [hiawatha-certbot.sh](tools/hiawatha-certbot.sh) - request new, or refresh existing letsencrypt certificates using [certbot](https://certbot.eff.org/#devuanother-other)
- * [php-update.sh](tools/php-update.sh) - download, compile and install latest stable [PHP-FPM](http://php.net/manual/en/install.fpm.php) from [php.net](http://php.net)
+Updates and additional installations outside of the repository are available through the [Simple Installer](https://github.com/cloux/sin):
 
-NOTE: these scripts are included in _/usr/local/bin_ inside the AMI
+ * `sin kernel` - compile and update the kernel from latest source on kernel.org
+ * `sin install oomd amazon-ssm-agent` - update the [oomd](https://facebookmicrosites.github.io/oomd/) and [ssm-agent](https://github.com/aws/amazon-ssm-agent) from source
 
 ---
 <a href="http://www.wtfpl.net"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png" align="right"></a>

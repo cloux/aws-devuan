@@ -1,8 +1,0 @@
-#!/bin/sh
-exec 2>&1
-
-[ -x /sbin/dhclient ] || exit 0
-
-[ -r ./conf ] && . ./conf
-
-exec /sbin/dhclient ${OPTS:=-d -4 -w -I}

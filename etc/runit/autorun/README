@@ -1,5 +1,0 @@
-These scripts are run only once after boot by
-/etc/runit/bootup/20-autorun.sh script.
-
-They are started in parallel as 'nohup SCRIPT &'.
-Outputs are logged into /var/log/autorun-SCRIPT.log files.

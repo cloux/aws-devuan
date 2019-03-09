@@ -2,4 +2,4 @@
 # Manage local and letsencrypt certificates
 # (cloux@rote.ch)
 
-/usr/local/bin/hiawatha-certbot.sh
+sin certbot hiawatha 2>/dev/null

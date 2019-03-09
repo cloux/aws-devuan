@@ -1,2 +1,0 @@
-#!/bin/sh
-socklog-check 2>/dev/null || exit 1

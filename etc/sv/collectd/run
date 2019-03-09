@@ -1,8 +1,0 @@
-#!/bin/sh
-exec 2>&1
-
-NAME=collectd
-DAEMON=$(command -v "$NAME")
-[ -x "$DAEMON" ] || exit 0
-
-exec "$DAEMON" -f

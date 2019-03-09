@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# check running nfsd threads
-[ -r /proc/fs/nfsd/threads ] && [ "$(cat /proc/fs/nfsd/threads)" -gt 0 ]

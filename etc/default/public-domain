@@ -1,3 +1,0 @@
-# Space separated list of domains checked when running /usr/local/bin/public-ip
-#DOMAINS="my-server.com subdomain-of.my-server.com"
-DOMAINS="$(hostname 2>/dev/null)"

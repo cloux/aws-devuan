@@ -1,9 +1,0 @@
-#!/bin/sh -e
-#
-# remove old files from apt cache
-MAXDAYS=3
-
-# run only if can be started nicely
-[ "$(command -v ionice)" ] || exit 1
-
-ionice --class 3 --ignore /usr/bin/find /var/cache/apt/archives -type f -ctime +${MAXDAYS} -delete >/dev/null 2>/dev/null

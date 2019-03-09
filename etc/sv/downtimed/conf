@@ -1,7 +1,0 @@
-# How long to sleep between each update
-# Default is 15 seconds.
-RESOLUTION=
-
-# Set to "n" to reduce the disk IO.
-# Otherwise, fsync is performed after each update in RESOLUTION interval
-FSYNC=n
