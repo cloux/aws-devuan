@@ -60,6 +60,7 @@ Currently available Devuan AMI offers:
     * _[svlogd](http://smarden.org/runit/svlogd.8.html)_ used for services writing to stdout
     * _[socklog](http://smarden.org/socklog/)_ used as runit-compatible syslog facility
  * Preinstalled [cloud-init](https://cloud-init.io)
+ * Preinstalled [oomd](https://facebookmicrosites.github.io/oomd/) - efficient Out-Of-Memory userspace killer based on [PSI](https://facebookmicrosites.github.io/psi/)
  * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent)
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
  	* Fully [automated](https://raw.githubusercontent.com/cloux/sin/master/modules/hiawatha/certbot) domain TLS certificate management, requests and renewals
@@ -72,7 +73,7 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Preinstalled tools
 
-    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dh-runit dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx lz4 mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync runit runit-init screen sntop ssmtp sysv-rc-conf telnet whois zip
+    # apt-get install acpid apache2-utils aptitude bison certbot cpulimit curl dnsutils ethtool eudev flex fuse gawk htop incron iptraf kexec-tools lsof lynx mc multitail ncdu ncftp nfs-common nfs-kernel-server nfswatch nfstrace ntp p7zip-full pciutils pigz php php-cgi procmail pwgen rename rsync screen sntop ssmtp telnet whois zip
 
 #### Compiled from source
 
