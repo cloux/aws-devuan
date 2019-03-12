@@ -1,0 +1,7 @@
+Package: *
+Pin: release o=Devuan,a=stable
+Pin-Priority: 500
+
+Package: init initramfs-tools sysvinit sysvinit-core
+Pin: release *
+Pin-Priority: -1
