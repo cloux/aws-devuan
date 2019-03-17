@@ -3,6 +3,7 @@
 # AWS EC2 cloud-init, see /etc/init.d/cloud-init
 # This is started parallel in the background (nohup) by 20-parallel.sh
 # (cloux@rote.ch)
+exec 2>&1
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 

@@ -38,7 +38,7 @@ Free-Tier Eligible general purpose GNU/Linux systems on AWS, as of 2018-03:
 | **Devuan Runit 2018-12-06** | [**Runit**](http://cloux.org/init/#runit) | **Community** | **apt** | **4 GB** | **3.6&nbsp;s**&nbsp;<sup>(&pm;0.9)</sup> | [**Free**](https://devuan.org/os/free-software) |
 
 <sup>\*1) Smallest possible storage size for a new instance</sup>  
-<sup>\*2) Determined by [ec2-benchmark-osboot.sh](https://raw.githubusercontent.com/cloux/sin/master/ec2-tools/inst/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
+<sup>\*2) Determined by [ec2-benchmark-osboot.sh](https://github.com/cloux/sin/blob/master/modules/ec2-tools/inst/ec2-benchmark-osboot.sh), on _t2.micro_ in _us-east-1a_, averaged 5 consecutive runs</sup>
 
 This is not a comprehensive comparison. Some AMIs might not qualify as general-purpose on EC2: while [Gentoo](https://gentoo.org) uses [OpenRC](http://cloux.org/init/#openrc) and not systemd, it is limited to very few [instance types](https://aws.amazon.com/ec2/instance-types/). However, if it works for your use case, Gentoo is definitely worth a try.  
 Amazon Linux 2017.09 looks like it's running SysVinit, but PID1 uses [obsolete](https://launchpad.net/upstart/+series) upstart v0.6.5. Either way, this OS is considered [end-of-life](https://aws.amazon.com/amazon-linux-2/faqs/#Support_for_Existing_AMI_.282017.09.29_for_Amazon_Linux) and should not be used for any new projects.
@@ -53,7 +53,7 @@ Currently available Devuan AMI offers:
  * [**Runit**](http://cloux.org/init/#runit) as init and service supervisor
  * Small footprint with only **4 GB** minimal EBS volume size
  * Fast direct boot **without Initrd**
- * Custom [compiled](https://raw.githubusercontent.com/cloux/sin/master/modules/kernel/install) stable kernel from https://www.kernel.org
+ * Custom [compiled](https://github.com/cloux/sin/blob/master/modules/kernel/install) stable kernel from https://www.kernel.org
     * Included network drivers Amazon ENA v1.3.0K (25Gb) + Intel ixgbevf 4.1.0-k (10Gb)
  * Fully automated AMI release cycle, always with the latest kernel 
  * Easily configurable logging, with all logs being textfiles in _/var/log_
@@ -63,7 +63,7 @@ Currently available Devuan AMI offers:
  * Preinstalled [oomd](https://facebookmicrosites.github.io/oomd/) - efficient Out-Of-Memory userspace killer based on [PSI](https://facebookmicrosites.github.io/psi/)
  * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent)
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
- 	* Fully [automated](https://raw.githubusercontent.com/cloux/sin/master/modules/hiawatha/certbot) domain TLS certificate management, requests and renewals
+ 	* Fully [automated](https://github.com/cloux/sin/blob/master/modules/hiawatha/certbot) domain TLS certificate management, requests and renewals
 
 _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenience, these services are preinstalled and activated, since they are not directly available from the repository. If you don't need it, simply use the _svdeactivate_ command, see [service management](#runit-service-management).
 
@@ -77,10 +77,10 @@ The setup differences compared to a clean Devuan installation mainly address run
 
 #### Compiled from source
 
- * Linux stable kernel (https://www.kernel.org), see [sin - kernel module](https://raw.githubusercontent.com/cloux/sin/master/modules/kernel/install)
- * Hiawatha webserver (http://www.hiawatha-webserver.org), see [sin - hiawatha module](https://raw.githubusercontent.com/cloux/sin/master/modules/hiawatha/install)
- * Socklog (http://smarden.org/socklog/install.html), see [sin - socklog module](https://raw.githubusercontent.com/cloux/sin/master/modules/socklog/install)
- * [amazon-ssm-agent](https://raw.githubusercontent.com/cloux/sin/master/modules/amazon-ssm-agent/install), ec2-metadata and other [tools](https://github.com/cloux/sin/modules/ec2-tools/)
+ * Linux stable kernel (https://www.kernel.org), see [sin - kernel module](https://github.com/cloux/sin/blob/master/modules/kernel/)
+ * Hiawatha webserver (http://www.hiawatha-webserver.org), see [sin - hiawatha module](https://github.com/cloux/sin/blob/master/modules/hiawatha/install)
+ * Socklog (http://smarden.org/socklog/install.html), see [sin - socklog module](https://github.com/cloux/sin/blob/master/modules/socklog/install)
+ * [amazon-ssm-agent](https://github.com/cloux/sin/blob/master/modules/amazon-ssm-agent/install), ec2-metadata and other [tools](https://github.com/cloux/sin/modules/ec2-tools/)
 
 Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
@@ -99,15 +99,15 @@ A few useful commands to get you up and running. These Runit scripts are univers
 ### Login
 
  * The default SSH user is **admin**
- * For an easy access, use [ssh-login](https://raw.githubusercontent.com/cloux/sin/master/modules/nettools/ssh-login)  
+ * For an easy access, use [ssh-login](https://github.com/cloux/sin/blob/master/modules/nettools/ssh-login)  
    or use the command `ssh -i INSTANCE-KEY.pem admin@INSTANCE-IP`
 
 ### Runit service management
 
 In addition to standard Runit [service control](http://smarden.org/runit/sv.8.html), these commands were added for convenience:
 
- * [svactivate](https://raw.githubusercontent.com/cloux/sin/master/modules/runit-init/inst/svactivate) - include and start services in Runit supervisor
- * [svdeactivate](https://raw.githubusercontent.com/cloux/sin/master/modules/runit-init/inst/svdeactivate) - stop services and disable supervision
+ * [svactivate](https://github.com/cloux/sin/blob/master/modules/runit-init/inst/svactivate) - include and start services in Runit supervisor
+ * [svdeactivate](https://github.com/cloux/sin/blob/master/modules/runit-init/inst/svdeactivate) - stop services and disable supervision
 
 ### System Updates
 
