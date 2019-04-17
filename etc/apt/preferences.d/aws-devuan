@@ -2,6 +2,6 @@ Package: *
 Pin: release o=Devuan,a=stable
 Pin-Priority: 500
 
-Package: init initramfs-tools sysvinit sysvinit-core
+Package: consolekit init initramfs-tools libsystemd0 sysvinit sysvinit-core
 Pin: release *
 Pin-Priority: -1
