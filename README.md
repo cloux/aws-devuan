@@ -91,10 +91,24 @@ Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
 Why **'Unofficial'**: This project is not affiliated with the official Devuan GNU/Linux distribution in any way.
 
+### Vagrant
+
+The Vagrant base box is available for download at https://app.vagrantup.com/cloux/boxes/ColibriOS
+
+This image is built by the same principles as the AWS EC2, featuring:
+
+ * Rebranding to **ColibriOS**
+ * Small image size ~200 MB
+ * Direct boot without initrd
+ * Kernel optimized for VirtualBox
+ * Many tools including [oomd](https://facebookmicrosites.github.io/oomd/), [wireguard](https://www.wireguard.com) and [sin](https://github.com/cloux/sin)
+
+NOTE: Unlike AWS EC2, the Vagrant images are not released automatically with each new kernel. New releases are available ad-hoc, depending on the amount of accumulated fixes.
+
 ---
 ## Usage
 
-A few useful commands to get you up and running. These Runit scripts are universal, and work well outside the cloud environment.
+A few useful commands to get you up and running quickly.
 
 ### Login
 
