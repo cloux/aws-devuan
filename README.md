@@ -64,6 +64,7 @@ Currently available Devuan AMI offers:
  * Preinstalled [amazon-ssm-agent](https://github.com/aws/amazon-ssm-agent)
  * Preinstalled [Hiawatha](https://www.hiawatha-webserver.org), advanced and secure webserver<a href="https://www.hiawatha-webserver.org"><img src="https://www.hiawatha-webserver.org/images/banners/hiawatha_88x31.png" align="right"></a>
  	* Fully [automated](https://github.com/cloux/sin/blob/master/modules/hiawatha/certbot) domain TLS certificate management, requests and renewals
+ * Docker support: `apt-get install docker.io` and it's up and running!
 
 _NOTE:_ not everybody wants to run a webserver or amazon-ssm-agent. For convenience, these services are preinstalled and activated, since they are not directly available from the repository. If you don't need it, simply use the _svdeactivate_ command, see [service management](#runit-service-management).
 
@@ -120,8 +121,9 @@ A few useful commands to get you up and running quickly.
 
 In addition to standard Runit [service control](http://smarden.org/runit/sv.8.html), these commands were added for convenience:
 
- * [svactivate](https://github.com/cloux/sin/blob/master/modules/runit-init/inst/svactivate) - include and start services in Runit supervisor
- * [svdeactivate](https://github.com/cloux/sin/blob/master/modules/runit-init/inst/svdeactivate) - stop services and disable supervision
+ * [svactivate](https://github.com/cloux/runit-utils/blob/master/support/svactivate) - include and start services in Runit supervisor
+ * [svdeactivate](https://github.com/cloux/runit-utils/blob/master/support/svdeactivate) - stop services and disable supervision
+ * [svstat](https://github.com/cloux/runit-utils/blob/master/support/svstat) - show status of a service, or all supervised services when run without parameter
 
 ### System Updates
 
