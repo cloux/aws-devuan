@@ -92,6 +92,12 @@ Sources are placed in _/usr/src_ and _/root/inst_ inside the AMI.
 
 Why **'Unofficial'**: This project is not affiliated with the official Devuan GNU/Linux distribution in any way.
 
+How to find freshest AMI ID with awscli and jq:
+
+```shell
+aws ec2 describe-images --region us-east-1 --owners 771240843992 --filters 'Name=name,Values=Devuan Runit *' 'Name=state,Values=available' --output json | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId'
+```
+
 ### Vagrant
 
 The Vagrant base box is available for download at https://app.vagrantup.com/cloux/boxes/ColibriOS
