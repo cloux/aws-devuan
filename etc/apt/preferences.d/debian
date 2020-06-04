@@ -1,7 +1,0 @@
-Package: *
-Pin: origin "cloudfront.debian.net"
-Pin-Priority: 50
-
-Package: base-files bsdutils init* libprocps6 login mount openssh* procps systemd-* sysv-rc sysvinit* util-linux uuid-runtime
-Pin: release o=Debian
-Pin-Priority: -1
