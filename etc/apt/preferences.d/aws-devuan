@@ -1,3 +1,3 @@
-Package: consolekit init initramfs-tools initscripts insserv sysvinit* linux-headers*
+Package: consolekit init initramfs-tools initscripts insserv sysvinit sysvinit-core linux-headers*
 Pin: release *
 Pin-Priority: -1
