@@ -37,4 +37,4 @@ GRUB_CMDLINE_LINUX="rootfstype=ext4"
 GRUB_DISABLE_RECOVERY="true"
 
 # disable os-prober, do not discover other operating systems
-GRUB_DISABLE_OS_PROBER=true
+GRUB_DISABLE_OS_PROBER=false
